@@ -1,8 +1,7 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { SkullLogo } from '@/components/SkullLogo';
 import { useAuth } from '@/context/AuthContext';
 import { Avatar } from '@/components/ui/Avatar';
-import { Badge } from '@/components/ui/Badge';
 import { Home, Heart, Users, Bell, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
@@ -17,24 +16,23 @@ const NAV_ITEMS = [
 
 export function Header() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { session, profile } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Array<{ id: string; content: string; read: boolean; created_at: string; actor?: { display_name: string; avatar_url: string } | null }>>([]);
+  const [notifications, setNotifications] = useState<Array<{ id: string; content: string; type: string; read: boolean; created_at: string; actor?: Array<{ display_name: string; avatar_url: string }> | null }>>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  useEffect(() => {
+useEffect(() => {
     if (session) {
       supabase
         .from('notifications')
-        .select('*, actor:profiles!notifications_actor_id_fkey(display_name, avatar_url)')
+        .select('id, content, type, read, created_at, actor:profiles!notifications_actor_id_fkey(display_name, avatar_url)')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
         .limit(10)
         .then(({ data }) => {
           if (data) {
-            setNotifications(data as Array<{ id: string; content: string; read: boolean; created_at: string; actor?: { display_name: string; avatar_url: string } | null }>);
+            setNotifications(data as Array<{ id: string; content: string; type: string; read: boolean; created_at: string; actor?: Array<{ display_name: string; avatar_url: string }> | null }>);
             setUnreadCount(data.filter((n) => !n.read).length);
           }
         });

@@ -3,9 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 import { SkullLogo } from '@/components/SkullLogo';
-import { Input, Textarea } from '@/components/ui/Input';
+import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { Mail, Lock, User, AtSign, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export function Auth() {
   const { signIn, signUp } = useAuth();
