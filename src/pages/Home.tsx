@@ -6,10 +6,8 @@ import { SkullLogo } from '@/components/SkullLogo';
 import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles } from 'lucide-react';
 import { CLIPS } from '@/data/arcade';
 import { SOCIAL_LINKS } from '@/data/core';
-import { useAuth } from '@/context/AuthContext';
 
 export function Home() {
-  const { profile } = useAuth();
   const featuredClips = CLIPS.filter((c) => c.featured).slice(0, 3);
 
   return (

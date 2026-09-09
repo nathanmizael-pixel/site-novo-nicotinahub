@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session as { user: { id: string } } | null);
+      setSession(data.session);
       if (data.session) {
         loadProfile(data.session.user.id).finally(() => setLoading(false));
       } else {
@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session as { user: { id: string } } | null);
+      setSession(session);
       if (session) {
         (async () => {
           await loadProfile(session.user.id);

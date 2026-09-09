@@ -2,8 +2,10 @@ import { type Profile } from '@/lib/supabase';
 import { initials } from '@/lib/utils';
 import { getClass } from '@/data/classes';
 
+type AvatarProfile = Partial<Pick<Profile, 'display_name' | 'avatar_url' | 'class_id'>>;
+
 type AvatarProps = {
-  profile?: Profile | null;
+  profile?: AvatarProfile | null;
   userId?: string;
   name?: string;
   avatarUrl?: string;

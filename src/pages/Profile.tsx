@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase, type Profile as ProfileType, type Post } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
@@ -37,6 +37,7 @@ export function Profile() {
       setLoading(false);
       return;
     }
+    const isOwn = targetId === session?.user.id;
     (async () => {
       setLoading(true);
       const { data } = await supabase.from('profiles').select('*').eq('id', targetId).maybeSingle();
@@ -64,7 +65,7 @@ export function Profile() {
 
       setLoading(false);
     })();
-  }, [targetId, session, isOwn]);
+  }, [targetId, session]);
 
   async function handleFollow() {
     if (!session || !targetId || isOwn) return;

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase, type Profile, type Post } from '@/lib/supabase';
+import { supabase, type Post } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/Toast';
 import { Card } from '@/components/ui/Card';
@@ -20,7 +20,7 @@ export function Community() {
   const [newPost, setNewPost] = useState('');
   const [posting, setPosting] = useState(false);
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
-  const [commentsByPost, setCommentsByPost] = useState<Record<string, any[]>>({});
+  const [commentsByPost, setCommentsByPost] = useState<Record<string, Array<{ id: string; content: string; author_id: string; created_at: string; author?: { display_name: string; avatar_url: string } }>>>({});
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
 
   const loadPosts = useCallback(async () => {
@@ -37,7 +37,7 @@ export function Community() {
       .limit(30);
 
     if (data) {
-      const postsWithFlags = data.map((p: any) => ({
+      const postsWithFlags = data.map((p: { likes?: Array<{ count: number }>; comments?: Array<{ count: number }> }) => ({
         ...p,
         like_count: p.likes?.[0]?.count || 0,
         comment_count: p.comments?.[0]?.count || 0,
@@ -70,6 +70,11 @@ export function Community() {
 
   async function handleLike(postId: string) {
     if (!session) return;
+    
+    // Get the post author before any state updates to avoid race conditions
+    const post = posts.find((p) => p.id === postId);
+    const authorId = post?.author_id;
+    
     const { data: existing } = await supabase
       .from('likes')
       .select('id')
@@ -83,9 +88,9 @@ export function Community() {
     } else {
       await supabase.from('likes').insert({ post_id: postId, user_id: session.user.id });
       setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, like_count: (p.like_count || 0) + 1, liked_by_me: true } : p));
-      if (profile) {
+      if (profile && authorId) {
         await supabase.from('notifications').insert({
-          user_id: posts.find((p) => p.id === postId)?.author_id,
+          user_id: authorId,
           actor_id: session.user.id,
           type: 'like',
           entity_id: postId,
@@ -244,7 +249,7 @@ export function Community() {
                           </div>
                         </div>
                       )}
-                      {(commentsByPost[post.id] || []).map((c: any) => (
+                      {(commentsByPost[post.id] || []).map((c: { id: string; content: string; author_id: string; created_at: string; author?: { display_name: string; avatar_url: string } }) => (
                         <div key={c.id} className="flex gap-2">
                           <Link to={`/profile/${c.author_id}`}>
                             <Avatar profile={c.author} size="xs" />

@@ -27,7 +27,7 @@ export function ProgressBar({ value, max = 100, className = '', color = '#A855F7
             width: `${pct}%`,
             background: `linear-gradient(90deg, ${color}80, ${color})`,
             boxShadow: `0 0 8px ${color}60`,
-          }}
+          } as React.CSSProperties & { '--bar-width'?: string }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" style={{ backgroundSize: '200% 100%' }} />
         </div>
