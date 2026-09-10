@@ -1,6 +1,8 @@
 import { type ReactNode, forwardRef, type HTMLAttributes } from 'react';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { SkullLogo } from '@/components/SkullLogo';
+import { Heart, MessageCircle, Share2 } from 'lucide-react';
 
 /**
  * FeatureCard — Editorial card for hero teasers, class selection, major features
@@ -201,6 +203,228 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(
 );
 
 ContentCard.displayName = 'ContentCard';
+
+/**
+ * PostCard — Community post with author identity, content, actions, and comments
+ * Layout: Author header + content + action bar + expandable comments
+ */
+export interface PostCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style'> {
+  author: {
+    id: string;
+    display_name: string;
+    username: string;
+    avatar_url?: string;
+    class_id?: string | null;
+  };
+  content: string;
+  created_at: string;
+  like_count: number;
+  comment_count: number;
+  liked_by_me: boolean;
+  media_url?: string | null;
+  accent?: string;
+  onLike: (postId: string) => void;
+  onShare: (postId: string) => void;
+  onToggleComments: (postId: string) => void;
+  isExpanded: boolean;
+  comments: Array<{
+    id: string;
+    content: string;
+    author_id: string;
+    created_at: string;
+    author?: { display_name: string; avatar_url: string };
+  }>;
+  commentInput: string;
+  onCommentInputChange: (postId: string, value: string) => void;
+  onSubmitComment: (postId: string) => void;
+  isCommenting: boolean;
+  classColor?: string;
+  className?: string;
+  classIcon?: ReactNode;
+  animate?: boolean;
+  animationDelay?: number;
+  style?: React.CSSProperties;
+}
+
+export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
+  ({
+    className,
+    author,
+    content,
+    created_at,
+    like_count,
+    comment_count,
+    liked_by_me,
+    media_url,
+    accent = '#A855F7',
+    onLike,
+    onShare,
+    onToggleComments,
+    isExpanded,
+    comments,
+    commentInput,
+    onCommentInputChange,
+    onSubmitComment,
+    isCommenting,
+    classColor,
+    classIcon,
+    children,
+    animate,
+    animationDelay,
+    ...props
+  }, ref) => {
+    const authorClassColor = classColor || accent;
+
+    return (
+      <article
+        ref={ref}
+        className={cn(
+          'relative rounded-2xl bg-surface/60 backdrop-blur-sm border border-border',
+          'transition-all duration-500 ease-out-expo',
+          'hover:border-primary/20 hover:shadow-depth-2',
+          animate && 'animate-reveal-up',
+          className
+        )}
+        style={{ '--accent': accent, animationDelay: animationDelay ? `${animationDelay}ms` : undefined } as React.CSSProperties}
+        {...props}
+      >
+        <div className="p-5">
+          {/* Author Header */}
+          <div className="flex items-start gap-3 mb-4">
+            <Link to={`/profile/${author.id}`} className="flex-shrink-0">
+              <div className="relative">
+                <div className="w-11 h-11 rounded-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/20">
+                  {author.avatar_url ? (
+                    <img src={author.avatar_url} alt={author.display_name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="font-display font-700 text-sm" style={{ color: authorClassColor }}>{author.display_name.charAt(0)}</span>
+                  )}
+                </div>
+                {classIcon && (
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center border bg-void" style={{ borderColor: authorClassColor }}>
+                    {classIcon}
+                  </div>
+                )}
+              </div>
+            </Link>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Link to={`/profile/${author.id}`} className="font-display font-600 text-sm text-text hover:text-primary-bright transition-colors truncate">
+                  {author.display_name}
+                </Link>
+                <span className="text-xs text-text-dim">@{author.username}</span>
+                {classIcon && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-600" style={{ background: `${authorClassColor}15`, color: authorClassColor, border: `1px solid ${authorClassColor}30` }}>
+                    {classIcon}
+                    {className}
+                  </span>
+                )}
+              </div>
+              <time className="text-xs text-text-dim" dateTime={created_at}>
+                {new Date(created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              </time>
+            </div>
+          </div>
+
+          {/* Content */}
+          <p className="text-sm text-text leading-relaxed whitespace-pre-wrap mb-4">{content}</p>
+
+          {/* Media */}
+          {media_url && (
+            <div className="mt-4 rounded-xl overflow-hidden border border-border">
+              <img src={media_url} alt="" className="w-full" />
+            </div>
+          )}
+
+          {/* Action Bar */}
+          <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
+            <button
+              onClick={() => onLike(author.id)}
+              className={`flex items-center gap-1.5 text-xs transition-all duration-200 ${liked_by_me ? 'text-primary-bright' : 'text-text-muted hover:text-text'}`}
+              aria-label={liked_by_me ? 'Unlike' : 'Like'}
+            >
+              <Heart size={14} className={liked_by_me ? 'fill-primary-bright' : ''} />
+              <span className="font-mono">{like_count}</span>
+            </button>
+            <button
+              onClick={() => onToggleComments(author.id)}
+              className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors"
+              aria-label={isExpanded ? 'Hide comments' : 'Show comments'}
+            >
+              <MessageCircle size={14} />
+              <span className="font-mono">{comment_count}</span>
+            </button>
+            <button
+              onClick={() => onShare(author.id)}
+              className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors ml-auto"
+              aria-label="Share"
+            >
+              <Share2 size={14} />
+            </button>
+          </div>
+
+          {/* Comments Section */}
+          {isExpanded && (
+            <div className="mt-4 pt-4 border-t border-border space-y-3 animate-fade-in-up" style={{ animationDelay: '50ms' }}>
+              {comments.length > 0 && comments.map((c) => (
+                <div key={c.id} className="flex gap-2">
+                  <Link to={`/profile/${c.author_id}`}>
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/20">
+                      {c.author?.avatar_url ? (
+                        <img src={c.author.avatar_url} alt={c.author.display_name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="font-display font-700 text-[10px]" style={{ color: accent }}>{c.author?.display_name?.charAt(0)}</span>
+                      )}
+                    </div>
+                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Link to={`/profile/${c.author_id}`} className="text-xs font-600 text-text hover:text-primary-bright truncate">
+                        {c.author?.display_name}
+                      </Link>
+                      <span className="text-[10px] text-text-dim">{new Date(c.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <p className="text-sm text-text mt-0.5">{c.content}</p>
+                  </div>
+                </div>
+              ))}
+
+              {/* Comment Composer */}
+              <div className="flex gap-2 pt-2">
+                <div className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/20 flex-shrink-0">
+                  {/* Current user avatar would go here */}
+                  <span className="font-display font-700 text-[10px]" style={{ color: accent }}>?</span>
+                </div>
+                <div className="flex-1 flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Write a comment..."
+                    value={commentInput}
+                    onChange={(e) => onCommentInputChange(author.id, e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && e.preventDefault() && onSubmitComment(author.id)}
+                    disabled={isCommenting}
+                    className="flex-1 px-3 py-2 bg-abyss border border-border rounded-xl text-sm text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none transition-all duration-200 disabled:opacity-50"
+                  />
+                  <button
+                    onClick={() => onSubmitComment(author.id)}
+                    disabled={isCommenting || !commentInput.trim()}
+                    className="px-4 py-2 bg-primary/15 text-primary-bright hover:bg-primary/25 text-sm font-600 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {children}
+        </div>
+      </article>
+    )
+  }
+);
+
+PostCard.displayName = 'PostCard';
 
 /**
  * ProfileCard — User profile display with class, stats, bio
