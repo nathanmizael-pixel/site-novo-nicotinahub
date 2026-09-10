@@ -5,14 +5,14 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SkullLogo } from '@/components/SkullLogo';
 import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Coins, Shield, Crown, Ghost } from 'lucide-react';
-import { CLIPS } from '@/data/clips';
-import { SOCIAL_LINKS } from '@/data/core';
+import { VIDEOS } from '@/data/videos';
+import { SOCIAL_LINKS } from '@/data/social';
 import { usePageEntry, useStagger } from '@/hooks/useMotion';
 
 export function Home() {
   const isPageVisible = usePageEntry(0);
-  const featuredClips = CLIPS.filter((c) => c.featured).slice(0, 3);
-  const clipDelays = useStagger(featuredClips.length, 80, 240);
+  const featuredVideos = VIDEOS.filter((v) => v.featured).slice(0, 3);
+  const videoDelays = useStagger(featuredVideos.length, 80, 240);
 
   return (
     <div className="animate-fade-in min-h-screen">
@@ -136,29 +136,29 @@ export function Home() {
           </Stack>
 
           <Grid cols={1} colsMd={2} colsLg={3} gap="lg" autoFit minItemWidth="320px">
-            {featuredClips.map((clip, index) => (
+            {featuredVideos.map((video, index) => (
               <MediaCard
-                key={clip.id}
-                image={clip.thumbnail || undefined}
-                title={clip.title}
-                subtitle={`${clip.views.toLocaleString()} visualizações · ${clip.category}`}
+                key={video.id}
+                image={video.thumbnail || undefined}
+                title={video.title}
+                subtitle={`${video.views.toLocaleString()} visualizações · ${video.category}`}
                 aspectRatio="video"
-                accent={clip.platform === 'twitch' ? '#9146FF' : '#FF0050'}
+                accent={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
                 badge={
                   <Badge
                     variant="solid"
                     size="sm"
-                    color={clip.platform === 'twitch' ? '#9146FF' : '#FF0050'}
+                    color={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
                     className="animate-reveal"
-                    style={{ animationDelay: `${clipDelays[index]}ms` }}
+                    style={{ animationDelay: `${videoDelays[index]}ms` }}
                   >
-                    {clip.platform === 'twitch' ? <Twitch size={10} /> : <Music2 size={10} />}
-                    {clip.platform}
+                    {video.platform === 'twitch' ? <Twitch size={10} /> : <Music2 size={10} />}
+                    {video.platform}
                   </Badge>
                 }
                 meta={
                   <span className="flex items-center gap-1.5 text-xs text-text/80">
-                    <span className="font-mono">{clip.duration}</span>
+                    <span className="font-mono">{video.duration}</span>
                   </span>
                 }
                 overlay={
@@ -166,12 +166,12 @@ export function Home() {
                     <ArrowRight size={20} />
                   </div>
                 }
-                onClick={() => window.open(clip.url, '_blank', 'noopener,noreferrer')}
+                onClick={() => window.open(video.url, '_blank', 'noopener,noreferrer')}
                 className="cursor-pointer animate-reveal-up"
-                style={{ animationDelay: `${clipDelays[index]}ms` }}
+                style={{ animationDelay: `${videoDelays[index]}ms` }}
               >
                 <div className="absolute bottom-3 left-3">
-                  <span className="font-mono text-xs text-text/80 bg-void/80 px-2 py-1 rounded">{clip.duration}</span>
+                  <span className="font-mono text-xs text-text/80 bg-void/80 px-2 py-1 rounded">{video.duration}</span>
                 </div>
               </MediaCard>
             ))}
