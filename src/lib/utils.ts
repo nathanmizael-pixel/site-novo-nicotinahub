@@ -1,4 +1,9 @@
+import { clsx, type ClassValue } from 'clsx';
 import { xpForLevel } from '@/data/core';
+
+export function cn(...inputs: ClassValue[]) {
+  return clsx(inputs);
+}
 
 export function xpProgress(xp: number, level: number) {
   const currentLevelXp = xpForLevel(level);

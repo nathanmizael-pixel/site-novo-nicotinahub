@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, type CSSProperties } from 'react';
 
 type BadgeProps = {
   children: ReactNode;
@@ -6,9 +6,10 @@ type BadgeProps = {
   variant?: 'solid' | 'outline' | 'glow';
   size?: 'sm' | 'md';
   className?: string;
+  style?: CSSProperties;
 };
 
-export function Badge({ children, color = '#A855F7', variant = 'solid', size = 'sm', className = '' }: BadgeProps) {
+export function Badge({ children, color = '#A855F7', variant = 'solid', size = 'sm', className = '', style }: BadgeProps) {
   const styles: Record<string, string> = {
     solid: `text-void`,
     outline: `border`,
@@ -17,14 +18,14 @@ export function Badge({ children, color = '#A855F7', variant = 'solid', size = '
 
   const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-[10px]' : 'px-3 py-1 text-xs';
 
-  const style: React.CSSProperties = variant === 'solid'
+  const baseStyle: CSSProperties = variant === 'solid'
     ? { backgroundColor: color, borderColor: color }
     : { color, borderColor: color, backgroundColor: `${color}15` };
 
   return (
     <span
       className={`inline-flex items-center gap-1 font-600 uppercase tracking-wider rounded clip-tag font-body ${styles[variant]} ${sizeClasses} ${className}`}
-      style={style}
+      style={{ ...baseStyle, ...style }}
     >
       {children}
     </span>

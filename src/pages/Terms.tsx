@@ -30,7 +30,7 @@ export function Terms() {
         <p className="text-sm text-text-muted">Last updated: September 2026</p>
       </div>
 
-      <Card elevated className="p-6 md:p-8 space-y-6">
+      <Card variant="elevated" padding="lg" className="space-y-6">
         {SECTIONS.map((section) => (
           <div key={section.title}>
             <h2 className="font-display font-600 text-base text-text mb-2">{section.title}</h2>

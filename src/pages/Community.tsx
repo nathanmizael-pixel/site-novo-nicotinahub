@@ -147,7 +147,7 @@ export function Community() {
       </div>
 
       {session ? (
-        <Card elevated className="p-5 mb-6">
+        <Card variant="elevated" padding="lg" className="mb-6">
           <div className="flex gap-3">
             <Avatar profile={profile} size="md" />
             <div className="flex-1">
@@ -167,7 +167,7 @@ export function Community() {
           </div>
         </Card>
       ) : (
-        <Card elevated className="p-6 mb-6 text-center">
+        <Card variant="elevated" padding="lg" className="mb-6 text-center">
           <Skull size={32} className="text-text-dim mx-auto mb-3" />
           <h3 className="font-display font-600 text-lg text-text mb-1">Join the Conversation</h3>
           <p className="text-sm text-text-muted mb-4">Sign in to post, like, and comment in the community.</p>
@@ -190,7 +190,7 @@ export function Community() {
       ) : (
         <div className="space-y-4">
           {posts.map((post) => (
-            <Card key={post.id} className="p-5 animate-fade-in-up">
+            <Card key={post.id} variant="default" padding="lg" className="animate-fade-in-up">
               <div className="flex items-start gap-3">
                 <Link to={`/profile/${post.author_id}`}>
                   <Avatar profile={post.author} size="md" />
