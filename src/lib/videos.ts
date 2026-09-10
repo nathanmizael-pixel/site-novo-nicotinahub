@@ -1,3 +1,6 @@
+import { supabase } from './supabase';
+import type { VideoFilters, VideoSort } from './supabase';
+
 export type VideoData = {
   id: string;
   title: string;
@@ -12,12 +15,7 @@ export type VideoData = {
   featured?: boolean;
 };
 
-export type VideoFilters = {
-  platform?: 'all' | 'twitch' | 'tiktok';
-  featured?: boolean;
-};
-
-export type VideoSort = 'newest' | 'oldest' | 'most-viewed' | 'featured';
+export type { VideoFilters, VideoSort } from './supabase';
 
 export interface VideosService {
   getAll(filters?: VideoFilters, sort?: VideoSort): Promise<VideoData[]>;
@@ -26,6 +24,7 @@ export interface VideosService {
   getPlatforms(): string[];
 }
 
+// Mock data as development fallback
 const MOCK_VIDEOS: VideoData[] = [
   { id: 'clip_001', title: 'The Play That Broke Chat', platform: 'twitch', thumbnail: '', author: 'nicotinacat', date: '2026-09-08', views: 24500, category: 'Gaming', duration: '0:47', url: 'https://twitch.tv/nicotinacat', featured: true },
   { id: 'clip_002', title: 'Rage Quit Compilation', platform: 'twitch', thumbnail: '', author: 'nicotinacat', date: '2026-09-07', views: 18200, category: 'Highlights', duration: '2:13', url: 'https://twitch.tv/nicotinacat', featured: true },
@@ -67,26 +66,148 @@ function applySort(videos: VideoData[], sort?: VideoSort): VideoData[] {
   }
 }
 
-export const videosService: VideosService = {
-  async getAll(filters?: VideoFilters, sort?: VideoSort) {
-    await new Promise((r) => setTimeout(r, 300));
-    const filtered = applyFilters(MOCK_VIDEOS, filters);
-    return applySort(filtered, sort);
+function mapSupabaseToVideoData(video: Record<string, unknown>): VideoData {
+  return {
+    id: video.id as string,
+    title: video.title as string,
+    platform: video.platform as 'twitch' | 'tiktok',
+    thumbnail: video.thumbnail_url as string,
+    author: 'nicotinacat',
+    date: new Date(video.published_at as string).toISOString().split('T')[0],
+    views: video.views as number,
+    category: video.category as string,
+    duration: video.duration as string,
+    url: video.video_url as string,
+    featured: video.featured as boolean,
+  };
+}
+
+async function isSupabaseConfigured(): Promise<boolean> {
+  try {
+    const { error } = await supabase.from('videos').select('id').limit(1);
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
+function fallbackGetAll(filters?: VideoFilters, sort?: VideoSort): VideoData[] {
+  const filtered = applyFilters(MOCK_VIDEOS, filters);
+  return applySort(filtered, sort);
+}
+
+function fallbackGetFeatured(limit = 3): VideoData[] {
+  return MOCK_VIDEOS.filter((v) => v.featured).slice(0, limit);
+}
+
+function fallbackGetById(id: string): VideoData | null {
+  return MOCK_VIDEOS.find((v) => v.id === id) ?? null;
+}
+
+export const videosService = {
+  async getAll(filters?: VideoFilters, sort?: VideoSort): Promise<VideoData[]> {
+    const useSupabase = await isSupabaseConfigured();
+    
+    if (useSupabase) {
+      try {
+        let query = supabase.from('videos').select('*');
+        
+        if (filters?.platform && filters.platform !== 'all') {
+          query = query.eq('platform', filters.platform);
+        }
+        if (filters?.featured !== undefined) {
+          query = query.eq('featured', filters.featured);
+        }
+        
+        switch (sort) {
+          case 'newest':
+            query = query.order('published_at', { ascending: false });
+            break;
+          case 'oldest':
+            query = query.order('published_at', { ascending: true });
+            break;
+          case 'most-viewed':
+            query = query.order('views', { ascending: false });
+            break;
+          case 'featured':
+            query = query.order('featured', { ascending: false });
+            break;
+          default:
+            query = query.order('published_at', { ascending: false });
+        }
+        
+        const { data, error } = await query;
+        
+        if (error) {
+          console.warn('Supabase error, falling back to mock:', error.message);
+          return fallbackGetAll(filters, sort);
+        }
+        
+        return (data || []).map(mapSupabaseToVideoData);
+      } catch (error) {
+        console.warn('Supabase error, falling back to mock:', error);
+        return fallbackGetAll(filters, sort);
+      }
+    }
+    
+    return fallbackGetAll(filters, sort);
   },
 
-  async getFeatured(limit = 3) {
-    await new Promise((r) => setTimeout(r, 200));
-    return MOCK_VIDEOS.filter((v) => v.featured).slice(0, limit);
+  async getFeatured(limit = 3): Promise<VideoData[]> {
+    const useSupabase = await isSupabaseConfigured();
+    
+    if (useSupabase) {
+      try {
+        const { data, error } = await supabase
+          .from('videos')
+          .select('*')
+          .eq('featured', true)
+          .order('published_at', { ascending: false })
+          .limit(limit);
+        
+        if (error) {
+          console.warn('Supabase error, falling back to mock:', error.message);
+          return fallbackGetFeatured(limit);
+        }
+        
+        return (data || []).map(mapSupabaseToVideoData);
+      } catch (error) {
+        console.warn('Supabase error, falling back to mock:', error);
+        return fallbackGetFeatured(limit);
+      }
+    }
+    
+    return fallbackGetFeatured(limit);
   },
 
-  async getById(id: string) {
-    await new Promise((r) => setTimeout(r, 150));
-    return MOCK_VIDEOS.find((v) => v.id === id) ?? null;
+  async getById(id: string): Promise<VideoData | null> {
+    const useSupabase = await isSupabaseConfigured();
+    
+    if (useSupabase) {
+      try {
+        const { data, error } = await supabase
+          .from('videos')
+          .select('*')
+          .eq('id', id)
+          .single();
+        
+        if (error) {
+          console.warn('Supabase error, falling back to mock:', error.message);
+          return fallbackGetById(id);
+        }
+        
+        return data ? mapSupabaseToVideoData(data) : null;
+      } catch (error) {
+        console.warn('Supabase error, falling back to mock:', error);
+        return fallbackGetById(id);
+      }
+    }
+    
+    return fallbackGetById(id);
   },
 
-  getPlatforms() {
-    const platforms = new Set(MOCK_VIDEOS.map((v) => v.platform));
-    return Array.from(platforms);
+  getPlatforms(): string[] {
+    return ['twitch', 'tiktok'];
   },
 };
 

@@ -110,3 +110,26 @@ export type WishlistItem = {
   status: string;
   priority: number;
 };
+
+export type Video = {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail_url: string;
+  video_url: string;
+  platform: 'twitch' | 'tiktok';
+  category: string;
+  duration: string;
+  views: number;
+  published_at: string;
+  featured: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type VideoFilters = {
+  platform?: 'all' | 'twitch' | 'tiktok';
+  featured?: boolean;
+};
+
+export type VideoSort = 'newest' | 'oldest' | 'most-viewed' | 'featured';
