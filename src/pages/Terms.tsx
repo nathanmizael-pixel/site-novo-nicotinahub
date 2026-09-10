@@ -3,17 +3,17 @@ import { SkullLogo } from '@/components/SkullLogo';
 import { FileText } from 'lucide-react';
 
 const SECTIONS = [
-  { title: '1. Acceptance of Terms', body: 'By accessing and using the nicotinacat Hub ("the Hub"), you accept and agree to be bound by these Terms of Service. If you do not agree, please do not use the Hub.' },
-  { title: '2. Description of Service', body: 'The Hub provides a community platform featuring social features, an arcade system with progression mechanics, card collection, expeditions, and content aggregation from connected platforms. We reserve the right to modify or discontinue any feature at any time.' },
-  { title: '3. User Accounts', body: 'You must create an account to access certain features. You are responsible for maintaining the security of your account and password. You agree to provide accurate information during registration and to keep your profile information updated.' },
-  { title: '4. User Conduct', body: 'You agree not to: post abusive, defamatory, or hateful content; harass other users; impersonate any person or entity; attempt to access another user\'s account; use automated systems to access the Hub without authorization; or engage in any activity that disrupts the service.' },
-  { title: '5. Content', body: 'You retain ownership of content you post. By posting, you grant the Hub a non-exclusive license to display and distribute that content within the platform. We reserve the right to remove content that violates these terms.' },
-  { title: '6. Arcade and Virtual Items', body: 'The arcade system includes virtual items, cards, gold, and progression mechanics. These virtual items have no monetary value and cannot be exchanged for real currency. We may adjust the arcade economy, balance, or features at our discretion.' },
-  { title: '7. Intellectual Property', body: 'The Hub, including its design, branding, and software, is owned by nicotinacat. All trademarks, logos, and content not created by users are property of their respective owners.' },
-  { title: '8. Third-Party Links', body: 'The Hub contains links to third-party websites and services (Twitch, TikTok, Discord, Amazon). We are not responsible for the content or practices of these third-party services.' },
-  { title: '9. Limitation of Liability', body: 'The Hub is provided "as is" without warranties of any kind. We are not liable for any indirect, incidental, or consequential damages arising from your use of the Hub.' },
-  { title: '10. Changes to Terms', body: 'We may update these terms at any time. Continued use of the Hub after changes constitutes acceptance of the updated terms.' },
-  { title: '11. Contact', body: 'For questions about these terms, reach out through the Discord community or social channels.' },
+  { title: '1. Aceitação dos Termos', body: 'Ao acessar e usar a nicotinacat, você aceita e concorda em ficar vinculado a estes Termos de Serviço. Se não concordar, por favor não utilize a nicotinacat.' },
+  { title: '2. Descrição do Serviço', body: 'A nicotinacat oferece uma plataforma de comunidade com recursos sociais, sistema de progressão estilo arcade, coleção de cards, expedições e agregação de conteúdo de plataformas conectadas. Reservamo-nos o direito de modificar ou descontinuar qualquer funcionalidade a qualquer momento.' },
+  { title: '3. Contas de Usuário', body: 'Você deve criar uma conta para acessar certos recursos. Você é responsável por manter a segurança da sua conta e senha. Você concorda em fornecer informações precisas durante o registro e manter suas informações de perfil atualizadas.' },
+  { title: '4. Conduta do Usuário', body: 'Você concorda em não: postar conteúdo abusivo, difamatório ou odioso; assediar outros usuários; se passar por outra pessoa ou entidade; tentar acessar a conta de outro usuário; usar sistemas automatizados para acessar a nicotinacat sem autorização; ou envolver-se em qualquer atividade que interrompa o serviço.' },
+  { title: '5. Conteúdo', body: 'Você mantém a propriedade do conteúdo que posta. Ao postar, você concede à nicotinacat uma licença não exclusiva para exibir e distribuir esse conteúdo dentro da plataforma. Reservamo-nos o direito de remover conteúdo que viole estes termos.' },
+  { title: '6. Itens Virtuais e Arcade', body: 'O sistema arcade inclui itens virtuais, cards, ouro e mecânicas de progressão. Estes itens virtuais não têm valor monetário e não podem ser trocados por moeda real. Podemos ajustar a economia do arcade, balanceamento ou funcionalidades a nosso critério.' },
+  { title: '7. Propriedade Intelectual', body: 'A nicotinacat, incluindo seu design, marca e software, é propriedade da nicotinacat. Todas as marcas registradas, logos e conteúdo não criados por usuários são propriedade de seus respectivos donos.' },
+  { title: '8. Links de Terceiros', body: 'A nicotinacat contém links para sites e serviços de terceiros (Twitch, TikTok, Discord, Amazon). Não somos responsáveis pelo conteúdo ou práticas destes serviços de terceiros.' },
+  { title: '9. Limitação de Responsabilidade', body: 'A nicotinacat é fornecida "como está" sem garantias de qualquer tipo. Não somos responsáveis por danos indiretos, incidentais ou consequenciais decorrentes do seu uso da nicotinacat.' },
+  { title: '10. Alterações nos Termos', body: 'Podemos atualizar estes termos a qualquer momento. O uso contínuo da nicotinacat após alterações constitui aceitação dos termos atualizados.' },
+  { title: '11. Contato', body: 'Para dúvidas sobre estes termos, entre em contato através da comunidade no Discord ou canais sociais.' },
 ];
 
 export function Terms() {
@@ -25,9 +25,9 @@ export function Terms() {
         </div>
         <div className="flex items-center justify-center gap-2 mb-2">
           <FileText size={24} className="text-primary" />
-          <h1 className="font-display font-700 text-3xl text-text">Terms of Service</h1>
+          <h1 className="font-display font-700 text-3xl text-text">Termos de Serviço</h1>
         </div>
-        <p className="text-sm text-text-muted">Last updated: September 2026</p>
+        <p className="text-sm text-text-muted">Última atualização: Setembro 2026</p>
       </div>
 
       <Card variant="elevated" padding="lg" className="space-y-6">

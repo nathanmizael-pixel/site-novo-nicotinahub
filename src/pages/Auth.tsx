@@ -26,12 +26,12 @@ export function Auth() {
 
     if (mode === 'signup') {
       if (form.username.length < 3) {
-        setError('Username must be at least 3 characters');
+        setError('O nome de usuário deve ter pelo menos 3 caracteres');
         setLoading(false);
         return;
       }
       if (form.displayName.length < 2) {
-        setError('Display name must be at least 2 characters');
+        setError('O nome de exibição deve ter pelo menos 2 caracteres');
         setLoading(false);
         return;
       }
@@ -41,7 +41,7 @@ export function Auth() {
         setLoading(false);
         return;
       }
-      addToast('success', 'Welcome to the Hub. Your journey begins.');
+      addToast('success', 'Bem-vindo à nicotinacat. Sua jornada começa.');
       navigate('/');
     } else {
       const { error: err } = await signIn(form.email, form.password);
@@ -50,7 +50,7 @@ export function Auth() {
         setLoading(false);
         return;
       }
-      addToast('success', 'Welcome back.');
+      addToast('success', 'Bem-vindo de volta.');
       navigate('/');
     }
     setLoading(false);
@@ -70,10 +70,10 @@ export function Auth() {
             </div>
 
             <h1 className="font-display font-800 text-display-lg text-text mb-2 animate-reveal-up" style={{ animationDelay: '100ms' }}>
-              {mode === 'login' ? 'Welcome Back' : 'Join the Hub'}
+              {mode === 'login' ? 'Bem-vindo de Volta' : 'Entre na nicotinacat'}
             </h1>
             <p className="text-body-md text-text-muted animate-reveal-up" style={{ animationDelay: '200ms' }}>
-              {mode === 'login' ? 'Sign in to continue your journey' : 'Create your account and begin'}
+              {mode === 'login' ? 'Entre para continuar sua jornada' : 'Crie sua conta e comece'}
             </p>
           </div>
 
@@ -84,13 +84,13 @@ export function Auth() {
                   onClick={() => setMode('login')}
                   className={`flex-1 py-2.5 text-sm font-600 rounded-md transition-all ${mode === 'login' ? 'bg-primary/15 text-primary-bright shadow-sm' : 'text-text-muted hover:text-text'}`}
                 >
-                  Sign In
+                  Entrar
                 </button>
                 <button
                   onClick={() => setMode('signup')}
                   className={`flex-1 py-2.5 text-sm font-600 rounded-md transition-all ${mode === 'signup' ? 'bg-primary/15 text-primary-bright shadow-sm' : 'text-text-muted hover:text-text'}`}
                 >
-                  Sign Up
+                  Cadastrar
                 </button>
               </div>
             </Stack>
@@ -99,12 +99,12 @@ export function Auth() {
               {mode === 'signup' && (
                 <Stack gap="md">
                   <div className="relative">
-                    <label className="block text-label-sm text-text-muted mb-2">Display Name</label>
+                    <label className="block text-label-sm text-text-muted mb-2">Nome de Exibição</label>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dim" size={18} />
                       <input
                         type="text"
-                        placeholder="Your name in the Hub"
+                        placeholder="Seu nome na nicotinacat"
                         value={form.displayName}
                         onChange={(e) => setForm({ ...form, displayName: e.target.value })}
                         required
@@ -114,12 +114,12 @@ export function Auth() {
                   </div>
 
                   <div className="relative">
-                    <label className="block text-label-sm text-text-muted mb-2">Username</label>
+                    <label className="block text-label-sm text-text-muted mb-2">Nome de Usuário</label>
                     <div className="relative">
                       <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dim" size={18} />
                       <input
                         type="text"
-                        placeholder="your_username"
+                        placeholder="seu_usuario"
                         value={form.username}
                         onChange={(e) => setForm({ ...form, username: e.target.value.replace(/[^a-zA-Z0-9_]/g, '') })}
                         required
@@ -132,12 +132,12 @@ export function Auth() {
 
               <Stack gap="md">
                 <div className="relative">
-                  <label className="block text-label-sm text-text-muted mb-2">Email</label>
+                  <label className="block text-label-sm text-text-muted mb-2">E-mail</label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dim" size={18} />
                     <input
                       type="email"
-                      placeholder="you@domain.com"
+                      placeholder="voce@dominio.com"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       required
@@ -147,7 +147,7 @@ export function Auth() {
                 </div>
 
                 <div className="relative">
-                  <label className="block text-label-sm text-text-muted mb-2">Password</label>
+                  <label className="block text-label-sm text-text-muted mb-2">Senha</label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dim" size={18} />
                     <input
@@ -177,27 +177,27 @@ export function Auth() {
                 className="w-full"
                 icon={!loading ? <ArrowRight size={18} /> : undefined}
               >
-                {mode === 'login' ? 'Sign In' : 'Create Account'}
+                {mode === 'login' ? 'Entrar' : 'Criar Conta'}
               </Button>
             </form>
 
             <p className="text-xs text-text-dim text-center mt-6 animate-fade-in" style={{ animationDelay: '400ms' }}>
-              By continuing, you agree to the{' '}
-              <Link to="/terms" className="text-primary-bright hover:underline font-500">Terms</Link>
-              {' '}and{' '}
-              <Link to="/privacy" className="text-primary-bright hover:underline font-500">Privacy Policy</Link>
+              Ao continuar, você concorda com os{' '}
+              <Link to="/terms" className="text-primary-bright hover:underline font-500">Termos</Link>
+              {' '}e a{' '}
+              <Link to="/privacy" className="text-primary-bright hover:underline font-500">Política de Privacidade</Link>
             </p>
           </Card>
 
           <div className="text-center mt-8 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
             <p className="text-sm text-text-muted">
-              {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}
+              {mode === 'login' ? 'Não tem conta?' : 'Já tem conta?'}
               {' '}
               <button
                 onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
                 className="text-primary-bright hover:text-primary font-600 ml-1 transition-colors"
               >
-                {mode === 'login' ? 'Sign Up' : 'Sign In'}
+                {mode === 'login' ? 'Cadastrar' : 'Entrar'}
               </button>
             </p>
           </div>
