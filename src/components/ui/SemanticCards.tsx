@@ -575,7 +575,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
 StatCard.displayName = 'StatCard';
 
 /**
- * MediaCard — Image/video heavy card for clips, wishlist items, expeditions
+ * MediaCard — Image/video heavy card for videos, wishlist items, expeditions
  */
 export interface MediaCardProps extends HTMLAttributes<HTMLDivElement> {
   image?: string;
