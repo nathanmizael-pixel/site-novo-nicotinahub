@@ -82,7 +82,7 @@ export function Profile() {
           user_id: targetId,
           actor_id: session.user.id,
           type: 'follow',
-          content: `${ownProfile.display_name} started following you`,
+          content: `${ownProfile.display_name} começou a seguir você`,
         });
       }
     }
@@ -97,7 +97,7 @@ export function Profile() {
     });
     setProfileData((prev) => prev ? { ...prev, ...editForm } : null);
     setEditing(false);
-    addToast('success', 'Profile updated.');
+    addToast('success', 'Perfil atualizado.');
   }
 
   if (loading) {
@@ -112,10 +112,10 @@ export function Profile() {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         <EmptyState
-          title="Profile not found"
-          description="This soul has not yet entered the Hub."
+          title="Perfil não encontrado"
+          description="Esta alma ainda não entrou na nicotinacat."
           icon={<Skull size={48} />}
-          action={<Button variant="primary" onClick={() => navigate('/community')}>Back to Community</Button>}
+          action={<Button variant="primary" onClick={() => navigate('/community')}>Voltar para a Comunidade</Button>}
         />
       </div>
     );
@@ -163,30 +163,30 @@ export function Profile() {
                 {isOwn ? (
                   !editing ? (
                     <Button variant="outline" size="sm" icon={<Edit3 size={14} />} onClick={() => { setEditForm({ display_name: profileData.display_name, username: profileData.username, bio: profileData.bio }); setEditing(true); }}>
-                      Edit
+                      Editar
                     </Button>
                   ) : (
                     <div className="flex gap-2">
-                      <Button variant="primary" size="sm" icon={<Save size={14} />} onClick={handleSaveEdit}>Save</Button>
-                      <Button variant="ghost" size="sm" icon={<X size={14} />} onClick={() => setEditing(false)}>Cancel</Button>
+                      <Button variant="primary" size="sm" icon={<Save size={14} />} onClick={handleSaveEdit}>Salvar</Button>
+                      <Button variant="ghost" size="sm" icon={<X size={14} />} onClick={() => setEditing(false)}>Cancelar</Button>
                     </div>
                   )
                 ) : session ? (
                   <Button variant={isFollowing ? 'secondary' : 'primary'} size="sm" onClick={handleFollow}>
-                    {isFollowing ? 'Following' : 'Follow'}
+                    {isFollowing ? 'Seguindo' : 'Seguir'}
                   </Button>
                 ) : null}
               </div>
 
               {editing ? (
                 <div className="mt-4 space-y-3">
-                  <Input label="Display Name" value={editForm.display_name} onChange={(e) => setEditForm({ ...editForm, display_name: e.target.value })} />
-                  <Input label="Username" value={editForm.username} onChange={(e) => setEditForm({ ...editForm, username: e.target.value.replace(/[^a-zA-Z0-9_]/g, '') })} />
+                  <Input label="Nome de Exibição" value={editForm.display_name} onChange={(e) => setEditForm({ ...editForm, display_name: e.target.value })} />
+                  <Input label="Nome de Usuário" value={editForm.username} onChange={(e) => setEditForm({ ...editForm, username: e.target.value.replace(/[^a-zA-Z0-9_]/g, '') })} />
                   <Textarea label="Bio" value={editForm.bio} onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })} rows={2} />
                 </div>
               ) : (
                 <p className="text-sm text-text-muted mt-3 leading-relaxed">
-                  {profileData.bio || 'No bio set. This soul is shrouded in mystery.'}
+                  {profileData.bio || 'Sem bio definida. Esta alma é um mistério.'}
                 </p>
               )}
 
@@ -194,11 +194,11 @@ export function Profile() {
               <div className="grid grid-cols-3 gap-4 mt-6">
                 <div className="text-center">
                   <p className="text-2xl font-display font-700 text-text">{followers}</p>
-                  <p className="text-xs text-text-muted">Followers</p>
+                  <p className="text-xs text-text-muted">Seguidores</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-display font-700 text-text">{following}</p>
-                  <p className="text-xs text-text-muted">Following</p>
+                  <p className="text-xs text-text-muted">Seguindo</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-display font-700 text-text">{posts.length}</p>
@@ -210,35 +210,35 @@ export function Profile() {
         </div>
       </Card>
 
-      {/* Journey Stats */}
+      {/* Estatísticas da Jornada */}
       <Card variant="default" padding="lg" className="mb-6">
-        <h2 className="font-display font-600 text-lg text-text mb-4">Journey Stats</h2>
+        <h2 className="font-display font-600 text-lg text-text mb-4">Estatísticas da Jornada</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="flex items-center gap-3 p-3 bg-abyss rounded-lg border border-border">
             <Zap size={20} className="text-primary" />
             <div>
-              <p className="text-xs text-text-muted">Level</p>
+              <p className="text-xs text-text-muted">Nível</p>
               <p className="text-lg font-display font-700 text-text">{profileData.level}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-3 bg-abyss rounded-lg border border-border">
             <Coins size={20} className="text-warning" />
             <div>
-              <p className="text-xs text-text-muted">Gold</p>
+              <p className="text-xs text-text-muted">Ouro</p>
               <p className="text-lg font-display font-700 text-text">{profileData.gold}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-3 bg-abyss rounded-lg border border-border">
             <Skull size={20} className="text-primary-bright" />
             <div>
-              <p className="text-xs text-text-muted">Class</p>
-              <p className="text-lg font-display font-700 text-text">{cls?.name || 'None'}</p>
+              <p className="text-xs text-text-muted">Classe</p>
+              <p className="text-lg font-display font-700 text-text">{cls?.name || 'Nenhuma'}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-3 bg-abyss rounded-lg border border-border">
             <Users size={20} className="text-success" />
             <div>
-              <p className="text-xs text-text-muted">Joined</p>
+              <p className="text-xs text-text-muted">Entrou em</p>
               <p className="text-sm font-600 text-text">{timeAgo(profileData.created_at)}</p>
             </div>
           </div>
@@ -246,19 +246,19 @@ export function Profile() {
 
         <div>
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-600 uppercase tracking-wider text-text-muted">XP Progress</span>
+            <span className="text-xs font-600 uppercase tracking-wider text-text-muted">Progresso de XP</span>
             <span className="text-xs text-text font-mono">{intoLevel} / {span} XP</span>
           </div>
           <ProgressBar value={pct} color={cls?.accent || '#A855F7'} height="h-3" />
-          <p className="text-xs text-text-dim mt-1.5">Next level at {xpForLevel(profileData.level + 1)} XP</p>
+          <p className="text-xs text-text-dim mt-1.5">Próximo nível em {xpForLevel(profileData.level + 1)} XP</p>
         </div>
       </Card>
 
-      {/* Recent Posts */}
+      {/* Posts Recentes */}
       <div>
-        <h2 className="font-display font-600 text-lg text-text mb-4">Recent Posts</h2>
+        <h2 className="font-display font-600 text-lg text-text mb-4">Posts Recentes</h2>
         {posts.length === 0 ? (
-          <EmptyState title="No posts yet" description="This soul has not spoken in the community." icon={<MessageCircle size={36} />} />
+          <EmptyState title="Nenhum post ainda" description="Esta alma ainda não falou na comunidade." icon={<MessageCircle size={36} />} />
         ) : (
           <div className="space-y-3">
             {posts.map((post) => (

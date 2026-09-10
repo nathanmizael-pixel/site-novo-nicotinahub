@@ -30,30 +30,28 @@ export function Home() {
               <div className="inline-flex items-center gap-2 mb-6">
                 <Badge variant="glow" size="md" className="animate-fade-in" style={{ animationDelay: isPageVisible ? '100ms' : '300ms' }}>
                   <Sparkles size={12} className="animate-float-slow" />
-                  <span className="font-display font-600">The Hub Awakens</span>
+                  <span className="font-display font-600">A nicotinacat Acordou</span>
                 </Badge>
               </div>
 
               <h1 className="font-display font-900 text-display-xl text-text mb-6 leading-tight tracking-tight animate-reveal-up" style={{ animationDelay: isPageVisible ? '150ms' : '350ms' }}>
                 <span className="gradient-text">nicotinacat</span>
-                <br />
-                <span className="font-normal text-text-muted">Hub</span>
               </h1>
 
               <p className="text-body-lg text-text-muted max-w-xl mb-10 leading-relaxed animate-reveal-up" style={{ animationDelay: isPageVisible ? '250ms' : '450ms' }}>
-                A dark fantasy sanctuary for the coven. Stream, share, collect, and forge your path
-                through the veil. Every soul tells a story — what's yours?
+                Um refúgio dark fantasy para o coven. Transmita, compartilhe, colecione e trace seu caminho
+                através do véu. Cada alma tem uma história — qual é a sua?
               </p>
 
               <Cluster gap="md" justify="start" className="animate-reveal-up" style={{ animationDelay: isPageVisible ? '350ms' : '550ms' }}>
                 <Link to="/community">
                   <Button variant="primary" size="lg" icon={<Users size={18} />}>
-                    Join the Coven
+                    Entrar no Coven
                   </Button>
                 </Link>
                 <Link to="/wishlist">
                   <Button variant="outline" size="lg" icon={<Heart size={18} />}>
-                    Support the Stream
+                    Apoiar a Stream
                   </Button>
                 </Link>
               </Cluster>
@@ -106,7 +104,7 @@ export function Home() {
                 {/* Bottom badge */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
                   <Badge variant="glow" size="md" className="px-4 py-1.5">
-                    <span className="font-display font-600 tracking-wider">ENTER THE VOID</span>
+                    <span className="font-display font-600 tracking-wider">ENTRE NO VÓRTICE</span>
                   </Badge>
                 </div>
               </div>
@@ -115,13 +113,25 @@ export function Home() {
         </Container>
       </HeroSection>
 
+      {/* Brand Signature */}
+      <Section size="tight" background="none" className="px-4">
+        <Container size="lg">
+          <div className="text-center animate-fade-in-up">
+            <p className="text-body-md text-text-muted leading-relaxed max-w-xl mx-auto font-light">
+              Oi, eu tenho três gatos<br />
+              e uma camiseta do Korn :)
+            </p>
+          </div>
+        </Container>
+      </Section>
+
       {/* Featured Content — Editorial layout */}
       <Section size="normal" background="none">
         <Container size="lg">
           <Stack gap="md" align="start" className="mb-12">
             <div>
-              <h2 className="font-display font-800 text-display-md text-text">Featured Moments</h2>
-              <p className="text-body-md text-text-muted mt-2">Curated highlights from the streams</p>
+              <h2 className="font-display font-800 text-display-md text-text">Momentos em Destaque</h2>
+              <p className="text-body-md text-text-muted mt-2">Destaques curados das streams</p>
             </div>
           </Stack>
 
@@ -131,7 +141,7 @@ export function Home() {
                 key={clip.id}
                 image={clip.thumbnail || undefined}
                 title={clip.title}
-                subtitle={`${clip.views.toLocaleString()} views · ${clip.category}`}
+                subtitle={`${clip.views.toLocaleString()} visualizações · ${clip.category}`}
                 aspectRatio="video"
                 accent={clip.platform === 'twitch' ? '#9146FF' : '#FF0050'}
                 badge={
@@ -175,11 +185,11 @@ export function Home() {
           <Stack gap="md" align="start" className="mb-16">
             <div>
               <Badge variant="outline" size="md" className="mb-4">
-                <Crown size={12} /> Core Pillars
+                <Crown size={12} /> Pilares
               </Badge>
-              <h2 className="font-display font-800 text-display-lg text-text">Three paths. One coven.</h2>
+              <h2 className="font-display font-800 text-display-lg text-text">Três caminhos. Um coven.</h2>
               <p className="text-body-lg text-text-muted mt-3 max-w-2xl">
-                Each pillar offers a different way to engage. Choose your path or walk them all.
+                Cada pilar oferece uma forma diferente de participar. Escolha seu caminho ou percorra todos.
               </p>
             </div>
           </Stack>
@@ -188,17 +198,17 @@ export function Home() {
             <FeatureCard
               layout="vertical"
               icon={<Users size={36} />}
-              title="Community"
-              description="Share your thoughts, follow fellow travelers, and build your reputation in the coven. Every voice echoes in the dark."
+              title="Comunidade"
+              description="Compartilhe seus pensamentos, siga outros viajantes e construa sua reputação no coven. Toda voz ecoa no escuro."
               accent="#A855F7"
               action={
                 <Link to="/community">
                   <Button variant="primary" icon={<ArrowRight size={16} />}>
-                    Enter Community
+                    Entrar na Comunidade
                   </Button>
                 </Link>
               }
-              badge={<Badge variant="glow" size="sm" color="#A855F7"><Sparkles size={10} /> Core</Badge>}
+              badge={<Badge variant="glow" size="sm" color="#A855F7"><Sparkles size={10} /> Pilar</Badge>}
               className="group"
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-primary/10 to-transparent" />
@@ -208,16 +218,16 @@ export function Home() {
               layout="vertical"
               icon={<Heart size={36} />}
               title="Wishlist"
-              description="Browse the curated Amazon wishlist and support the stream. Every gift fuels the content and keeps the coven thriving."
+              description="Explore a Amazon wishlist curada e apoie a stream. Cada presente alimenta o conteúdo e mantém o coven vivo."
               accent="#F43F5E"
               action={
                 <Link to="/wishlist">
                   <Button variant="primary" icon={<ArrowRight size={16} />}>
-                    View Wishlist
+                    Ver Wishlist
                   </Button>
                 </Link>
               }
-              badge={<Badge variant="glow" size="sm" color="#F43F5E"><Crown size={10} /> Support</Badge>}
+              badge={<Badge variant="glow" size="sm" color="#F43F5E"><Crown size={10} /> Apoio</Badge>}
               className="group"
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-secondary/10 to-transparent" />
@@ -226,17 +236,17 @@ export function Home() {
             <FeatureCard
               layout="vertical"
               icon={<Ghost size={36} />}
-              title="Journey"
-              description="Track your progress, level up, earn gold, and unlock cosmetics. Your profile tells the story of your path through the veil."
+              title="Jornada"
+              description="Acompanhe seu progresso, suba de nível, ganhe ouro e desbloqueie cosméticos. Seu perfil conta a história do seu caminho através do véu."
               accent="#FBBF24"
               action={
                 <Link to="/profile">
                   <Button variant="primary" icon={<ArrowRight size={16} />}>
-                    View Profile
+                    Ver Perfil
                   </Button>
                 </Link>
               }
-              badge={<Badge variant="glow" size="sm" color="#FBBF24"><Shield size={10} /> Progress</Badge>}
+              badge={<Badge variant="glow" size="sm" color="#FBBF24"><Shield size={10} /> Progresso</Badge>}
               className="group"
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold/10 to-transparent" />
@@ -250,8 +260,8 @@ export function Home() {
         <Container size="lg">
           <Stack gap="md" align="start" className="mb-10">
             <div className="text-center">
-              <h2 className="font-display font-700 text-display-md text-text">Find nicotinacat Across the Void</h2>
-              <p className="text-body-md text-text-muted mt-2">Each platform offers a different window into the coven</p>
+              <h2 className="font-display font-700 text-display-md text-text">Encontre a nicotinacat no Vazio</h2>
+              <p className="text-body-md text-text-muted mt-2">Cada plataforma oferece uma janela diferente para o coven</p>
             </div>
           </Stack>
 
@@ -259,7 +269,7 @@ export function Home() {
             <NavigationCard
               icon={<Twitch size={24} />}
               label="Twitch"
-              description="Live streams, VODs, and chat replays"
+              description="Streams ao vivo, VODs e replays de chat"
               accent="#9146FF"
               href={SOCIAL_LINKS.twitch}
               target="_blank"
@@ -272,7 +282,7 @@ export function Home() {
             <NavigationCard
               icon={<Music2 size={24} />}
               label="TikTok"
-              description="Short-form highlights, challenges, and behind-the-scenes"
+              description="Highlights curtos, desafios e bastidores"
               accent="#FF0050"
               href={SOCIAL_LINKS.tiktok}
               target="_blank"
@@ -285,7 +295,7 @@ export function Home() {
             <NavigationCard
               icon={<MessageCircle size={24} />}
               label="Discord"
-              description="Community chat, announcements, and voice channels"
+              description="Chat da comunidade, anúncios e canais de voz"
               accent="#5865F2"
               href={SOCIAL_LINKS.discord}
               target="_blank"
@@ -305,31 +315,31 @@ export function Home() {
             <StatCard
               layout="horizontal"
               icon={<Zap size={20} />}
-              label="Active Members"
-              value="1,247"
+              label="Membros Ativos"
+              value="1.247"
               accent="#A855F7"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />
             <StatCard
               layout="horizontal"
               icon={<MessageCircle size={20} />}
-              label="Posts This Month"
-              value="3,892"
+              label="Posts Este Mês"
+              value="3.892"
               accent="#F43F5E"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />
             <StatCard
               layout="horizontal"
               icon={<Coins size={20} />}
-              label="Gold Circulating"
-              value="2.4M"
+              label="Ouro em Circulação"
+              value="2,4M"
               accent="#FBBF24"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />
             <StatCard
               layout="horizontal"
               icon={<Shield size={20} />}
-              label="Active Classes"
+              label="Classes Ativas"
               value="6"
               accent="#FBBF24"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"

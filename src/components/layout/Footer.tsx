@@ -14,22 +14,28 @@ export function Footer() {
               <span className="font-display font-700 text-lg tracking-wider text-text">nicotinacat</span>
             </div>
             <p className="text-sm text-text-muted max-w-md leading-relaxed">
-              The central hub of the nicotinacat community. Connect and share
-              in a dark fantasy world built for those who walk the edge between worlds.
+              O ponto central da comunidade nicotinacat. Conecte e compartilhe
+              em um mundo dark fantasy feito para quem caminha na fronteira entre mundos.
             </p>
+            <div className="mt-6 pt-4 border-t border-border">
+              <p className="text-sm text-text-muted leading-relaxed font-light">
+                Oi, eu tenho três gatos<br />
+                e uma camiseta do Korn :)
+              </p>
+            </div>
           </div>
 
           <div>
-            <h4 className="text-xs font-600 uppercase tracking-wider text-text-muted mb-3">Navigate</h4>
+            <h4 className="text-xs font-600 uppercase tracking-wider text-text-muted mb-3">Navegar</h4>
             <ul className="space-y-2">
               <li><Link to="/" className="text-sm text-text hover:text-primary-bright transition-colors">Home</Link></li>
-              <li><Link to="/community" className="text-sm text-text hover:text-primary-bright transition-colors">Community</Link></li>
+              <li><Link to="/community" className="text-sm text-text hover:text-primary-bright transition-colors">Comunidade</Link></li>
               <li><Link to="/wishlist" className="text-sm text-text hover:text-primary-bright transition-colors">Wishlist</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-xs font-600 uppercase tracking-wider text-text-muted mb-3">Connect</h4>
+            <h4 className="text-xs font-600 uppercase tracking-wider text-text-muted mb-3">Conectar</h4>
             <ul className="space-y-2">
               <li>
                 <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-text hover:text-primary-bright transition-colors">
@@ -56,10 +62,10 @@ export function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-text-dim">© 2026 nicotinacat Hub. All rights reserved.</p>
+          <p className="text-xs text-text-dim">© 2026 nicotinacat. Todos os direitos reservados.</p>
           <div className="flex gap-6">
-            <Link to="/terms" className="text-xs text-text-dim hover:text-text-muted transition-colors">Terms of Service</Link>
-            <Link to="/privacy" className="text-xs text-text-dim hover:text-text-muted transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="text-xs text-text-dim hover:text-text-muted transition-colors">Termos de Serviço</Link>
+            <Link to="/privacy" className="text-xs text-text-dim hover:text-text-muted transition-colors">Política de Privacidade</Link>
           </div>
         </div>
       </div>
