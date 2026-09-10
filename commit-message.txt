@@ -1,0 +1,61 @@
+feat: add videos experience
+
+## Arquitetura
+- Nova rota `/videos` adicionada ao roteamento
+- Camada de dados em `src/lib/videos.ts` com `VideosService` e `videosRepository`
+- Fonte de dados mock em `src/data/videos.ts` (12 vídeos: Twitch + TikTok)
+- Tipos TypeScript para `VideoData`, `VideoFilters`, `VideoSort`
+- Repository pattern preparado para futura integração Supabase
+
+## Página /videos
+- Hero com identidade da marca
+- Vídeo em destaque (FeatureCard horizontal com overlay de ação)
+- Filtros: plataforma (Todos/Twitch/TikTok), destaque, ordenação
+- Grid responsivo (1/2/3 colunas) com MediaCard reutilizado
+- Estados: loading (skeleton), empty (com CTA), error (com retry)
+- Seção CTA final para redes sociais
+
+## Navegação
+- Adicionado "Vídeos" ao Header (ícone Film) entre Home e Community
+
+## Home atualizada
+- Usa `videosRepository.findFeatured(3)` via shared data layer
+- Remove import direto de `src/data/videos`
+- Mantém seção "Momentos em Destaque" como porta de entrada
+
+## Componentes reutilizados
+- MediaCard (aspectRatio="video") para grid
+- FeatureCard para vídeo em destaque
+- LayoutPrimitives: Container, Section, Stack, Grid, Cluster
+- Filtros com Badge, Button, select nativo
+
+## Filtros implementados
+- Plataforma: Todos / Twitch / TikTok
+- Apenas em destaque (checkbox)
+- Ordenação: Mais recentes / Mais antigos / Mais vistos / Destaque
+- Botão "Limpar" quando houver filtros ativos
+
+## Estados implementados
+- Loading: 6 SkeletonCards com stagger
+- Empty: EmptyState contextual com ícone Sparkles + CTA "Limpar filtros"
+- Error: Mensagem em PT-BR + botão "Tentar novamente"
+
+## Validação
+- typecheck: PASS
+- lint: PASS (4 warnings pré-existentes)
+- build: PASS (407 kB JS / 116 kB gzipped)
+- Playwright: Home, Videos, Community, Profile, Wishlist, Auth, Terms, Privacy — desktop/tablet/mobile ✅
+- Console: 0 erros
+- Page titles: "nicotinacat" (sem Hub)
+- Zero referências CLIPS/clips/Nicotinacat Hub no frontend público
+
+## Resíduos legítimos mantidos
+- Terms.tsx: "Arcade" em termos legais (uso descritivo legítimo)
+- videos.ts: título "Reacting to Your Clips" (título histórico de conteúdo)
+
+## Pendências para futuras missões
+- Tabela Supabase `videos` com RLS
+- Integração real TikTok/Twitch (OAuth, sync, thumbnails)
+- Player embed nativo
+- Upload/gerenciamento de vídeos
+- Admin/moderation

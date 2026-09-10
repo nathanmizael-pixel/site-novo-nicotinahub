@@ -5,14 +5,22 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SkullLogo } from '@/components/SkullLogo';
 import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Coins, Shield, Crown, Ghost } from 'lucide-react';
-import { VIDEOS } from '@/data/videos';
+import { videosRepository } from '@/lib/videos';
 import { SOCIAL_LINKS } from '@/data/social';
-import { usePageEntry, useStagger } from '@/hooks/useMotion';
+import { usePageEntry } from '@/hooks/useMotion';
+import { useState, useEffect } from 'react';
 
 export function Home() {
   const isPageVisible = usePageEntry(0);
-  const featuredVideos = VIDEOS.filter((v) => v.featured).slice(0, 3);
-  const videoDelays = useStagger(featuredVideos.length, 80, 240);
+  const [featuredVideos, setFeaturedVideos] = useState<Array<{ id: string; title: string; platform: 'twitch' | 'tiktok'; thumbnail: string; author: string; date: string; views: number; category: string; duration: string; url: string; featured?: boolean }>>([]);
+  const [videoDelays, setVideoDelays] = useState<number[]>([]);
+
+  useEffect(() => {
+    videosRepository.findFeatured(3).then((videos) => {
+      setFeaturedVideos(videos);
+      setVideoDelays(videos.map((_, i) => i * 80));
+    });
+  }, []);
 
   return (
     <div className="animate-fade-in min-h-screen">
