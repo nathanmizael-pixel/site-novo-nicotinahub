@@ -6,11 +6,12 @@ import { useToast } from '@/components/ui/Toast';
 import { Card } from '@/components/ui/Card';
 import { Avatar } from '@/components/ui/Avatar';
 import { Button } from '@/components/ui/Button';
-import { Textarea } from '@/components/ui/Input';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonCard } from '@/components/ui/Skeleton';
-import { timeAgo } from '@/lib/utils';
-import { Heart, MessageCircle, Share2, Send, Users, Skull } from 'lucide-react';
+import { PostCard } from '@/components/ui/SemanticCards';
+import { Heart, Send, Skull, Sparkles } from 'lucide-react';
+import { useStagger } from '@/hooks/useMotion';
+import { Section, Container, Stack } from '@/components/layout/LayoutPrimitives';
 
 export function Community() {
   const { session, profile } = useAuth();
@@ -22,6 +23,9 @@ export function Community() {
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
   const [commentsByPost, setCommentsByPost] = useState<Record<string, Array<{ id: string; content: string; author_id: string; created_at: string; author?: { display_name: string; avatar_url: string } }>>>({});
   const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
+  const [commentingPostId, setCommentingPostId] = useState<string | null>(null);
+
+  const staggerDelays = useStagger(10, 60, 300);
 
   const loadPosts = useCallback(async () => {
     setLoading(true);
@@ -71,7 +75,6 @@ export function Community() {
   async function handleLike(postId: string) {
     if (!session) return;
     
-    // Get the post author before any state updates to avoid race conditions
     const post = posts.find((p) => p.id === postId);
     const authorId = post?.author_id;
     
@@ -123,6 +126,7 @@ export function Community() {
 
   async function handleComment(postId: string) {
     if (!session || !commentInputs[postId]?.trim()) return;
+    setCommentingPostId(postId);
     const content = commentInputs[postId].trim();
     const { error } = await supabase.from('comments').insert({
       post_id: postId,
@@ -134,148 +138,152 @@ export function Community() {
       loadComments(postId);
       setPosts((prev) => prev.map((p) => p.id === postId ? { ...p, comment_count: (p.comment_count || 0) + 1 } : p));
     }
+    setCommentingPostId(null);
   }
 
+  const getClassInfo = (classId: string | null | undefined) => {
+    const classes: Record<string, { name: string; color: string; icon: React.ReactNode }> = {
+      reaper: { name: 'Reaper', color: '#A855F7', icon: <Skull size={10} /> },
+      witch: { name: 'Witch', color: '#C084FC', icon: <Sparkles size={10} /> },
+      blade: { name: 'Blade', color: '#F43F5E', icon: <Heart size={10} /> },
+      oracle: { name: 'Oracle', color: '#FBBF24', icon: <Sparkles size={10} /> },
+      warden: { name: 'Warden', color: '#60A5FA', icon: <Heart size={10} /> },
+      hollow: { name: 'Hollow', color: '#9CA3AF', icon: <Skull size={10} /> },
+    };
+    return classId ? classes[classId] : null;
+  };
+
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 animate-fade-in">
-      <div className="mb-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <Users size={24} className="text-primary" />
-          <h1 className="font-display font-700 text-3xl text-text">Community</h1>
-        </div>
-        <p className="text-sm text-text-muted">Share your thoughts with the coven</p>
+    <Section size="normal" background="atmosphere" className="vignette min-h-screen">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[150px]" />
       </div>
 
-      {session ? (
-        <Card variant="elevated" padding="lg" className="mb-6">
-          <div className="flex gap-3">
-            <Avatar profile={profile} size="md" />
-            <div className="flex-1">
-              <Textarea
-                placeholder="What's on your mind?"
-                value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-                rows={3}
-                className="bg-abyss"
-              />
-              <div className="flex justify-end mt-2">
-                <Button size="sm" variant="primary" icon={<Send size={14} />} loading={posting} onClick={handlePost} disabled={!newPost.trim()}>
-                  Post
-                </Button>
-              </div>
-            </div>
+      <Container size="xl">
+        {/* Header */}
+        <Stack gap="sm" align="center" className="mb-10 text-center animate-fade-in-up">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+            <Sparkles size={14} className="text-primary" />
+            <span className="font-display font-600 text-sm text-text">The Coven</span>
           </div>
-        </Card>
-      ) : (
-        <Card variant="elevated" padding="lg" className="mb-6 text-center">
-          <Skull size={32} className="text-text-dim mx-auto mb-3" />
-          <h3 className="font-display font-600 text-lg text-text mb-1">Join the Conversation</h3>
-          <p className="text-sm text-text-muted mb-4">Sign in to post, like, and comment in the community.</p>
-          <Link to="/auth">
-            <Button variant="primary" size="md">Sign In</Button>
-          </Link>
-        </Card>
-      )}
+          <h1 className="font-display font-800 text-display-lg text-text">Community</h1>
+          <p className="text-body-md text-text-muted max-w-xl">Share your thoughts, follow fellow travelers, and build your reputation in the coven.</p>
+        </Stack>
 
-      {loading ? (
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => <SkeletonCard key={i} />)}
-        </div>
-      ) : posts.length === 0 ? (
-        <EmptyState
-          title="The void is silent"
-          description="No posts yet. Be the first to share something with the community."
-          icon={<Users size={48} />}
-        />
-      ) : (
-        <div className="space-y-4">
-          {posts.map((post) => (
-            <Card key={post.id} variant="default" padding="lg" className="animate-fade-in-up">
-              <div className="flex items-start gap-3">
-                <Link to={`/profile/${post.author_id}`}>
-                  <Avatar profile={post.author} size="md" />
-                </Link>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Link to={`/profile/${post.author_id}`} className="font-600 text-sm text-text hover:text-primary-bright transition-colors">
-                      {post.author?.display_name || 'Unknown'}
-                    </Link>
-                    <span className="text-xs text-text-dim">@{post.author?.username || 'unknown'}</span>
-                    <span className="text-xs text-text-dim">· {timeAgo(post.created_at)}</span>
-                  </div>
-                  <p className="text-sm text-text leading-relaxed whitespace-pre-wrap">{post.content}</p>
-                  {post.media_url && (
-                    <div className="mt-3 rounded-lg overflow-hidden border border-border">
-                      <img src={post.media_url} alt="" className="w-full" />
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-4 mt-4">
-                    <button
-                      onClick={() => handleLike(post.id)}
-                      disabled={!session}
-                      className={`flex items-center gap-1.5 text-xs transition-all ${post.liked_by_me ? 'text-primary-bright' : 'text-text-muted hover:text-text'}`}
-                    >
-                      <Heart size={14} className={post.liked_by_me ? 'fill-primary-bright' : ''} />
-                      {post.like_count || 0}
-                    </button>
-                    <button
-                      onClick={() => toggleComments(post.id)}
-                      className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors"
-                    >
-                      <MessageCircle size={14} />
-                      {post.comment_count || 0}
-                    </button>
-                    <button className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors">
-                      <Share2 size={14} />
-                    </button>
-                  </div>
-
-                  {expandedComments.has(post.id) && (
-                    <div className="mt-4 pt-4 border-t border-border space-y-3 animate-fade-in">
-                      {session && (
-                        <div className="flex gap-2">
-                          <Avatar profile={profile} size="xs" />
-                          <div className="flex-1 flex gap-2">
-                            <input
-                              type="text"
-                              placeholder="Write a comment..."
-                              value={commentInputs[post.id] || ''}
-                              onChange={(e) => setCommentInputs((prev) => ({ ...prev, [post.id]: e.target.value }))}
-                              onKeyDown={(e) => e.key === 'Enter' && handleComment(post.id)}
-                              className="flex-1 px-3 py-1.5 bg-abyss border border-border rounded-md text-sm text-text placeholder:text-text-dim focus:border-primary/50 outline-none"
-                            />
-                            <Button size="sm" variant="ghost" onClick={() => handleComment(post.id)}>Send</Button>
-                          </div>
-                        </div>
-                      )}
-                      {(commentsByPost[post.id] || []).map((c: { id: string; content: string; author_id: string; created_at: string; author?: { display_name: string; avatar_url: string } }) => (
-                        <div key={c.id} className="flex gap-2">
-                          <Link to={`/profile/${c.author_id}`}>
-                            <Avatar profile={c.author} size="xs" />
-                          </Link>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <Link to={`/profile/${c.author_id}`} className="text-xs font-600 text-text hover:text-primary-bright">
-                                {c.author?.display_name}
-                              </Link>
-                              <span className="text-[10px] text-text-dim">{timeAgo(c.created_at)}</span>
-                            </div>
-                            <p className="text-sm text-text mt-0.5">{c.content}</p>
-                          </div>
-                        </div>
-                      ))}
-                      {(commentsByPost[post.id] || []).length === 0 && (
-                        <p className="text-xs text-text-dim text-center py-2">No comments yet</p>
-                      )}
+        {/* Composer */}
+        <div className="mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+          {session ? (
+            <Card variant="elevated" padding="lg" className="relative overflow-hidden">
+              <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-primary/5 to-transparent" />
+              <div className="relative flex gap-4">
+                <div className="relative flex-shrink-0">
+                  <Avatar profile={profile} size="lg" />
+                  {profile?.class_id && (
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center border-2 bg-void" style={{ borderColor: getClassInfo(profile.class_id)?.color || '#A855F7' }}>
+                      {getClassInfo(profile.class_id)?.icon}
                     </div>
                   )}
                 </div>
+                <div className="flex-1">
+                  <textarea
+                    placeholder="What echoes in the void?"
+                    value={newPost}
+                    onChange={(e) => setNewPost(e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 bg-abyss border border-border/50 rounded-xl text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none resize-none transition-all duration-200"
+                  />
+                  <div className="flex items-center justify-between mt-3">
+                    <span className="text-xs text-text-dim">Your voice echoes in the coven</span>
+                    <Button size="sm" variant="primary" icon={<Send size={14} />} loading={posting} onClick={handlePost} disabled={!newPost.trim() || posting}>
+                      Post
+                    </Button>
+                  </div>
+                </div>
               </div>
             </Card>
-          ))}
+          ) : (
+            <Card variant="elevated" padding="lg" className="text-center relative overflow-hidden">
+              <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-secondary/5 to-transparent" />
+              <div className="relative">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary/10 mb-4">
+                  <Sparkles size={28} className="text-secondary" />
+                </div>
+                <h3 className="font-display font-600 text-lg text-text mb-1">Join the Conversation</h3>
+                <p className="text-sm text-text-muted mb-5">Sign in to post, like, and comment in the community.</p>
+                <Link to="/auth">
+                  <Button variant="primary" size="md" icon={<Sparkles size={14} />}>Enter the Coven</Button>
+                </Link>
+              </div>
+            </Card>
+          )}
         </div>
-      )}
-    </div>
+
+        {/* Feed */}
+        <div className="animate-fade-in" role="feed" aria-label="Community posts">
+          {loading ? (
+            <div className="space-y-4" role="status" aria-label="Loading posts">
+              {[...Array(5)].map((_, i) => (
+                <SkeletonCard key={i} className="animate-shimmer" style={{ animationDelay: `${staggerDelays[i] || 0}ms` }} />
+              ))}
+            </div>
+          ) : posts.length === 0 ? (
+            <EmptyState
+              title="The coven is silent"
+              description="No souls have spoken yet. Be the first to break the silence."
+              icon={<Sparkles size={48} className="text-primary/50 animate-float" />}
+              action={session ? (
+                <Button variant="primary" size="sm" onClick={() => document.querySelector('textarea')?.focus()}>
+                  <Sparkles size={14} /> Write the first post
+                </Button>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="primary" size="sm">Join the Coven</Button>
+                </Link>
+              )}
+              className="py-16 animate-fade-in-up"
+            />
+          ) : (
+            <div className="space-y-4">
+              {posts.map((post, index) => {
+                const classInfo = getClassInfo(post.author?.class_id);
+                return (
+<PostCard
+                  key={post.id}
+                  author={{
+                    id: post.author_id,
+                    display_name: post.author?.display_name || 'Unknown',
+                    username: post.author?.username || 'unknown',
+                    avatar_url: post.author?.avatar_url,
+                    class_id: post.author?.class_id,
+                  }}
+                  content={post.content}
+                  created_at={post.created_at}
+                  like_count={post.like_count || 0}
+                  comment_count={post.comment_count || 0}
+                  liked_by_me={post.liked_by_me || false}
+                  media_url={post.media_url}
+                  accent={classInfo?.color || '#A855F7'}
+                  classColor={classInfo?.color}
+                  classIcon={classInfo?.icon}
+                  className={classInfo?.name}
+                  onLike={handleLike}
+                  onShare={() => {}}
+                  onToggleComments={toggleComments}
+                  isExpanded={expandedComments.has(post.id)}
+                  comments={commentsByPost[post.id] || []}
+                  commentInput={commentInputs[post.id] || ''}
+                  onCommentInputChange={(value: string) => setCommentInputs((prev) => ({ ...prev, [post.id]: value }))}
+                  onSubmitComment={handleComment}
+                  isCommenting={commentingPostId === post.id}
+                  animate
+                  animationDelay={staggerDelays[index] || 0}
+                />
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </Container>
+    </Section>
   );
 }
