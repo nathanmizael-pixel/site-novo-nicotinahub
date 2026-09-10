@@ -127,7 +127,7 @@ export function Profile() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 animate-fade-in">
       {/* Character Sheet Header */}
-      <Card elevated className="overflow-hidden mb-6 relative">
+      <Card variant="elevated" padding="lg" radius="xl" className="mb-6 relative overflow-hidden">
         <div
           className="absolute inset-0 opacity-10"
           style={{ background: cls ? `radial-gradient(circle at 50% 0%, ${cls.accent}, transparent 70%)` : undefined }}
@@ -211,7 +211,7 @@ export function Profile() {
       </Card>
 
       {/* Journey Stats */}
-      <Card className="p-6 mb-6">
+      <Card variant="default" padding="lg" className="mb-6">
         <h2 className="font-display font-600 text-lg text-text mb-4">Journey Stats</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="flex items-center gap-3 p-3 bg-abyss rounded-lg border border-border">
@@ -262,7 +262,7 @@ export function Profile() {
         ) : (
           <div className="space-y-3">
             {posts.map((post) => (
-              <Card key={post.id} className="p-4">
+              <Card key={post.id} variant="default" padding="md" className="transition-all duration-200 hover:border-primary/20 hover:shadow-depth-1">
                 <div className="flex items-start gap-3">
                   <Avatar profile={profileData} size="sm" />
                   <div className="flex-1">
