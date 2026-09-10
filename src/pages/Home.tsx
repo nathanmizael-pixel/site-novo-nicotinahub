@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SkullLogo } from '@/components/SkullLogo';
 import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Coins, Shield, Crown, Ghost } from 'lucide-react';
-import { CLIPS } from '@/data/arcade';
+import { CLIPS } from '@/data/clips';
 import { SOCIAL_LINKS } from '@/data/core';
 import { usePageEntry, useStagger } from '@/hooks/useMotion';
 
@@ -70,7 +70,7 @@ export function Home() {
                 {/* Rotating orbit rings */}
                 <div className="absolute inset-0 -rotate-12 animate-spin-slow opacity-20">
                   <svg className="w-full h-full" viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="90" fill="none" stroke="url(#primary)" stroke-width="0.5" stroke-dasharray="8,12" />
+                    <circle cx="100" cy="100" r="90" fill="none" stroke="url(#primary)" strokeWidth="0.5" strokeDasharray="8,12" />
                     <defs>
                       <linearGradient id="primary" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#A855F7" stopOpacity="0.3" />
@@ -81,7 +81,7 @@ export function Home() {
                 </div>
                 <div className="absolute inset-0 rotate-6 animate-spin-slow opacity-15" style={{ animationDirection: 'reverse', animationDuration: '25s' }}>
                   <svg className="w-full h-full" viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="70" fill="none" stroke="#FBBF24" stroke-width="0.3" stroke-dasharray="4,20" opacity="0.4" />
+                    <circle cx="100" cy="100" r="70" fill="none" stroke="#FBBF24" strokeWidth="0.3" strokeDasharray="4,20" opacity="0.4" />
                   </svg>
                 </div>
 
