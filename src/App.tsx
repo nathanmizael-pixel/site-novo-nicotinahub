@@ -9,6 +9,7 @@ import { Auth } from '@/pages/Auth';
 import { Wishlist } from '@/pages/Wishlist';
 import { Terms } from '@/pages/Terms';
 import { Privacy } from '@/pages/Privacy';
+import { Videos } from '@/pages/Videos';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/videos" element={<Videos />} />
               <Route path="/community" element={<Community />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/:id" element={<Profile />} />
