@@ -1,51 +1,30 @@
-feat: persist videos with supabase
+fix: align videos schema and seed
 
-## Schema
-- Created `videos` table with columns: id, title, description, thumbnail_url, video_url, platform (twitch/tiktok), category, duration, views, published_at, featured, created_at, updated_at
-- Added indexes on published_at, featured, platform
-- Added trigger for updated_at
+## UUID / clip_001 incompatibility fix
 
-## RLS Policies
-- Public SELECT for anon + authenticated (all videos visible)
-- INSERT/UPDATE/DELETE restricted to admin (false condition for now - no public writes)
-- RLS enabled on table
+**Problem**: The original seed migration used `clip_001`, `clip_002` style IDs while the database schema defines `videos.id` as `uuid` with `gen_random_uuid()` default. This created an incompatibility between the schema (expecting UUID) and seed data (using string IDs like `clip_001`).
 
-## Data Layer
-- `src/lib/videos.ts` updated with Supabase integration + mock fallback
-- `Video`, `VideoFilters`, `VideoSort` types added to `src/lib/supabase.ts`
-- `videosRepository` interface preserved for UI consumption
-- Mock data (`MOCK_VIDEOS`) preserved as fallback when Supabase unavailable
-- Repository auto-detects Supabase availability
+**Fix**: Updated seed migration and all mock data to use proper UUID strings (deterministic v5-style) instead of `clip_001` style IDs.
 
-## Seed
-- Created `20260910000001_seed_videos.sql` with 12 videos from existing mock data
-- UPSERT logic preserves existing records
-- Titles, URLs, platforms, categories, durations, views preserved
+## Files changed
 
-## Migration
-- `20260910000000_create_videos_table.sql` - table + RLS + indexes + trigger
-- `20260910000001_seed_videos.sql` - 12 video records (upsert)
+### Migration: `supabase/migrations/20260910000001_seed_videos.sql`
+- Changed all 12 video IDs from `clip_001`..`clip_012` to deterministic UUIDs (e.g., `a1b2c3d4-e5f6-7890-abcd-ef1234567890`)
+- Added comment explaining deterministic UUID v5 generation
 
-## Pages
-- `Videos.tsx` uses repository (unchanged API)
-- `Home.tsx` uses `videosRepository.findFeatured(3)` (shared data layer)
-- No breaking changes to UI components
+### Data layer: `src/data/videos.ts`
+- Updated `VIDEOS` mock array to use UUID IDs matching the seed migration
 
-## Validation
-- typecheck: PASS
-- lint: PASS (4 pre-existing react-refresh warnings)
-- build: PASS (408 kB JS / 116 kB gzipped)
-- Playwright: Home, Videos, Community, Profile, Wishlist, Auth, Terms, Privacy — desktop/tablet/mobile ✅
-- Console: 0 errors (404s are expected for mock thumbnails)
-- Page titles: "nicotinacat" (no Hub)
+### Data layer: `src/lib/videos.ts`
+- Updated `MOCK_VIDEOS` mock array to use UUID IDs
+- Improved fallback logic with better error handling:
+  - Added `isSupabaseExplicitlyConfigured()` - checks if env vars are set
+  - Added `isSupabaseAccessible()` - checks actual DB connectivity
+  - Clear separation: mock used only when Supabase NOT explicitly configured
+  - Errors thrown when Supabase configured but inaccessible (not silently falling back to mock)
+  - Explicit error messages for connection/RLS issues
 
-## Residual References (Legitimate)
-- Terms.tsx: "Arcade" in legal terms (descriptive)
-- videos.ts: title "Reacting to Your Clips" (historical content)
-
-## Pending for Future Missions
-- Tabela Supabase `videos` with RLS in production
-- Integração real TikTok/Twitch (OAuth, sync, thumbnails)
-- Player embed nativo
-- Upload/gerenciamento de vídeos
-- Admin/moderation
+## Validations
+- TypeScript: PASS
+- ESLint: PASS (4 pre-existing react-refresh warnings)
+- Build: PASS (409 kB JS / 116 kB gzipped)

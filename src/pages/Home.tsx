@@ -46,11 +46,6 @@ export function Home() {
                 <span className="gradient-text">nicotinacat</span>
               </h1>
 
-              <p className="text-body-lg text-text-muted max-w-xl mb-10 leading-relaxed animate-reveal-up" style={{ animationDelay: isPageVisible ? '250ms' : '450ms' }}>
-                Um refúgio dark fantasy para o coven. Transmita, compartilhe, colecione e trace seu caminho
-                através do véu. Cada alma tem uma história — qual é a sua?
-              </p>
-
               <Cluster gap="md" justify="start" className="animate-reveal-up" style={{ animationDelay: isPageVisible ? '350ms' : '550ms' }}>
                 <Link to="/community">
                   <Button variant="primary" size="lg" icon={<Users size={18} />}>
