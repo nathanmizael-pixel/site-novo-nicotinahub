@@ -1,22 +1,32 @@
-fix: refine home brand presentation
+fix: place brand signature in home hero
 
-## Home Branding Fix
+## Change
 
-**Removed**: Long descriptive paragraph in Hero section ("Um refúgio dark fantasy para o coven...")
+Moved brand signature from separate section into Hero, replacing the old descriptive paragraph.
 
-**Added**: Brand signature in dedicated section below Hero:
-```
+**Before**: Hero had headline + descriptive paragraph ("Um refúgio dark fantasy...") + CTAs
+
+**After**: Hero has headline + brand signature + CTAs
+
+## Brand Signature (exact copy)
+
 Oi, eu tenho três gatos
 e uma camiseta do Korn :)
-```
 
-**Implementation**:
-- Added dedicated Section after Hero with centered brand signature
-- Typography: `text-body-md text-text-muted leading-relaxed max-w-xl mx-auto font-light`
+## Implementation
+
+- Removed separate "Brand Signature" Section after Hero
+- Added signature text in Hero, after h1, before CTAs
+- Typography: `text-body-md text-text-muted leading-relaxed max-w-xl mb-8 animate-reveal-up`
 - Two lines with `<br />` separator
-- `animate-fade-in-up` animation
+- Animation delay matches Hero content stagger (250ms/450ms)
 
-**Removed duplication**: Confirmed single occurrence of brand signature (no duplicate in Hero + section)
+## Verification
+
+- No duplicate signature (removed separate section)
+- Hero visually balanced
+- No overflow at any viewport
+- All animations preserved
 
 ## Validation
 
@@ -24,5 +34,4 @@ e uma camiseta do Korn :)
 - lint: PASS (4 pre-existing react-refresh warnings)
 - build: PASS (409 kB JS / 116 kB gzipped)
 - Playwright: Home, Videos, Community, Profile, Wishlist, Auth, Terms, Privacy — desktop/tablet/mobile ✅
-- Console: 0 errors (404s for mock thumbnails expected; Supabase warning expected when unconfigured)
-- Page titles: "nicotinacat" (no Hub)
+- Console: 0 errors

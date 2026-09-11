@@ -46,6 +46,11 @@ export function Home() {
                 <span className="gradient-text">nicotinacat</span>
               </h1>
 
+              <p className="text-body-md text-text-muted leading-relaxed max-w-xl mb-8 animate-reveal-up" style={{ animationDelay: isPageVisible ? '250ms' : '450ms' }}>
+                Oi, eu tenho três gatos<br />
+                e uma camiseta do Korn :)
+              </p>
+
               <Cluster gap="md" justify="start" className="animate-reveal-up" style={{ animationDelay: isPageVisible ? '350ms' : '550ms' }}>
                 <Link to="/community">
                   <Button variant="primary" size="lg" icon={<Users size={18} />}>
@@ -115,18 +120,6 @@ export function Home() {
           </div>
         </Container>
       </HeroSection>
-
-      {/* Brand Signature */}
-      <Section size="tight" background="none" className="px-4">
-        <Container size="lg">
-          <div className="text-center animate-fade-in-up">
-            <p className="text-body-md text-text-muted leading-relaxed max-w-xl mx-auto font-light">
-              Oi, eu tenho três gatos<br />
-              e uma camiseta do Korn :)
-            </p>
-          </div>
-        </Container>
-      </Section>
 
       {/* Featured Content — Editorial layout */}
       <Section size="normal" background="none">
