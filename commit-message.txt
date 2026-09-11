@@ -1,30 +1,28 @@
-fix: align videos schema and seed
+fix: refine home brand presentation
 
-## UUID / clip_001 incompatibility fix
+## Home Branding Fix
 
-**Problem**: The original seed migration used `clip_001`, `clip_002` style IDs while the database schema defines `videos.id` as `uuid` with `gen_random_uuid()` default. This created an incompatibility between the schema (expecting UUID) and seed data (using string IDs like `clip_001`).
+**Removed**: Long descriptive paragraph in Hero section ("Um refúgio dark fantasy para o coven...")
 
-**Fix**: Updated seed migration and all mock data to use proper UUID strings (deterministic v5-style) instead of `clip_001` style IDs.
+**Added**: Brand signature in dedicated section below Hero:
+```
+Oi, eu tenho três gatos
+e uma camiseta do Korn :)
+```
 
-## Files changed
+**Implementation**:
+- Added dedicated Section after Hero with centered brand signature
+- Typography: `text-body-md text-text-muted leading-relaxed max-w-xl mx-auto font-light`
+- Two lines with `<br />` separator
+- `animate-fade-in-up` animation
 
-### Migration: `supabase/migrations/20260910000001_seed_videos.sql`
-- Changed all 12 video IDs from `clip_001`..`clip_012` to deterministic UUIDs (e.g., `a1b2c3d4-e5f6-7890-abcd-ef1234567890`)
-- Added comment explaining deterministic UUID v5 generation
+**Removed duplication**: Confirmed single occurrence of brand signature (no duplicate in Hero + section)
 
-### Data layer: `src/data/videos.ts`
-- Updated `VIDEOS` mock array to use UUID IDs matching the seed migration
+## Validation
 
-### Data layer: `src/lib/videos.ts`
-- Updated `MOCK_VIDEOS` mock array to use UUID IDs
-- Improved fallback logic with better error handling:
-  - Added `isSupabaseExplicitlyConfigured()` - checks if env vars are set
-  - Added `isSupabaseAccessible()` - checks actual DB connectivity
-  - Clear separation: mock used only when Supabase NOT explicitly configured
-  - Errors thrown when Supabase configured but inaccessible (not silently falling back to mock)
-  - Explicit error messages for connection/RLS issues
-
-## Validations
-- TypeScript: PASS
-- ESLint: PASS (4 pre-existing react-refresh warnings)
-- Build: PASS (409 kB JS / 116 kB gzipped)
+- typecheck: PASS
+- lint: PASS (4 pre-existing react-refresh warnings)
+- build: PASS (409 kB JS / 116 kB gzipped)
+- Playwright: Home, Videos, Community, Profile, Wishlist, Auth, Terms, Privacy — desktop/tablet/mobile ✅
+- Console: 0 errors (404s for mock thumbnails expected; Supabase warning expected when unconfigured)
+- Page titles: "nicotinacat" (no Hub)
