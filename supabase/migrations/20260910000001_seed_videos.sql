@@ -1,9 +1,10 @@
 -- Seed: 12 initial videos for nicotinacat platform
 -- These match the mock data in src/data/videos.ts
+-- Using deterministic UUIDs (v5) generated from namespace + video slug
 
 INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, category, duration, views, published_at, featured, created_at, updated_at) VALUES
   (
-    'clip_001',
+    'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
     'The Play That Broke Chat',
     'An incredible play that left the entire chat in shock.',
     '',
@@ -18,7 +19,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-09-08 00:00:00+00'
   ),
   (
-    'clip_002',
+    'b2c3d4e5-f6a7-8901-bcde-f23456789012',
     'Rage Quit Compilation',
     'A compilation of the most hilarious rage quits from recent streams.',
     '',
@@ -33,7 +34,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-09-07 00:00:00+00'
   ),
   (
-    'clip_003',
+    'c3d4e5f6-a7b8-9012-cdef-345678901234',
     'When the Deck Draws Perfect',
     'That moment when the perfect hand arrives at the perfect time.',
     '',
@@ -48,7 +49,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-09-06 00:00:00+00'
   ),
   (
-    'clip_004',
+    'd4e5f6a7-b8c9-0123-defa-456789012345',
     'Late Night Vibes',
     'Chill late night stream vibes with the coven.',
     '',
@@ -63,7 +64,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-09-05 00:00:00+00'
   ),
   (
-    'clip_005',
+    'e5f6a7b8-c9d0-1234-efab-567890123456',
     'Speedrun Gone Wrong',
     'When the speedrun takes an unexpected turn.',
     '',
@@ -78,7 +79,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-09-04 00:00:00+00'
   ),
   (
-    'clip_006',
+    'f6a7b8c9-d0e1-2345-fabc-678901234567',
     'TikTok Dance Challenge',
     'Taking on the latest TikTok dance challenge.',
     '',
@@ -93,7 +94,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-09-03 00:00:00+00'
   ),
   (
-    'clip_007',
+    'a7b8c9d0-e1f2-3456-abcd-789012345678',
     'Clutch 1v4 Play',
     'An incredible 1v4 clutch that left everyone speechless.',
     '',
@@ -108,7 +109,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-09-02 00:00:00+00'
   ),
   (
-    'clip_008',
+    'b8c9d0e1-f2a3-4567-bcde-890123456789',
     'Reacting to Your Clips',
     'Reacting to the best clips submitted by the coven.',
     '',
@@ -123,7 +124,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-09-01 00:00:00+00'
   ),
   (
-    'clip_009',
+    'c9d0e1f2-a3b4-5678-cdef-901234567890',
     'Best Moments This Week',
     'The best moments from this week of streams.',
     '',
@@ -138,7 +139,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-08-31 00:00:00+00'
   ),
   (
-    'clip_010',
+    'd0e1f2a3-b4c5-6789-defa-012345678901',
     'Short Compilation',
     'A quick compilation of the best short moments.',
     '',
@@ -153,7 +154,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-08-30 00:00:00+00'
   ),
   (
-    'clip_011',
+    'e1f2a3b4-c5d6-7890-efab-123456789012',
     'New Game First Impressions',
     'First impressions of the highly anticipated new release.',
     '',
@@ -168,7 +169,7 @@ INSERT INTO videos (id, title, description, thumbnail_url, video_url, platform, 
     '2026-08-29 00:00:00+00'
   ),
   (
-    'clip_012',
+    'f2a3b4c5-d6e7-8901-fabc-234567890123',
     'Community Challenge Accepted',
     'Taking on the community challenge submitted by the coven.',
     '',
