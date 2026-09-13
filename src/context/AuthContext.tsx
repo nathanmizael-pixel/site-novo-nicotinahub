@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function updateProfile(updates: Partial<Profile>) {
-    if (!session) return { error: 'No session' };
+    if (!session) return { error: 'Nenhuma sessão' };
     const allowedFields = ['display_name', 'username', 'bio', 'avatar_url'] as const;
     const filtered = Object.fromEntries(
       Object.entries(updates).filter(([key]) => allowedFields.includes(key as typeof allowedFields[number]))

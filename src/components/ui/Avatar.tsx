@@ -23,7 +23,7 @@ const sizeMap = {
 };
 
 export function Avatar({ profile, name, avatarUrl, classId, size = 'md', onClick }: AvatarProps) {
-  const displayName = profile?.display_name || name || 'Unknown';
+  const displayName = profile?.display_name || name || 'Desconhecido';
   const url = profile?.avatar_url || avatarUrl;
   const cls = getClass(profile?.class_id || classId || null);
   const accentColor = cls?.accent || '#A855F7';

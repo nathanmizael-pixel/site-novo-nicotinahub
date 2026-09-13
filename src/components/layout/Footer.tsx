@@ -19,8 +19,8 @@ export function Footer() {
             </p>
             <div className="mt-6 pt-4 border-t border-border">
               <p className="text-sm text-text-muted leading-relaxed font-light">
-                Oi, eu tenho três gatos<br />
-                e uma camiseta do Korn :)
+                oi eu tenho tres gatos<br />
+                e uma camiseta do korn :)
               </p>
             </div>
           </div>
@@ -28,9 +28,9 @@ export function Footer() {
           <div>
             <h4 className="text-xs font-600 uppercase tracking-wider text-text-muted mb-3">Navegar</h4>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-sm text-text hover:text-primary-bright transition-colors">Home</Link></li>
+              <li><Link to="/" className="text-sm text-text hover:text-primary-bright transition-colors">Início</Link></li>
               <li><Link to="/community" className="text-sm text-text hover:text-primary-bright transition-colors">Comunidade</Link></li>
-              <li><Link to="/wishlist" className="text-sm text-text hover:text-primary-bright transition-colors">Wishlist</Link></li>
+              <li><Link to="/wishlist" className="text-sm text-text hover:text-primary-bright transition-colors">Lista de Desejos</Link></li>
             </ul>
           </div>
 
@@ -54,7 +54,7 @@ export function Footer() {
               </li>
               <li>
                 <Link to="/wishlist" className="flex items-center gap-2 text-sm text-text hover:text-primary-bright transition-colors">
-                  <ShoppingBag size={14} /> Wishlist
+                  <ShoppingBag size={14} /> Lista de Desejos
                 </Link>
               </li>
             </ul>
