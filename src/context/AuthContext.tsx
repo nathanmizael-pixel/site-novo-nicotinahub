@@ -10,7 +10,7 @@ type AuthContextType = {
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
-  updateProfile: (updates: Partial<Profile>) => Promise<void>;
+  updateProfile: (updates: Partial<Profile>) => Promise<{ error: string | null }>;
 };
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -54,18 +54,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function signUp(email: string, password: string, username: string, displayName: string) {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { username, display_name: displayName },
+      },
+    });
     if (error) return { error: error.message };
 
     if (data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        username,
-        display_name: displayName,
-      });
-      if (profileError) {
-        return { error: profileError.message };
-      }
       await loadProfile(data.user.id);
     }
     return { error: null };
@@ -92,14 +90,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function updateProfile(updates: Partial<Profile>) {
-    if (!session) return;
+    if (!session) return { error: 'No session' };
+    const allowedFields = ['display_name', 'username', 'bio', 'avatar_url'] as const;
+    const filtered = Object.fromEntries(
+      Object.entries(updates).filter(([key]) => allowedFields.includes(key as typeof allowedFields[number]))
+    );
     const { error } = await supabase
       .from('profiles')
-      .update(updates)
+      .update(filtered)
       .eq('id', session.user.id);
     if (!error) {
-      setProfile((prev) => (prev ? { ...prev, ...updates } : null));
+      setProfile((prev) => (prev ? { ...prev, ...filtered } : null));
     }
+    return { error: error?.message || null };
   }
 
   return (
