@@ -63,9 +63,9 @@ export function Community() {
       content: newPost.trim(),
     });
     if (error) {
-      addToast('error', 'Failed to post. Try again.');
+      addToast('error', 'Não foi possível publicar. Tente novamente.');
     } else {
-      addToast('success', 'Posted to the community.');
+      addToast('success', 'Publicado na comunidade.');
       setNewPost('');
       loadPosts();
     }
@@ -164,10 +164,10 @@ export function Community() {
         <Stack gap="sm" align="center" className="mb-10 text-center animate-fade-in-up">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
             <Sparkles size={14} className="text-primary" />
-            <span className="font-display font-600 text-sm text-text">The Coven</span>
+            <span className="font-display font-600 text-sm text-text">A Comunidade</span>
           </div>
-          <h1 className="font-display font-800 text-display-lg text-text">Community</h1>
-          <p className="text-body-md text-text-muted max-w-xl">Share your thoughts, follow fellow travelers, and build your reputation in the coven.</p>
+          <h1 className="font-display font-800 text-display-lg text-text">Comunidade</h1>
+          <p className="text-body-md text-text-muted max-w-xl">Compartilhe suas ideias, siga outros viajantes e construa sua reputação na comunidade.</p>
         </Stack>
 
         {/* Composer */}
@@ -186,16 +186,16 @@ export function Community() {
                 </div>
                 <div className="flex-1">
                   <textarea
-                    placeholder="What echoes in the void?"
+                    placeholder="O que ecoa no vazio?"
                     value={newPost}
                     onChange={(e) => setNewPost(e.target.value)}
                     rows={3}
                     className="w-full px-4 py-3 bg-abyss border border-border/50 rounded-xl text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none resize-none transition-all duration-200"
                   />
                   <div className="flex items-center justify-between mt-3">
-                    <span className="text-xs text-text-dim">Your voice echoes in the coven</span>
+                    <span className="text-xs text-text-dim">Sua voz ecoa na comunidade</span>
                     <Button size="sm" variant="primary" icon={<Send size={14} />} loading={posting} onClick={handlePost} disabled={!newPost.trim() || posting}>
-                      Post
+                      Publicar
                     </Button>
                   </div>
                 </div>
@@ -208,10 +208,10 @@ export function Community() {
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary/10 mb-4">
                   <Sparkles size={28} className="text-secondary" />
                 </div>
-                <h3 className="font-display font-600 text-lg text-text mb-1">Join the Conversation</h3>
-                <p className="text-sm text-text-muted mb-5">Sign in to post, like, and comment in the community.</p>
+                <h3 className="font-display font-600 text-lg text-text mb-1">Participe da conversa</h3>
+                <p className="text-sm text-text-muted mb-5">Entre para publicar, curtir e comentar na comunidade.</p>
                 <Link to="/auth">
-                  <Button variant="primary" size="md" icon={<Sparkles size={14} />}>Enter the Coven</Button>
+                  <Button variant="primary" size="md" icon={<Sparkles size={14} />}>Entrar na Comunidade</Button>
                 </Link>
               </div>
             </Card>
@@ -219,25 +219,25 @@ export function Community() {
         </div>
 
         {/* Feed */}
-        <div className="animate-fade-in" role="feed" aria-label="Community posts">
+        <div className="animate-fade-in" role="feed" aria-label="Posts da comunidade">
           {loading ? (
-            <div className="space-y-4" role="status" aria-label="Loading posts">
+            <div className="space-y-4" role="status" aria-label="Carregando posts">
               {[...Array(5)].map((_, i) => (
                 <SkeletonCard key={i} className="animate-shimmer" style={{ animationDelay: `${staggerDelays[i] || 0}ms` }} />
               ))}
             </div>
           ) : posts.length === 0 ? (
             <EmptyState
-              title="The coven is silent"
-              description="No souls have spoken yet. Be the first to break the silence."
+              title="A comunidade está em silêncio"
+              description="Nenhuma alma falou ainda. Seja a primeira pessoa a quebrar o silêncio."
               icon={<Sparkles size={48} className="text-primary/50 animate-float" />}
               action={session ? (
                 <Button variant="primary" size="sm" onClick={() => document.querySelector('textarea')?.focus()}>
-                  <Sparkles size={14} /> Write the first post
+                  <Sparkles size={14} /> Escreva o primeiro post
                 </Button>
               ) : (
                 <Link to="/auth">
-                  <Button variant="primary" size="sm">Join the Coven</Button>
+                  <Button variant="primary" size="sm">Entrar na Comunidade</Button>
                 </Link>
               )}
               className="py-16 animate-fade-in-up"
@@ -251,8 +251,8 @@ export function Community() {
                   key={post.id}
                   author={{
                     id: post.author_id,
-                    display_name: post.author?.display_name || 'Unknown',
-                    username: post.author?.username || 'unknown',
+                    display_name: post.author?.display_name || 'Desconhecido',
+                    username: post.author?.username || 'desconhecido',
                     avatar_url: post.author?.avatar_url,
                     class_id: post.author?.class_id,
                   }}

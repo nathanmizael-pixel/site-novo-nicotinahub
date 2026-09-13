@@ -9,10 +9,10 @@ import { useEffect } from 'react';
 import { timeAgo } from '@/lib/utils';
 
 const NAV_ITEMS = [
-  { path: '/', label: 'Home', icon: Home },
+  { path: '/', label: 'Início', icon: Home },
   { path: '/videos', label: 'Vídeos', icon: Film },
-  { path: '/community', label: 'Community', icon: Users },
-  { path: '/wishlist', label: 'Wishlist', icon: Heart },
+  { path: '/community', label: 'Comunidade', icon: Users },
+  { path: '/wishlist', label: 'Lista de Desejos', icon: Heart },
 ];
 
 export function Header() {
@@ -98,15 +98,15 @@ useEffect(() => {
                         <div className="fixed inset-0 z-40" onClick={() => setNotifOpen(false)} />
                         <div className="absolute right-0 top-full mt-2 w-80 card-elevated rounded-lg shadow-elevated border border-border z-50 animate-fade-in-up">
                           <div className="px-4 py-3 border-b border-border">
-                            <h3 className="font-display font-600 text-sm text-text">Notifications</h3>
+                            <h3 className="font-display font-600 text-sm text-text">Notificações</h3>
                           </div>
                           <div className="max-h-80 overflow-y-auto">
                             {notifications.length === 0 ? (
-                              <p className="px-4 py-8 text-center text-sm text-text-muted">No notifications yet</p>
+                              <p className="px-4 py-8 text-center text-sm text-text-muted">Nenhuma notificação ainda</p>
                             ) : (
                               notifications.map((n) => (
                                 <div key={n.id} className="px-4 py-3 border-b border-border/50 hover:bg-surface/50 transition-colors">
-                                  <p className="text-sm text-text">{n.content || `${n.type} notification`}</p>
+                                  <p className="text-sm text-text">{n.content || 'Nova atividade na comunidade'}</p>
                                   <p className="text-xs text-text-dim mt-0.5">{timeAgo(n.created_at)}</p>
                                 </div>
                               ))
@@ -125,7 +125,7 @@ useEffect(() => {
                   to="/auth"
                   className="px-4 py-2 text-sm font-600 bg-primary text-void rounded-md hover:bg-primary-bright transition-all shadow-glow-sm clip-corner-sm"
                 >
-                  Sign In
+                  Entrar
                 </Link>
               )}
 
@@ -168,7 +168,7 @@ useEffect(() => {
                   }`}
                 >
                   <Avatar profile={profile} size="xs" />
-                  Profile
+                  Perfil
                 </Link>
               )}
             </nav>

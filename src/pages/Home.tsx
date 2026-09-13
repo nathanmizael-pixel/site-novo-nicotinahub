@@ -38,7 +38,7 @@ export function Home() {
               <div className="inline-flex items-center gap-2 mb-6">
                 <Badge variant="glow" size="md" className="animate-fade-in" style={{ animationDelay: isPageVisible ? '100ms' : '300ms' }}>
                   <Sparkles size={12} className="animate-float-slow" />
-                  <span className="font-display font-600">A nicotinacat Acordou</span>
+                  <span className="font-display font-600">A nicotinacat acordou</span>
                 </Badge>
               </div>
 
@@ -46,15 +46,15 @@ export function Home() {
                 <span className="gradient-text">nicotinacat</span>
               </h1>
 
-              <p className="text-body-md text-text-muted leading-relaxed max-w-xl mb-8 animate-reveal-up" style={{ animationDelay: isPageVisible ? '250ms' : '450ms' }}>
-                Oi, eu tenho três gatos<br />
-                e uma camiseta do Korn :)
+              <p className="text-body-md text-text-muted/90 leading-relaxed max-w-md mb-8 animate-reveal-up" style={{ animationDelay: isPageVisible ? '250ms' : '450ms' }}>
+                oi eu tenho tres gatos<br />
+                e uma camiseta do korn :)
               </p>
 
               <Cluster gap="md" justify="start" className="animate-reveal-up" style={{ animationDelay: isPageVisible ? '350ms' : '550ms' }}>
                 <Link to="/community">
                   <Button variant="primary" size="lg" icon={<Users size={18} />}>
-                    Entrar no Coven
+                    Entrar na Comunidade
                   </Button>
                 </Link>
                 <Link to="/wishlist">
@@ -183,7 +183,7 @@ export function Home() {
               <Badge variant="outline" size="md" className="mb-4">
                 <Crown size={12} /> Pilares
               </Badge>
-              <h2 className="font-display font-800 text-display-lg text-text">Três caminhos. Um coven.</h2>
+              <h2 className="font-display font-800 text-display-lg text-text">Três caminhos. Uma comunidade.</h2>
               <p className="text-body-lg text-text-muted mt-3 max-w-2xl">
                 Cada pilar oferece uma forma diferente de participar. Escolha seu caminho ou percorra todos.
               </p>
@@ -195,7 +195,7 @@ export function Home() {
               layout="vertical"
               icon={<Users size={36} />}
               title="Comunidade"
-              description="Compartilhe seus pensamentos, siga outros viajantes e construa sua reputação no coven. Toda voz ecoa no escuro."
+              description="Compartilhe seus pensamentos, siga outros viajantes e construa sua reputação na comunidade. Toda voz ecoa no escuro."
               accent="#A855F7"
               action={
                 <Link to="/community">
@@ -213,13 +213,13 @@ export function Home() {
             <FeatureCard
               layout="vertical"
               icon={<Heart size={36} />}
-              title="Wishlist"
-              description="Explore a Amazon wishlist curada e apoie a stream. Cada presente alimenta o conteúdo e mantém o coven vivo."
+              title="Lista de Desejos"
+              description="Explore a lista de desejos da Amazon curada e apoie a transmissão. Cada presente fortalece o conteúdo e mantém a comunidade viva."
               accent="#F43F5E"
               action={
                 <Link to="/wishlist">
                   <Button variant="primary" icon={<ArrowRight size={16} />}>
-                    Ver Wishlist
+                    Ver lista de desejos
                   </Button>
                 </Link>
               }
@@ -257,7 +257,7 @@ export function Home() {
           <Stack gap="md" align="start" className="mb-10">
             <div className="text-center">
               <h2 className="font-display font-700 text-display-md text-text">Encontre a nicotinacat no Vazio</h2>
-              <p className="text-body-md text-text-muted mt-2">Cada plataforma oferece uma janela diferente para o coven</p>
+              <p className="text-body-md text-text-muted mt-2">Cada plataforma oferece uma janela diferente para a comunidade</p>
             </div>
           </Stack>
 
@@ -278,7 +278,7 @@ export function Home() {
             <NavigationCard
               icon={<Music2 size={24} />}
               label="TikTok"
-              description="Highlights curtos, desafios e bastidores"
+              description="Cortes curtos, desafios e bastidores"
               accent="#FF0050"
               href={SOCIAL_LINKS.tiktok}
               target="_blank"
@@ -319,7 +319,7 @@ export function Home() {
             <StatCard
               layout="horizontal"
               icon={<MessageCircle size={20} />}
-              label="Posts Este Mês"
+              label="Posts este mês"
               value="3.892"
               accent="#F43F5E"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"

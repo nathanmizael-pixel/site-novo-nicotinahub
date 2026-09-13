@@ -16,7 +16,7 @@ export function ProgressBar({ value, max = 100, className = '', color = '#A855F7
     <div className={`w-full ${className}`}>
       {showLabel && (
         <div className="flex justify-between items-center mb-1.5">
-          <span className="text-xs text-text-muted font-500">{label || 'Progress'}</span>
+          <span className="text-xs text-text-muted font-500">{label || 'Progresso'}</span>
           <span className="text-xs text-text font-600 font-mono">{Math.round(pct)}%</span>
         </div>
       )}

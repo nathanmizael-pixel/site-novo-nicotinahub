@@ -61,7 +61,7 @@ export function Videos() {
             <div className="text-center mb-12">
               <h1 className="font-display font-800 text-display-lg text-text mb-4">Vídeos</h1>
               <p className="text-body-md text-text-muted max-w-xl mx-auto">
-                A biblioteca completa de streams, highlights e momentos do coven.
+                A biblioteca completa de streams, destaques e momentos da comunidade.
               </p>
             </div>
           </Container>
@@ -89,7 +89,7 @@ export function Videos() {
             <div className="text-center mb-12">
               <h1 className="font-display font-800 text-display-lg text-text mb-4">Vídeos</h1>
               <p className="text-body-md text-text-muted max-w-xl mx-auto">
-                A biblioteca completa de streams, highlights e momentos do coven.
+                A biblioteca completa de streams, destaques e momentos da comunidade.
               </p>
             </div>
           </Container>
@@ -126,7 +126,7 @@ export function Videos() {
             </div>
             <h1 className="font-display font-800 text-display-xl text-text">Vídeos</h1>
             <p className="text-body-lg text-text-muted max-w-xl mx-auto">
-              A biblioteca completa de streams, highlights e momentos do coven.
+              A biblioteca completa de streams, destaques e momentos da comunidade.
               Cada frame conta uma história.
             </p>
           </Stack>

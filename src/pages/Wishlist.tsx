@@ -29,17 +29,17 @@ export function Wishlist() {
       <div className="mb-8 text-center">
         <div className="flex items-center justify-center gap-3 mb-2">
           <Heart size={28} className="text-primary" />
-          <h1 className="font-display font-700 text-3xl text-text">Wishlist</h1>
+          <h1 className="font-display font-700 text-3xl text-text">Lista de Desejos</h1>
         </div>
         <p className="text-sm text-text-muted max-w-lg mx-auto">
-          Support nicotinacat by gifting items from the Amazon wishlist. Every gift helps keep the stream and community alive.
+          Apoie a nicotinacat presenteando itens da lista de desejos da Amazon. Cada presente ajuda a manter a transmissão e a comunidade vivas.
         </p>
       </div>
 
       <div className="text-center mb-8">
         <a href={SOCIAL_LINKS.amazon} target="_blank" rel="noopener noreferrer">
           <Button variant="primary" size="lg" icon={<ShoppingBag size={18} />}>
-            View Wishlist on Amazon
+            Ver lista de desejos na Amazon
           </Button>
         </a>
       </div>
@@ -50,12 +50,12 @@ export function Wishlist() {
         </div>
       ) : items.length === 0 ? (
         <EmptyState
-          title="Wishlist items coming soon"
-          description="Items are being curated. Check the Amazon wishlist directly in the meantime."
+          title="Lista de desejos em breve"
+          description="Os itens estão sendo selecionados. Enquanto isso, confira diretamente a lista de desejos da Amazon."
           icon={<Heart size={48} />}
           action={
             <a href={SOCIAL_LINKS.amazon} target="_blank" rel="noopener noreferrer">
-              <Button variant="primary" icon={<ExternalLink size={16} />}>Go to Amazon Wishlist</Button>
+              <Button variant="primary" icon={<ExternalLink size={16} />}>Ir para a lista da Amazon</Button>
             </a>
           }
         />
@@ -72,7 +72,7 @@ export function Wishlist() {
                 )}
                 {item.status === 'fulfilled' && (
                   <div className="absolute top-2 right-2">
-                    <Badge color="#22C55E" size="sm">Gifted</Badge>
+                    <Badge color="#22C55E" size="sm">Presenteado</Badge>
                   </div>
                 )}
               </div>
@@ -82,7 +82,7 @@ export function Wishlist() {
                 <div className="flex items-center justify-between">
                   {item.price && <span className="text-sm font-display font-700 text-primary-bright">{item.price}</span>}
                   <a href={item.link || SOCIAL_LINKS.amazon} target="_blank" rel="noopener noreferrer" className="text-xs text-text-muted hover:text-primary-bright flex items-center gap-1">
-                    View <ExternalLink size={10} />
+                    Ver <ExternalLink size={10} />
                   </a>
                 </div>
               </div>

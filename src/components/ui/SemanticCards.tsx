@@ -341,7 +341,7 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
             <button
               onClick={() => onLike(author.id)}
               className={`flex items-center gap-1.5 text-xs transition-all duration-200 ${liked_by_me ? 'text-primary-bright' : 'text-text-muted hover:text-text'}`}
-              aria-label={liked_by_me ? 'Unlike' : 'Like'}
+              aria-label={liked_by_me ? 'Remover curtida' : 'Curtir'}
             >
               <Heart size={14} className={liked_by_me ? 'fill-primary-bright' : ''} />
               <span className="font-mono">{like_count}</span>
@@ -349,7 +349,7 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
             <button
               onClick={() => onToggleComments(author.id)}
               className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors"
-              aria-label={isExpanded ? 'Hide comments' : 'Show comments'}
+              aria-label={isExpanded ? 'Ocultar comentários' : 'Mostrar comentários'}
             >
               <MessageCircle size={14} />
               <span className="font-mono">{comment_count}</span>
@@ -357,7 +357,7 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
             <button
               onClick={() => onShare(author.id)}
               className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors ml-auto"
-              aria-label="Share"
+              aria-label="Compartilhar"
             >
               <Share2 size={14} />
             </button>
@@ -398,7 +398,7 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
                 <div className="flex-1 flex gap-2">
                   <input
                     type="text"
-                    placeholder="Write a comment..."
+                    placeholder="Escreva um comentário..."
                     value={commentInput}
                     onChange={(e) => onCommentInputChange(author.id, e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && e.preventDefault() && onSubmitComment(author.id)}
@@ -410,7 +410,7 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
                     disabled={isCommenting || !commentInput.trim()}
                     className="px-4 py-2 bg-primary/15 text-primary-bright hover:bg-primary/25 text-sm font-600 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Send
+                    Publicar
                   </button>
                 </div>
               </div>
