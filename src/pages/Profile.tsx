@@ -8,11 +8,9 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
-import { ProgressBar } from '@/components/ui/ProgressBar';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { getClass } from '@/data/classes';
-import { xpForLevel } from '@/data/core';
-import { xpProgress, timeAgo } from '@/lib/utils';
+import { timeAgo } from '@/lib/utils';
 import { Heart, MessageCircle, Users, Skull, Coins, Zap, Edit3, Save, X } from 'lucide-react';
 
 export function Profile() {
@@ -122,7 +120,6 @@ export function Profile() {
   }
 
   const cls = getClass(profileData.class_id);
-  const { pct, intoLevel, span } = xpProgress(profileData.xp, profileData.level);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 animate-fade-in">
@@ -213,7 +210,7 @@ export function Profile() {
       {/* Estatísticas da Jornada */}
       <Card variant="default" padding="lg" className="mb-6">
         <h2 className="font-display font-600 text-lg text-text mb-4">Estatísticas da Jornada</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="flex items-center gap-3 p-3 bg-abyss rounded-lg border border-border">
             <Zap size={20} className="text-primary" />
             <div>
@@ -242,15 +239,6 @@ export function Profile() {
               <p className="text-sm font-600 text-text">{timeAgo(profileData.created_at)}</p>
             </div>
           </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-600 uppercase tracking-wider text-text-muted">Progresso de XP</span>
-            <span className="text-xs text-text font-mono">{intoLevel} / {span} XP</span>
-          </div>
-          <ProgressBar value={pct} color={cls?.accent || '#A855F7'} height="h-3" />
-          <p className="text-xs text-text-dim mt-1.5">Próximo nível em {xpForLevel(profileData.level + 1)} XP</p>
         </div>
       </Card>
 
