@@ -46,9 +46,8 @@ export function Home() {
                 <span className="gradient-text">nicotinacat</span>
               </h1>
 
-              <p className="text-body-md text-text-muted/90 leading-relaxed max-w-md mb-8 animate-reveal-up" style={{ animationDelay: isPageVisible ? '250ms' : '450ms' }}>
-                oi eu tenho tres gatos<br />
-                e uma camiseta do korn :)
+              <p className="text-body-lg text-text-muted/70 leading-relaxed max-w-xl mb-8 animate-reveal-up tracking-wide" style={{ animationDelay: isPageVisible ? '250ms' : '450ms' }}>
+                oi eu tenho tres gatos e uma camiseta do korn :)
               </p>
 
               <Cluster gap="md" justify="start" className="animate-reveal-up" style={{ animationDelay: isPageVisible ? '350ms' : '550ms' }}>
