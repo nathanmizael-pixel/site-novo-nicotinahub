@@ -1,11 +1,10 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { SkullLogo } from '@/components/SkullLogo';
 import { useAuth } from '@/context/AuthContext';
 import { Avatar } from '@/components/ui/Avatar';
-import { Home, Heart, Users, Bell, Menu, X, Film } from 'lucide-react';
-import { useState } from 'react';
+import { Home, Heart, Users, Bell, Menu, X, Film, LogOut, User } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { useEffect } from 'react';
 import { timeAgo } from '@/lib/utils';
 
 const NAV_ITEMS = [
@@ -17,11 +16,30 @@ const NAV_ITEMS = [
 
 export function Header() {
   const location = useLocation();
-  const { session, profile } = useAuth();
+  const navigate = useNavigate();
+  const { session, profile, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const [notifications, setNotifications] = useState<Array<{ id: string; content: string; type: string; read: boolean; created_at: string; actor?: Array<{ display_name: string; avatar_url: string }> | null }>>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  async function handleSignOut() {
+    await signOut();
+    setUserMenuOpen(false);
+    navigate('/');
+  }
 
 useEffect(() => {
     if (session) {
@@ -116,9 +134,39 @@ useEffect(() => {
                       </>
                     )}
                   </div>
-                  <Link to="/profile" className="flex items-center gap-2 p-1 rounded-md hover:bg-surface/50 transition-all">
-                    <Avatar profile={profile} size="sm" />
-                  </Link>
+                  <div className="relative" ref={userMenuRef}>
+                    <button
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                      className="flex items-center gap-2 p-1 rounded-md hover:bg-surface/50 transition-all"
+                      aria-expanded={userMenuOpen}
+                      aria-haspopup="true"
+                    >
+                      <Avatar profile={profile} size="sm" />
+                    </button>
+                    {userMenuOpen && (
+                      <>
+                        <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
+                        <div className="absolute right-0 top-full mt-2 w-48 card-elevated rounded-lg shadow-elevated border border-border z-50 animate-fade-in-up overflow-hidden">
+                          <Link
+                            to="/profile"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2 px-3 py-2 text-sm font-500 text-text hover:bg-surface/50 transition-colors"
+                          >
+                            <User size={16} />
+                            Meu perfil
+                          </Link>
+                          <div className="border-t border-border/50" />
+                          <button
+                            onClick={handleSignOut}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm font-500 text-danger hover:bg-danger/10 transition-colors text-left"
+                          >
+                            <LogOut size={16} />
+                            Sair
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </>
               ) : (
                 <Link
@@ -160,16 +208,25 @@ useEffect(() => {
                 );
               })}
               {session && (
-                <Link
-                  to="/profile"
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2.5 text-sm font-500 rounded-md transition-all ${
-                    location.pathname === '/profile' ? 'text-primary-bright bg-primary/10' : 'text-text-muted hover:text-text hover:bg-surface/50'
-                  }`}
-                >
-                  <Avatar profile={profile} size="xs" />
-                  Perfil
-                </Link>
+                <>
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-500 rounded-md transition-all ${
+                      location.pathname === '/profile' ? 'text-primary-bright bg-primary/10' : 'text-text-muted hover:text-text hover:bg-surface/50'
+                    }`}
+                  >
+                    <Avatar profile={profile} size="xs" />
+                    Perfil
+                  </Link>
+                  <button
+                    onClick={() => { handleSignOut(); setMobileOpen(false); }}
+                    className="flex items-center gap-3 px-3 py-2.5 text-sm font-500 rounded-md transition-all text-danger hover:bg-danger/10 w-full text-left"
+                  >
+                    <LogOut size={18} />
+                    Sair
+                  </button>
+                </>
               )}
             </nav>
           </div>
