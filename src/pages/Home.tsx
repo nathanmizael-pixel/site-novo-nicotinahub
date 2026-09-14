@@ -38,7 +38,7 @@ export function Home() {
               <div className="inline-flex items-center gap-2 mb-6">
                 <Badge variant="glow" size="md" className="animate-fade-in" style={{ animationDelay: isPageVisible ? '100ms' : '300ms' }}>
                   <Sparkles size={12} className="animate-float-slow" />
-                  <span className="font-display font-600">A nicotinacat acordou</span>
+                  <span className="font-display font-600">miau.</span>
                 </Badge>
               </div>
 
@@ -126,7 +126,6 @@ export function Home() {
           <Stack gap="md" align="start" className="mb-12">
             <div>
               <h2 className="font-display font-800 text-display-md text-text">Momentos em Destaque</h2>
-              <p className="text-body-md text-text-muted mt-2">Destaques curados das streams</p>
             </div>
           </Stack>
 
@@ -177,17 +176,7 @@ export function Home() {
       {/* Core Pillars — Feature cards with personality */}
       <Section size="loose" background="atmosphere" className="vignette">
         <Container size="lg">
-          <Stack gap="md" align="start" className="mb-16">
-            <div>
-              <Badge variant="outline" size="md" className="mb-4">
-                <Crown size={12} /> Pilares
-              </Badge>
-              <h2 className="font-display font-800 text-display-lg text-text">Três caminhos. Uma comunidade.</h2>
-              <p className="text-body-lg text-text-muted mt-3 max-w-2xl">
-                Cada pilar oferece uma forma diferente de participar. Escolha seu caminho ou percorra todos.
-              </p>
-            </div>
-          </Stack>
+          <h2 className="font-display font-800 text-display-lg text-text mb-16">Três formas de viver a nicotinacat</h2>
 
           <Grid cols={1} colsMd={3} gap="xl" autoFit minItemWidth="300px">
             <FeatureCard
@@ -253,12 +242,7 @@ export function Home() {
       {/* Social Links — Editorial presentation */}
       <Section size="normal" background="none">
         <Container size="lg">
-          <Stack gap="md" align="start" className="mb-10">
-            <div className="text-center">
-              <h2 className="font-display font-700 text-display-md text-text">Encontre a nicotinacat no Vazio</h2>
-              <p className="text-body-md text-text-muted mt-2">Cada plataforma oferece uma janela diferente para a comunidade</p>
-            </div>
-          </Stack>
+          <h2 className="font-display font-700 text-display-md text-text text-center mb-10">Encontre a nicotinacat por aí</h2>
 
           <Grid cols={1} colsMd={3} gap="lg" autoFit minItemWidth="260px">
             <NavigationCard
