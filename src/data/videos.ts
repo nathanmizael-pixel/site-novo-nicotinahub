@@ -10,9 +10,10 @@ export type VideoData = {
   duration: string;
   url: string;
   featured?: boolean;
+  tiktok_video_id?: string | null;
 };
 
-export const VIDEOS: VideoData[] = [
+export const MOCK_VIDEOS: VideoData[] = [
   { id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', title: 'A jogada que quebrou o chat', platform: 'twitch', thumbnail: '', author: 'nicotinacat', date: '2026-09-08', views: 24500, category: 'Jogos', duration: '0:47', url: 'https://twitch.tv/nicotinacat', featured: true },
   { id: 'b2c3d4e5-f6a7-8901-bcde-f23456789012', title: 'Compilado de rage quits', platform: 'twitch', thumbnail: '', author: 'nicotinacat', date: '2026-09-07', views: 18200, category: 'Destaques', duration: '2:13', url: 'https://twitch.tv/nicotinacat', featured: true },
   { id: 'c3d4e5f6-a7b8-9012-cdef-345678901234', title: 'Quando o deck sai perfeito', platform: 'twitch', thumbnail: '', author: 'nicotinacat', date: '2026-09-06', views: 31000, category: 'Jogos', duration: '1:05', url: 'https://twitch.tv/nicotinacat', featured: true },
