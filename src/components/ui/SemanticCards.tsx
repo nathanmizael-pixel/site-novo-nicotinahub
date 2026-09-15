@@ -209,6 +209,7 @@ ContentCard.displayName = 'ContentCard';
  * Layout: Author header + content + action bar + expandable comments
  */
 export interface PostCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style'> {
+  postId: string;
   author: {
     id: string;
     display_name: string;
@@ -249,6 +250,7 @@ export interface PostCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'cla
 export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
   ({
     className,
+    postId,
     author,
     content,
     created_at,
@@ -339,7 +341,7 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
           {/* Action Bar */}
           <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
             <button
-              onClick={() => onLike(author.id)}
+              onClick={() => onLike(postId)}
               className={`flex items-center gap-1.5 text-xs transition-all duration-200 ${liked_by_me ? 'text-primary-bright' : 'text-text-muted hover:text-text'}`}
               aria-label={liked_by_me ? 'Remover curtida' : 'Curtir'}
             >
@@ -347,7 +349,7 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
               <span className="font-mono">{like_count}</span>
             </button>
             <button
-              onClick={() => onToggleComments(author.id)}
+              onClick={() => onToggleComments(postId)}
               className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors"
               aria-label={isExpanded ? 'Ocultar comentários' : 'Mostrar comentários'}
             >
@@ -355,7 +357,7 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
               <span className="font-mono">{comment_count}</span>
             </button>
             <button
-              onClick={() => onShare(author.id)}
+              onClick={() => onShare(postId)}
               className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text transition-colors ml-auto"
               aria-label="Compartilhar"
             >
@@ -400,13 +402,13 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
                     type="text"
                     placeholder="Escreva um comentário..."
                     value={commentInput}
-                    onChange={(e) => onCommentInputChange(author.id, e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && e.preventDefault() && onSubmitComment(author.id)}
+                    onChange={(e) => onCommentInputChange(postId, e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && e.preventDefault() && onSubmitComment(postId)}
                     disabled={isCommenting}
                     className="flex-1 px-3 py-2 bg-abyss border border-border rounded-xl text-sm text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none transition-all duration-200 disabled:opacity-50"
                   />
                   <button
-                    onClick={() => onSubmitComment(author.id)}
+                    onClick={() => onSubmitComment(postId)}
                     disabled={isCommenting || !commentInput.trim()}
                     className="px-4 py-2 bg-primary/15 text-primary-bright hover:bg-primary/25 text-sm font-600 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -587,15 +589,18 @@ export interface MediaCardProps extends HTMLAttributes<HTMLDivElement> {
   aspectRatio?: 'video' | 'square' | 'portrait';
   accent?: string;
   overlay?: ReactNode;
+  titleAs?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'span';
 }
 
 export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(
-  ({ className, image, title, subtitle, badge, meta, actions, aspectRatio = 'video', accent = '#A855F7', overlay, children, ...props }, ref) => {
+  ({ className, image, title, subtitle, badge, meta, actions, aspectRatio = 'video', accent = '#A855F7', overlay, children, titleAs = 'h3', ...props }, ref) => {
     const aspectStyles = {
       video: 'aspect-video',
       square: 'aspect-square',
       portrait: 'aspect-[9/16]',
     };
+
+    const TitleTag = titleAs;
 
     return (
       <div
@@ -639,7 +644,7 @@ export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(
         </div>
 
         <div className="p-5">
-          <h3 className="font-display font-700 text-heading-sm text-text line-clamp-1">{title}</h3>
+          <TitleTag className="font-display font-700 text-heading-sm text-text line-clamp-1">{title}</TitleTag>
           {subtitle && <p className="text-body-sm text-text-muted mt-1">{subtitle}</p>}
           {children}
         </div>

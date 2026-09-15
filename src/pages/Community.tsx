@@ -98,7 +98,7 @@ export function Community() {
           type: 'like',
           entity_id: postId,
           entity_type: 'post',
-          content: `${profile.display_name} liked your post`,
+          content: `${profile.display_name} curtiu seu post`,
         });
       }
     }
@@ -190,11 +190,11 @@ export function Community() {
                     value={newPost}
                     onChange={(e) => setNewPost(e.target.value)}
                     rows={3}
-                    className="w-full px-4 py-3 bg-abyss border border-border/50 rounded-xl text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none resize-none transition-all duration-200"
+                    className="w-full px-4 py-3 bg-abyss border border-border/50 rounded-xl text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none resize-none transition-all duration-200 min-h-[44px]"
                   />
                   <div className="flex items-center justify-between mt-3">
                     <span className="text-xs text-text-dim">Sua voz ecoa na comunidade</span>
-                    <Button size="sm" variant="primary" icon={<Send size={14} />} loading={posting} onClick={handlePost} disabled={!newPost.trim() || posting}>
+                    <Button size="sm" variant="primary" icon={<Send size={14} />} loading={posting} onClick={handlePost} disabled={!newPost.trim() || posting} className="min-h-[44px]">
                       Publicar
                     </Button>
                   </div>
@@ -208,10 +208,9 @@ export function Community() {
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary/10 mb-4">
                   <Sparkles size={28} className="text-secondary" />
                 </div>
-                <h3 className="font-display font-600 text-lg text-text mb-1">Participe da conversa</h3>
-                <p className="text-sm text-text-muted mb-5">Entre para publicar, curtir e comentar na comunidade.</p>
+                <p className="font-display font-600 text-lg text-text mb-1">Entre para publicar, curtir e comentar.</p>
                 <Link to="/auth">
-                  <Button variant="primary" size="md" icon={<Sparkles size={14} />}>Entrar na Comunidade</Button>
+                  <Button variant="primary" size="md" icon={<Sparkles size={14} />} className="min-h-[44px]">Entrar na Comunidade</Button>
                 </Link>
               </div>
             </Card>
@@ -228,18 +227,9 @@ export function Community() {
             </div>
           ) : posts.length === 0 ? (
             <EmptyState
-              title="A comunidade está em silêncio"
-              description="Nenhuma alma falou ainda. Seja a primeira pessoa a quebrar o silêncio."
+              title="O vazio escuta."
+              description="Seja a primeira voz a ecoar."
               icon={<Sparkles size={48} className="text-primary/50 animate-float" />}
-              action={session ? (
-                <Button variant="primary" size="sm" onClick={() => document.querySelector('textarea')?.focus()}>
-                  <Sparkles size={14} /> Escreva o primeiro post
-                </Button>
-              ) : (
-                <Link to="/auth">
-                  <Button variant="primary" size="sm">Entrar na Comunidade</Button>
-                </Link>
-              )}
               className="py-16 animate-fade-in-up"
             />
           ) : (
@@ -249,6 +239,7 @@ export function Community() {
                 return (
 <PostCard
                   key={post.id}
+                  postId={post.id}
                   author={{
                     id: post.author_id,
                     display_name: post.author?.display_name || 'Desconhecido',
