@@ -144,7 +144,7 @@ async function storeTokens(
     {
       provider: 'tiktok',
       tiktok_open_id: incomingOpenId,
-      account_username: userInfo.data.user.display_name,
+      account_username: `tiktok_${incomingOpenId.slice(0, 8)}`,
       account_display_name: userInfo.data.user.display_name,
       access_token: tokenData.access_token,
       refresh_token: tokenData.refresh_token,

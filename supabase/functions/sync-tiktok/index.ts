@@ -160,7 +160,7 @@ async function fetchUserInfo(accessToken: string): Promise<{ username: string; d
   }
 
   return {
-    username: data.data?.user?.display_name || 'unknown',
+    username: `tiktok_${data.data?.user?.open_id?.slice(0, 8) || 'unknown'}`,
     display_name: data.data?.user?.display_name || 'Unknown',
   };
 }
