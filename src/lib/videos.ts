@@ -108,6 +108,11 @@ async function isSupabaseAccessible(): Promise<boolean> {
   }
 }
 
+async function isSupabaseConfiguredAndAccessible(): Promise<boolean> {
+  if (!isSupabaseExplicitlyConfigured()) return false;
+  return isSupabaseAccessible();
+}
+
 function fallbackGetAll(filters?: VideoFilters, sort?: VideoSort): VideoData[] {
   const filtered = applyFilters(MOCK_VIDEOS, filters);
   return applySort(filtered, sort);
@@ -123,13 +128,7 @@ function fallbackGetById(id: string): VideoData | null {
 
 export const videosService = {
   async getAll(filters?: VideoFilters, sort?: VideoSort): Promise<VideoData[]> {
-    const explicitlyConfigured = isSupabaseExplicitlyConfigured();
-    
-    if (explicitlyConfigured) {
-      const accessible = await isSupabaseAccessible();
-      if (!accessible) {
-        throw new Error('Supabase configurado, mas inacessível (verifique a conexão/RLS)');
-      }
+    if (await isSupabaseConfiguredAndAccessible()) {
       
       try {
         let query = supabase.from('videos').select('*');
@@ -175,13 +174,7 @@ export const videosService = {
   },
 
   async getFeatured(limit = 3): Promise<VideoData[]> {
-    const explicitlyConfigured = isSupabaseExplicitlyConfigured();
-    
-    if (explicitlyConfigured) {
-      const accessible = await isSupabaseAccessible();
-      if (!accessible) {
-        throw new Error('Supabase configurado, mas inacessível (verifique a conexão/RLS)');
-      }
+    if (await isSupabaseConfiguredAndAccessible()) {
       
       try {
         const { data, error } = await supabase
@@ -206,13 +199,7 @@ export const videosService = {
   },
 
   async getById(id: string): Promise<VideoData | null> {
-    const explicitlyConfigured = isSupabaseExplicitlyConfigured();
-    
-    if (explicitlyConfigured) {
-      const accessible = await isSupabaseAccessible();
-      if (!accessible) {
-        throw new Error('Supabase configurado, mas inacessível (verifique a conexão/RLS)');
-      }
+    if (await isSupabaseConfiguredAndAccessible()) {
       
       try {
         const { data, error } = await supabase
