@@ -8,6 +8,7 @@ import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap,
 import { videosRepository } from '@/lib/videos';
 import { SOCIAL_LINKS } from '@/data/social';
 import { CLASSES } from '@/data/classes';
+import { supabase } from '@/lib/supabase';
 import { usePageEntry } from '@/hooks/useMotion';
 import { useState, useEffect, useMemo } from 'react';
 
@@ -31,10 +32,8 @@ export function Home() {
 
   useEffect(() => {
     // Fetch community stats
-    import('@/lib/supabase').then(({ supabase }) => {
-      supabase.from('posts').select('*', { count: 'exact', head: true }).then(({ count }) => {
-        setTotalPosts(count || 0);
-      });
+    supabase.from('posts').select('*', { count: 'exact', head: true }).then(({ count }) => {
+      setTotalPosts(count || 0);
     });
   }, []);
 
