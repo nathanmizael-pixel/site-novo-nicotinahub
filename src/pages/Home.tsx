@@ -37,18 +37,11 @@ export function Home() {
     });
   }, []);
 
-  const formatViews = (n: number): string => {
+  const formatCount = (n: number): string => {
     if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
     if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
     return n.toString();
   };
-
-  useEffect(() => {
-    videosRepository.findFeatured(3).then((videos) => {
-      setFeaturedVideos(videos);
-      setVideoDelays(videos.map((_, i) => i * 80));
-    });
-  }, []);
 
   return (
     <div className="animate-fade-in min-h-screen">
@@ -192,9 +185,6 @@ export function Home() {
                 className="cursor-pointer animate-reveal-up"
                 style={{ animationDelay: `${videoDelays[index]}ms` }}
               >
-                <div className="absolute bottom-3 left-3">
-                  <span className="font-mono text-xs text-text/80 bg-void/80 px-2 py-1 rounded">{video.duration}</span>
-                </div>
               </MediaCard>
             ))}
           </Grid>
@@ -323,7 +313,7 @@ export function Home() {
               layout="horizontal"
               icon={<Zap size={20} />}
               label="Membros Ativos"
-              value={formatViews(totalViews)}
+              value={formatCount(totalViews)}
               accent="#A855F7"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />
@@ -331,7 +321,7 @@ export function Home() {
               layout="horizontal"
               icon={<MessageCircle size={20} />}
               label="Posts este mês"
-              value={formatViews(totalPosts)}
+              value={formatCount(totalPosts)}
               accent="#F43F5E"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />

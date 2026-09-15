@@ -24,3 +24,23 @@ dist-ssr
 .env.backup*
 
 .vercel
+
+# Playwright test artifacts
+test-results/
+playwright-report/
+
+# Supabase CLI temporary files
+supabase/.temp/
+
+# Audit artifacts and screenshots
+audit/
+audit-screenshots/
+validation-screenshots/
+
+# Kilocode/Agent Manager worktrees (managed separately)
+.kilo/worktrees/
+
+# Misc temporary files
+*.zip
+download
+download*

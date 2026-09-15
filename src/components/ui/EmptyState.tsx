@@ -15,8 +15,13 @@ export function EmptyState({ title, titleAs = 'h3', description, icon, action, c
   const TitleTag = titleAs;
 
   return (
-    <div className={`flex flex-col items-center justify-center py-16 px-4 text-center ${className}`} style={style}>
-      <div className="mb-4 opacity-30">
+    <div
+      className={`flex flex-col items-center justify-center py-16 px-4 text-center ${className}`}
+      style={style}
+      role="status"
+      aria-live="polite"
+    >
+      <div className="mb-4 opacity-30" aria-hidden="true">
         {icon || <SkullLogo size={48} />}
       </div>
       <TitleTag className="font-display font-600 text-lg text-text mb-1">{title}</TitleTag>
