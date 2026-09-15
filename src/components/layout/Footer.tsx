@@ -27,33 +27,33 @@ export function Footer() {
 
           <div>
             <h4 className="text-xs font-600 uppercase tracking-wider text-text-muted mb-3">Navegar</h4>
-            <ul className="space-y-2">
-              <li><Link to="/" className="text-sm text-text hover:text-primary-bright transition-colors">Início</Link></li>
-              <li><Link to="/community" className="text-sm text-text hover:text-primary-bright transition-colors">Comunidade</Link></li>
-              <li><Link to="/wishlist" className="text-sm text-text hover:text-primary-bright transition-colors">Lista de Desejos</Link></li>
+            <ul className="space-y-1">
+              <li><Link to="/" className="flex items-center py-2 text-sm text-text hover:text-primary-bright transition-colors">Início</Link></li>
+              <li><Link to="/community" className="flex items-center py-2 text-sm text-text hover:text-primary-bright transition-colors">Comunidade</Link></li>
+              <li><Link to="/wishlist" className="flex items-center py-2 text-sm text-text hover:text-primary-bright transition-colors">Lista de Desejos</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-xs font-600 uppercase tracking-wider text-text-muted mb-3">Conectar</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               <li>
-                <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-text hover:text-primary-bright transition-colors">
+                <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-2 text-sm text-text hover:text-primary-bright transition-colors">
                   <Twitch size={14} /> Twitch
                 </a>
               </li>
               <li>
-                <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-text hover:text-primary-bright transition-colors">
+                <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-2 text-sm text-text hover:text-primary-bright transition-colors">
                   <Music2 size={14} /> TikTok
                 </a>
               </li>
               <li>
-                <a href={SOCIAL_LINKS.discord} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-text hover:text-primary-bright transition-colors">
+                <a href={SOCIAL_LINKS.discord} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-2 text-sm text-text hover:text-primary-bright transition-colors">
                   <MessageCircle size={14} /> Discord
                 </a>
               </li>
               <li>
-                <Link to="/wishlist" className="flex items-center gap-2 text-sm text-text hover:text-primary-bright transition-colors">
+                <Link to="/wishlist" className="flex items-center gap-2 py-2 text-sm text-text hover:text-primary-bright transition-colors">
                   <ShoppingBag size={14} /> Lista de Desejos
                 </Link>
               </li>

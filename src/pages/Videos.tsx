@@ -26,8 +26,14 @@ export function Videos() {
         videosRepository.findAll({ platform: filters.platform === 'all' ? undefined : filters.platform, featured: filters.featured || undefined }, filters.sort),
         videosRepository.findFeatured(1),
       ]);
-      setVideos(allVideos);
-      setFeaturedVideo(featured[0] ?? null);
+      const featuredVideo = featured[0] ?? null;
+      setFeaturedVideo(featuredVideo);
+      // Remove featured video from grid to avoid duplication
+      if (featuredVideo) {
+        setVideos(allVideos.filter(v => v.id !== featuredVideo.id));
+      } else {
+        setVideos(allVideos);
+      }
     } catch {
       setError('Não foi possível carregar os vídeos. Tente novamente.');
     } finally {
@@ -137,12 +143,12 @@ export function Videos() {
       <Section size="tight" background="none">
         <Container size="xl">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3" role="group" aria-label="Filtrar por plataforma">
               <Button
                 variant={filters.platform === 'all' ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => handleFilterChange('platform', 'all')}
-                className="transition-all"
+                className="transition-all min-h-[44px]"
               >
                 <Sparkles size={14} className="mr-1" />
                 Todos
@@ -151,7 +157,7 @@ export function Videos() {
                 variant={filters.platform === 'twitch' ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => handleFilterChange('platform', 'twitch')}
-                className="transition-all"
+                className="transition-all min-h-[44px]"
               >
                 <Twitch size={14} className="mr-1 text-[#9146FF]" />
                 Twitch
@@ -160,7 +166,7 @@ export function Videos() {
                 variant={filters.platform === 'tiktok' ? 'primary' : 'outline'}
                 size="sm"
                 onClick={() => handleFilterChange('platform', 'tiktok')}
-                className="transition-all"
+                className="transition-all min-h-[44px]"
               >
                 <Music2 size={14} className="mr-1" />
                 TikTok
@@ -168,10 +174,12 @@ export function Videos() {
             </div>
 
             <div className="flex flex-wrap items-center gap-3 lg:ml-auto">
+              <label htmlFor="video-sort" className="sr-only">Ordenar por</label>
               <select
+                id="video-sort"
                 value={filters.sort}
                 onChange={(e) => handleFilterChange('sort', e.target.value as 'newest' | 'oldest' | 'most-viewed' | 'featured')}
-                className="px-3 py-2 bg-abyss border border-border rounded-lg text-sm text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none transition-all cursor-pointer"
+                className="px-3 py-2 bg-abyss border border-border rounded-lg text-sm text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none transition-all cursor-pointer min-h-[44px]"
               >
                 <option value="newest">Mais recentes</option>
                 <option value="oldest">Mais antigos</option>
@@ -179,8 +187,9 @@ export function Videos() {
                 <option value="featured">Destaque</option>
               </select>
 
-              <label className="flex items-center gap-2 px-3 py-2 bg-abyss border border-border rounded-lg text-sm text-text-muted cursor-pointer">
+              <label htmlFor="video-featured" className="flex items-center gap-2 px-3 py-2 bg-abyss border border-border rounded-lg text-sm text-text-muted cursor-pointer min-h-[44px]">
                 <input
+                  id="video-featured"
                   type="checkbox"
                   checked={filters.featured}
                   onChange={(e) => handleFilterChange('featured', e.target.checked)}
@@ -190,7 +199,7 @@ export function Videos() {
               </label>
 
               {hasActiveFilters && (
-                <Button variant="ghost" size="sm" onClick={clearFilters} icon={<X size={14} />}>
+                <Button variant="ghost" size="sm" onClick={clearFilters} icon={<X size={14} />} className="min-h-[44px]">
                   Limpar
                 </Button>
               )}
@@ -246,10 +255,10 @@ export function Videos() {
 
           {videos.length === 0 ? (
             <EmptyState
-              title="O vazio está silencioso"
-              description="Nenhum vídeo encontrado com estes filtros. Tente ajustar sua busca."
+              title="Nada por aqui."
+              description="Ajuste os filtros e tente de novo."
               icon={<div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"><Sparkles size={24} className="text-primary/50" /></div>}
-              action={hasActiveFilters ? <Button variant="primary" size="sm" onClick={clearFilters} icon={<X size={14} />}>Limpar filtros</Button> : undefined}
+              action={hasActiveFilters ? <Button variant="primary" size="sm" onClick={clearFilters} icon={<X size={14} />} className="min-h-[44px]">Limpar filtros</Button> : undefined}
               className="py-16 animate-fade-in-up"
             />
           ) : (
@@ -289,6 +298,7 @@ export function Videos() {
                   onClick={() => window.open(video.url, '_blank', 'noopener,noreferrer')}
                   className="cursor-pointer animate-reveal-up"
                   style={{ animationDelay: `${index * 60}ms` }}
+                  titleAs="div"
                 >
                   <div className="absolute bottom-3 left-3">
                     <span className="font-mono text-xs text-text/80 bg-void/80 px-2 py-1 rounded">{video.duration}</span>
@@ -303,31 +313,23 @@ export function Videos() {
       {/* CTA Section */}
       <Section size="loose" background="abyss" divider>
         <Container size="lg">
-          <FeatureCard
-            layout="vertical"
-            icon={<Zap size={36} />}
-            title="Quer ver mais?"
-            description="A biblioteca está sempre crescendo. Siga a nicotinacat nas plataformas para não perder nenhum momento."
-            accent="#A855F7"
-            action={
-              <Cluster gap="md" justify="center">
-                <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noopener noreferrer">
-                  <Button variant="primary" icon={<Twitch size={16} />}>
-                    Twitch
-                  </Button>
-                </a>
-                <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer">
-                  <Button variant="secondary" icon={<Music2 size={16} />}>
-                    TikTok
-                  </Button>
-                </a>
-              </Cluster>
-            }
-            badge={<Badge variant="glow" size="sm" color="#A855F7"><Sparkles size={10} /> Novos vídeos toda semana</Badge>}
-            className="group max-w-2xl mx-auto"
-          >
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-primary/10 to-transparent" />
-          </FeatureCard>
+          <div className="text-center max-w-2xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <Sparkles size={14} className="text-primary animate-float-slow" />
+              <span className="font-display font-600 text-sm text-text">Novos vídeos toda semana</span>
+            </div>
+            <p className="text-body-md text-text-muted mb-6">
+              A biblioteca está sempre crescendo. Siga nas plataformas para não perder nenhum momento.
+            </p>
+            <Cluster gap="md" justify="center">
+              <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noopener noreferrer">
+                <Button variant="primary" icon={<Twitch size={16} />} className="min-h-[44px]">Twitch</Button>
+              </a>
+              <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer">
+                <Button variant="secondary" icon={<Music2 size={16} />} className="min-h-[44px]">TikTok</Button>
+              </a>
+            </Cluster>
+          </div>
         </Container>
       </Section>
     </div>

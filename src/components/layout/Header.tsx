@@ -85,7 +85,7 @@ useEffect(() => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center gap-2 px-3 py-2 text-sm font-500 rounded-md transition-all duration-200 ${
+                    className={`flex items-center gap-2 px-3 py-2.5 text-sm font-500 rounded-md transition-all duration-200 min-h-[44px] ${
                       active
                         ? 'text-primary-bright bg-primary/10 border border-primary/20'
                         : 'text-text-muted hover:text-text hover:bg-surface/50'
@@ -179,7 +179,9 @@ useEffect(() => {
 
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="lg:hidden p-2 text-text-muted hover:text-text"
+                className="lg:hidden p-3 text-text-muted hover:text-text min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'}
+                aria-expanded={mobileOpen}
               >
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
@@ -198,7 +200,7 @@ useEffect(() => {
                     key={item.path}
                     to={item.path}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-500 rounded-md transition-all ${
+                    className={`flex items-center gap-3 px-3 py-3 text-sm font-500 rounded-md transition-all min-h-[44px] ${
                       active ? 'text-primary-bright bg-primary/10' : 'text-text-muted hover:text-text hover:bg-surface/50'
                     }`}
                   >
@@ -212,7 +214,7 @@ useEffect(() => {
                   <Link
                     to="/profile"
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 text-sm font-500 rounded-md transition-all ${
+                    className={`flex items-center gap-3 px-3 py-3 text-sm font-500 rounded-md transition-all min-h-[44px] ${
                       location.pathname === '/profile' ? 'text-primary-bright bg-primary/10' : 'text-text-muted hover:text-text hover:bg-surface/50'
                     }`}
                   >
@@ -221,7 +223,7 @@ useEffect(() => {
                   </Link>
                   <button
                     onClick={() => { handleSignOut(); setMobileOpen(false); }}
-                    className="flex items-center gap-3 px-3 py-2.5 text-sm font-500 rounded-md transition-all text-danger hover:bg-danger/10 w-full text-left"
+                    className="flex items-center gap-3 px-3 py-3 text-sm font-500 rounded-md transition-all min-h-[44px] text-danger hover:bg-danger/10 w-full text-left"
                   >
                     <LogOut size={18} />
                     Sair
