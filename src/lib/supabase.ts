@@ -125,6 +125,7 @@ export type Video = {
   featured: boolean;
   created_at: string;
   updated_at: string;
+  tiktok_video_id: string | null;
 };
 
 export type VideoFilters = {
@@ -133,3 +134,17 @@ export type VideoFilters = {
 };
 
 export type VideoSort = 'newest' | 'oldest' | 'most-viewed' | 'featured';
+
+export type TikTokToken = {
+  id: string;
+  provider: string;
+  account_username: string | null;
+  account_display_name: string | null;
+  access_token: string;
+  refresh_token: string;
+  expires_at: string;
+  scope: string;
+  token_type: string;
+  created_at: string;
+  updated_at: string;
+};

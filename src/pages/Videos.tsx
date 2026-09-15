@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { videosRepository } from '@/lib/videos';
+import { SOCIAL_LINKS } from '@/data/social';
 import { Twitch, Music2, X, Sparkles, Zap } from 'lucide-react';
 
 export function Videos() {
@@ -336,11 +337,4 @@ const platformLabels: Record<string, string> = {
   all: 'Todos',
   twitch: 'Twitch',
   tiktok: 'TikTok',
-};
-
-const SOCIAL_LINKS = {
-  twitch: 'https://twitch.tv/nicotinacat',
-  tiktok: 'https://tiktok.com/@nicotinacat',
-  discord: 'https://discord.gg/nicotinacat',
-  amazon: 'https://www.amazon.com/hz/wishlist/ls/nicotinacat',
 };

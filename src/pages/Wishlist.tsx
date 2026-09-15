@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { Section, Container, Stack } from '@/components/layout/LayoutPrimitives';
-import { SOCIAL_LINKS } from '@/data/core';
+import { SOCIAL_LINKS } from '@/data/social';
 import { Heart, ShoppingBag, ExternalLink, Package } from 'lucide-react';
 
 export function Wishlist() {

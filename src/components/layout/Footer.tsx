@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { SkullLogo } from '@/components/SkullLogo';
 import { Twitch, Music2, MessageCircle, ShoppingBag } from 'lucide-react';
-import { SOCIAL_LINKS } from '@/data/core';
+import { SOCIAL_LINKS } from '@/data/social';
 
 export function Footer() {
   return (

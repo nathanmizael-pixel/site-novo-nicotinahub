@@ -7,13 +7,42 @@ import { SkullLogo } from '@/components/SkullLogo';
 import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Coins, Shield, Crown, Ghost } from 'lucide-react';
 import { videosRepository } from '@/lib/videos';
 import { SOCIAL_LINKS } from '@/data/social';
+import { CLASSES } from '@/data/classes';
 import { usePageEntry } from '@/hooks/useMotion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 export function Home() {
   const isPageVisible = usePageEntry(0);
   const [featuredVideos, setFeaturedVideos] = useState<Array<{ id: string; title: string; platform: 'twitch' | 'tiktok'; thumbnail: string; author: string; date: string; views: number; category: string; duration: string; url: string; featured?: boolean }>>([]);
   const [videoDelays, setVideoDelays] = useState<number[]>([]);
+  const [totalViews, setTotalViews] = useState(0);
+  const [totalPosts, setTotalPosts] = useState(0);
+
+  const activeClassCount = useMemo(() => CLASSES.length, []);
+
+  useEffect(() => {
+    videosRepository.findFeatured(3).then((videos) => {
+      setFeaturedVideos(videos);
+      setVideoDelays(videos.map((_, i) => i * 80));
+      const total = videos.reduce((sum, v) => sum + v.views, 0);
+      setTotalViews(total);
+    });
+  }, []);
+
+  useEffect(() => {
+    // Fetch community stats
+    import('@/lib/supabase').then(({ supabase }) => {
+      supabase.from('posts').select('*', { count: 'exact', head: true }).then(({ count }) => {
+        setTotalPosts(count || 0);
+      });
+    });
+  }, []);
+
+  const formatViews = (n: number): string => {
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+    if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+    return n.toString();
+  };
 
   useEffect(() => {
     videosRepository.findFeatured(3).then((videos) => {
@@ -295,7 +324,7 @@ export function Home() {
               layout="horizontal"
               icon={<Zap size={20} />}
               label="Membros Ativos"
-              value="1.247"
+              value={formatViews(totalViews)}
               accent="#A855F7"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />
@@ -303,7 +332,7 @@ export function Home() {
               layout="horizontal"
               icon={<MessageCircle size={20} />}
               label="Posts este mês"
-              value="3.892"
+              value={formatViews(totalPosts)}
               accent="#F43F5E"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />
@@ -319,7 +348,7 @@ export function Home() {
               layout="horizontal"
               icon={<Shield size={20} />}
               label="Classes Ativas"
-              value="6"
+              value={activeClassCount}
               accent="#FBBF24"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />
