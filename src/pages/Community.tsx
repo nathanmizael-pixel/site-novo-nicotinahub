@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase, type Post } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -142,7 +142,7 @@ export function Community() {
   }
 
   const getClassInfo = (classId: string | null | undefined) => {
-    const classes: Record<string, { name: string; color: string; icon: React.ReactNode }> = {
+    const classes: Record<string, { name: string; color: string; icon: ReactNode }> = {
       reaper: { name: 'Reaper', color: '#A855F7', icon: <Skull size={10} /> },
       witch: { name: 'Witch', color: '#C084FC', icon: <Sparkles size={10} /> },
       blade: { name: 'Blade', color: '#F43F5E', icon: <Heart size={10} /> },

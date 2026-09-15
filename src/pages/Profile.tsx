@@ -12,12 +12,13 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { getClass } from '@/data/classes';
 import { timeAgo } from '@/lib/utils';
-import { Heart, MessageCircle, Users, Skull, Coins, Zap, Edit3, Save, X, ArrowLeft } from 'lucide-react';
+import { Heart, MessageCircle, Users, Skull, Coins, Zap, Edit3, Save, X, ArrowLeft, Music2 } from 'lucide-react';
+import { TikTokConnect } from '@/components/TikTokConnect';
 
 export function Profile() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { session, profile: ownProfile, updateProfile } = useAuth();
+  const { session, profile: ownProfile, updateProfile, isAdmin } = useAuth();
   const { addToast } = useToast();
   const [profileData, setProfileData] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(true);
@@ -258,6 +259,22 @@ return (
           </div>
         </div>
       </Card>
+
+      {/* TikTok Integration (admin only) */}
+      {isAdmin && (
+        <Card variant="default" padding="md" className="mt-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Music2 size={20} className="text-primary-bright" />
+              <div>
+                <p className="text-sm font-600 text-text">TikTok</p>
+                <p className="text-xs text-text-muted">Sincronize vídeos do canal editorial @nicotinaclipes</p>
+              </div>
+            </div>
+            <TikTokConnect variant="primary" size="sm" />
+          </div>
+        </Card>
+      )}
 
       {/* Posts */}
       <div>

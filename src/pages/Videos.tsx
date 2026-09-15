@@ -45,10 +45,6 @@ export function Videos() {
     loadVideos();
   }, [loadVideos]);
 
-  useEffect(() => {
-    loadVideos();
-  }, [loadVideos]);
-
   const handleFilterChange = (key: keyof typeof filters, value: 'all' | 'twitch' | 'tiktok' | boolean | 'newest' | 'oldest' | 'most-viewed' | 'featured') => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
