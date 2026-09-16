@@ -1,16 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Container, HeroSection, Section, Stack, Grid, Cluster } from '@/components/layout/LayoutPrimitives';
 import { FeatureCard, MediaCard, NavigationCard, StatCard } from '@/components/ui/SemanticCards';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SkullLogo } from '@/components/SkullLogo';
-import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Coins, Shield, Crown, Ghost } from 'lucide-react';
+import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Crown } from 'lucide-react';
 import { videosRepository } from '@/lib/videos';
+import { formatNumber } from '@/lib/utils';
 import { SOCIAL_LINKS } from '@/data/social';
-import { CLASSES } from '@/data/classes';
 import { supabase } from '@/lib/supabase';
 import { usePageEntry } from '@/hooks/useMotion';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export function Home() {
   const isPageVisible = usePageEntry(0);
@@ -18,17 +19,28 @@ export function Home() {
   const [videoDelays, setVideoDelays] = useState<number[]>([]);
   const [totalViews, setTotalViews] = useState(0);
   const [totalPosts, setTotalPosts] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const activeClassCount = useMemo(() => CLASSES.length, []);
-
-  useEffect(() => {
-    videosRepository.findFeatured(3).then((videos) => {
+  const loadFeaturedVideos = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const videos = await videosRepository.findFeatured(3);
       setFeaturedVideos(videos);
       setVideoDelays(videos.map((_, i) => i * 80));
       const total = videos.reduce((sum, v) => sum + v.views, 0);
       setTotalViews(total);
-    });
+    } catch {
+      setError('Não foi possível carregar os vídeos. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadFeaturedVideos();
+  }, [loadFeaturedVideos]);
 
   useEffect(() => {
     // Fetch community stats
@@ -36,12 +48,6 @@ export function Home() {
       setTotalPosts(count || 0);
     });
   }, []);
-
-  const formatCount = (n: number): string => {
-    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-    if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-    return n.toString();
-  };
 
   return (
     <div className="animate-fade-in min-h-screen">
@@ -132,7 +138,7 @@ export function Home() {
                 {/* Bottom badge */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
                   <Badge variant="glow" size="md" className="px-4 py-1.5">
-                    <span className="font-display font-600 tracking-wider">ENTRE NO VÓRTICE</span>
+                    <span className="font-display font-600 tracking-wider">ENTRE NA LIVE</span>
                   </Badge>
                 </div>
               </div>
@@ -150,44 +156,81 @@ export function Home() {
             </div>
           </Stack>
 
-          <Grid cols={1} colsMd={2} colsLg={3} gap="lg" autoFit minItemWidth="320px">
-            {featuredVideos.map((video, index) => (
-              <MediaCard
-                key={video.id}
-                image={video.thumbnail || undefined}
-                title={video.title}
-                subtitle={`${video.views.toLocaleString()} visualizações · ${video.category}`}
-                aspectRatio="video"
-                accent={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
-                badge={
-                  <Badge
-                    variant="solid"
-                    size="sm"
-                    color={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
-                    className="animate-reveal"
-                    style={{ animationDelay: `${videoDelays[index]}ms` }}
-                  >
-                    {video.platform === 'twitch' ? <Twitch size={10} /> : <Music2 size={10} />}
-                    {video.platform}
-                  </Badge>
-                }
-                meta={
-                  <span className="flex items-center gap-1.5 text-xs text-text/80">
-                    <span className="font-mono">{video.duration}</span>
-                  </span>
-                }
-                overlay={
-                  <div className="w-14 h-14 rounded-full bg-void/80 backdrop-blur-sm flex items-center justify-center border border-primary/30 text-primary animate-scale-in">
-                    <ArrowRight size={20} />
+          {loading ? (
+            <div role="status" aria-label="Carregando vídeos em destaque">
+              <Grid cols={1} colsMd={2} colsLg={3} gap="lg" autoFit minItemWidth="320px">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="animate-shimmer" style={{ animationDelay: `${i * 60}ms` }}>
+                    <div className="aspect-video rounded-xl bg-abyss" />
                   </div>
-                }
-                onClick={() => window.open(video.url, '_blank', 'noopener,noreferrer')}
-                className="cursor-pointer animate-reveal-up"
-                style={{ animationDelay: `${videoDelays[index]}ms` }}
-              >
-              </MediaCard>
-            ))}
-          </Grid>
+                ))}
+              </Grid>
+            </div>
+          ) : error ? (
+            <div className="text-center py-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-danger/10 border border-danger/30 text-danger mb-4">
+                <span className="font-display font-600 text-sm">Erro ao carregar</span>
+              </div>
+              <p className="text-text-muted mb-6">{error}</p>
+              <Button variant="primary" onClick={loadFeaturedVideos} icon={<Zap size={16} />}>
+                Tentar novamente
+              </Button>
+            </div>
+          ) : featuredVideos.length === 0 ? (
+            <EmptyState
+              title="Nada por aqui."
+              description="Ainda não há vídeos em destaque."
+              icon={<div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"><Sparkles size={24} className="text-primary/50" /></div>}
+              className="py-16 animate-fade-in-up"
+            />
+          ) : (
+            <Grid cols={1} colsMd={2} colsLg={3} gap="lg" autoFit minItemWidth="320px">
+              {featuredVideos.map((video, index) => (
+                <MediaCard
+                  key={video.id}
+                  image={video.thumbnail || undefined}
+                  title={video.title}
+                  subtitle={`${video.views.toLocaleString()} visualizações · ${video.category}`}
+                  aspectRatio="video"
+                  accent={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
+                  badge={
+                    <Badge
+                      variant="solid"
+                      size="sm"
+                      color={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
+                      className="animate-reveal"
+                      style={{ animationDelay: `${videoDelays[index]}ms` }}
+                    >
+                      {video.platform === 'twitch' ? <Twitch size={10} /> : <Music2 size={10} />}
+                      {video.platform}
+                    </Badge>
+                  }
+                  meta={
+                    <span className="flex items-center gap-1.5 text-xs text-text/80">
+                      <span className="font-mono">{video.duration}</span>
+                    </span>
+                  }
+                  overlay={
+                    <div className="w-14 h-14 rounded-full bg-void/80 backdrop-blur-sm flex items-center justify-center border border-primary/30 text-primary animate-scale-in">
+                      <ArrowRight size={20} />
+                    </div>
+                  }
+                  onClick={() => window.open(video.url, '_blank', 'noopener,noreferrer')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      window.open(video.url, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  className="cursor-pointer animate-reveal-up"
+                  style={{ animationDelay: `${videoDelays[index]}ms` }}
+                >
+                </MediaCard>
+              ))}
+            </Grid>
+          )}
         </Container>
       </Section>
 
@@ -233,25 +276,6 @@ export function Home() {
               className="group"
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-secondary/10 to-transparent" />
-            </FeatureCard>
-
-            <FeatureCard
-              layout="vertical"
-              icon={<Ghost size={36} />}
-              title="Jornada"
-              description="Acompanhe seu progresso, suba de nível, ganhe ouro e desbloqueie cosméticos. Seu perfil conta a história do seu caminho através do véu."
-              accent="#FBBF24"
-              action={
-                <Link to="/profile">
-                  <Button variant="primary" icon={<ArrowRight size={16} />}>
-                    Ver Perfil
-                  </Button>
-                </Link>
-              }
-              badge={<Badge variant="glow" size="sm" color="#FBBF24"><Shield size={10} /> Progresso</Badge>}
-              className="group"
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-gold/10 to-transparent" />
             </FeatureCard>
           </Grid>
         </Container>
@@ -312,35 +336,20 @@ export function Home() {
             <StatCard
               layout="horizontal"
               icon={<Zap size={20} />}
-              label="Membros Ativos"
-              value={formatCount(totalViews)}
+              label="Visualizações em Destaque"
+              value={formatNumber(totalViews)}
               accent="#A855F7"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />
             <StatCard
               layout="horizontal"
               icon={<MessageCircle size={20} />}
-              label="Posts este mês"
-              value={formatCount(totalPosts)}
+              label="Posts Totais"
+              value={formatNumber(totalPosts)}
               accent="#F43F5E"
               className="bg-surface/40 backdrop-blur-sm border border-border/50"
             />
-            <StatCard
-              layout="horizontal"
-              icon={<Coins size={20} />}
-              label="Ouro em Circulação"
-              value="2,4M"
-              accent="#FBBF24"
-              className="bg-surface/40 backdrop-blur-sm border border-border/50"
-            />
-            <StatCard
-              layout="horizontal"
-              icon={<Shield size={20} />}
-              label="Classes Ativas"
-              value={activeClassCount}
-              accent="#FBBF24"
-              className="bg-surface/40 backdrop-blur-sm border border-border/50"
-            />
+
           </Grid>
         </Container>
       </Section>
