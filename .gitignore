@@ -31,6 +31,7 @@ playwright-report/
 
 # Supabase CLI temporary files
 supabase/.temp/
+supabase/schemas/
 
 # Audit artifacts and screenshots
 audit/
@@ -39,6 +40,9 @@ validation-screenshots/
 
 # Kilocode/Agent Manager worktrees (managed separately)
 .kilo/worktrees/
+.kilo/*.md
+.kilo/*.ps1
+kilo.json
 
 # Misc temporary files
 *.zip
