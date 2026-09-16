@@ -237,7 +237,7 @@ export function Home() {
       {/* Core Pillars — Feature cards with personality */}
       <Section size="loose" background="atmosphere" className="vignette">
         <Container size="lg">
-          <h2 className="font-display font-800 text-display-lg text-text mb-16">Três formas de viver a nicotinacat</h2>
+          <h2 className="font-display font-800 text-display-lg text-text mb-16">Duas formas de viver a nicotinacat</h2>
 
           <Grid cols={1} colsMd={3} gap="xl" autoFit minItemWidth="300px">
             <FeatureCard
@@ -332,25 +332,24 @@ export function Home() {
       {/* Stats Bar — Subtle credibility */}
       <Section size="tight" background="abyss" divider>
         <Container size="lg">
-          <Grid cols={2} colsMd={4} gap="md">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-10 md:gap-16 max-w-xl mx-auto">
             <StatCard
-              layout="horizontal"
+              layout="vertical"
               icon={<Zap size={20} />}
               label="Visualizações em Destaque"
               value={formatNumber(totalViews)}
               accent="#A855F7"
-              className="bg-surface/40 backdrop-blur-sm border border-border/50"
+              className="bg-surface/40 backdrop-blur-sm border border-border/50 w-full sm:w-auto"
             />
             <StatCard
-              layout="horizontal"
+              layout="vertical"
               icon={<MessageCircle size={20} />}
               label="Posts Totais"
               value={formatNumber(totalPosts)}
               accent="#F43F5E"
-              className="bg-surface/40 backdrop-blur-sm border border-border/50"
+              className="bg-surface/40 backdrop-blur-sm border border-border/50 w-full sm:w-auto"
             />
-
-          </Grid>
+          </div>
         </Container>
       </Section>
     </div>
