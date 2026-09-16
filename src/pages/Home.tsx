@@ -339,7 +339,7 @@ export function Home() {
               label="Visualizações em Destaque"
               value={formatNumber(totalViews)}
               accent="#A855F7"
-              className="bg-surface/40 backdrop-blur-sm border border-border/50 w-full sm:w-auto"
+              className="bg-surface/40 backdrop-blur-sm border border-border/50 w-full sm:w-52"
             />
             <StatCard
               layout="vertical"
@@ -347,7 +347,7 @@ export function Home() {
               label="Posts Totais"
               value={formatNumber(totalPosts)}
               accent="#F43F5E"
-              className="bg-surface/40 backdrop-blur-sm border border-border/50 w-full sm:w-auto"
+              className="bg-surface/40 backdrop-blur-sm border border-border/50 w-full sm:w-52"
             />
           </div>
         </Container>
