@@ -7,14 +7,8 @@ import { Loader2, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
 import { Container, Section, Cluster } from '@/components/layout/LayoutPrimitives';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { validateState } from '@/lib/tiktok';
-
-interface CallbackResult {
-  success: boolean;
-  error?: string;
-  account_username?: string;
-  account_display_name?: string;
-}
+import { validateState, getRedirectUri } from '@/lib/tiktok';
+import { supabase } from '@/lib/supabase';
 
 export function AuthCallback() {
   const [searchParams] = useSearchParams();
@@ -63,29 +57,22 @@ export function AuthCallback() {
       setStatus('exchanging');
 
       try {
-        const functionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tiktok-oauth`;
+        const redirectUri = getRedirectUri();
 
-        const response = await fetch(functionUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ 
-            code, 
-            redirect_uri: `${window.location.origin}/auth/tiktok/callback`,
+        const { data, error } = await supabase.functions.invoke('tiktok-oauth', {
+          body: {
+            code,
+            redirect_uri: redirectUri,
             admin_user_id: session.user.id,
-          }),
+          },
         });
 
-        const result: CallbackResult = await response.json();
-
-        if (!response.ok || !result.success) {
-          throw new Error(result.error || 'Falha na troca do código por tokens');
+        if (error || !data?.success) {
+          throw new Error(data?.error || error?.message || 'Falha na troca do código por tokens');
         }
 
         setStatus('success');
-        addToast('success', `TikTok conectado como @${result.account_username || result.account_display_name || 'usuário'}`);
+        addToast('success', `TikTok conectado como @${data.account_username || data.account_display_name || 'usuário'}`);
 
         setTimeout(() => {
           navigate('/videos');

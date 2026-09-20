@@ -175,15 +175,16 @@ Deno.serve(async (req) => {
     });
   }
 
+  // Get the user's JWT from the Authorization header (passed by supabase.functions.invoke)
   const authHeader = req.headers.get('Authorization');
-  const expectedAuth = `Bearer ${getEnv('SUPABASE_SERVICE_ROLE_KEY')}`;
-
-  if (authHeader !== expectedAuth) {
-    return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return new Response(JSON.stringify({ success: false, error: 'Missing Authorization header' }), {
       status: 401,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
+
+  const userJwt = authHeader.replace('Bearer ', '');
 
   try {
     const { code, redirect_uri, admin_user_id }: TokenExchangeRequest = await req.json();
@@ -203,6 +204,28 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Create a Supabase client with the user's JWT to verify identity
+    const supabaseUrl = getEnv('SUPABASE_URL');
+    const userSupabase = createClient(supabaseUrl, getEnv('SUPABASE_ANON_KEY'), {
+      global: { headers: { Authorization: `Bearer ${userJwt}` } },
+    });
+
+    const { data: { user }, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Invalid user session' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Verify the admin_user_id matches the authenticated user
+    if (user.id !== admin_user_id) {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized: user ID mismatch' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Server-side admin validation
     if (!validateAdminUserId(admin_user_id)) {
       return new Response(
@@ -211,12 +234,13 @@ Deno.serve(async (req) => {
       );
     }
 
-    const supabase = createClient(getEnv('SUPABASE_URL'), getEnv('SUPABASE_SERVICE_ROLE_KEY'));
+    // Use service role key for database operations (server-side only)
+    const adminSupabase = createClient(supabaseUrl, getEnv('SUPABASE_SERVICE_ROLE_KEY'));
 
     const tokenData = await exchangeCodeForTokens(code, redirect_uri);
     const userInfo = await fetchUserInfo(tokenData.access_token);
 
-    await storeTokens(supabase, tokenData, userInfo);
+    await storeTokens(adminSupabase, tokenData, userInfo);
 
     const result: TokenExchangeResponse = {
       success: true,

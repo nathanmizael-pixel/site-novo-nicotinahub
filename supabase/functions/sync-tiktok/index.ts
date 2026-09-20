@@ -268,6 +268,16 @@ async function upsertVideos(supabase: ReturnType<typeof createClient>, videos: T
   return { synced, errors };
 }
 
+// Helper function to validate admin user ID (same as tiktok-oauth)
+function validateAdminUserId(adminUserId: string): boolean {
+  const expectedAdminId = getEnv('ADMIN_USER_ID');
+  if (!expectedAdminId) {
+    console.error('ADMIN_USER_ID not configured in Edge Function secrets');
+    return false;
+  }
+  return adminUserId === expectedAdminId;
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -282,25 +292,48 @@ Deno.serve(async (req) => {
     });
   }
 
-  // Verify Authorization header (service role key)
+  // Get the user's JWT from the Authorization header (passed by supabase.functions.invoke)
   const authHeader = req.headers.get('Authorization');
-  const expectedAuth = `Bearer ${getEnv('SUPABASE_SERVICE_ROLE_KEY')}`;
-  
-  if (authHeader !== expectedAuth) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
       status: 401,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 
+  const userJwt = authHeader.replace('Bearer ', '');
+
   try {
-    const supabase = createClient(
+    // Create a Supabase client with the user's JWT to verify identity
+    const supabaseUrl = getEnv('SUPABASE_URL');
+    const userSupabase = createClient(supabaseUrl, getEnv('SUPABASE_ANON_KEY'), {
+      global: { headers: { Authorization: `Bearer ${userJwt}` } },
+    });
+
+    const { data: { user }, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !user) {
+      return new Response(JSON.stringify({ error: 'Invalid user session' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Verify the user is the admin authorized
+    if (!validateAdminUserId(user.id)) {
+      return new Response(JSON.stringify({ error: 'Unauthorized: user is not admin' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Use service role key for privileged database operations (server-side only)
+    const adminSupabase = createClient(
       getEnv('SUPABASE_URL'),
       getEnv('SUPABASE_SERVICE_ROLE_KEY')
     );
 
     // Ensure we have a valid access token
-    const accessToken = await ensureValidAccessToken(supabase);
+    const accessToken = await ensureValidAccessToken(adminSupabase);
 
     // Fetch user info (to update account info in tokens table)
     let accountUsername: string | null = null;
@@ -318,11 +351,11 @@ Deno.serve(async (req) => {
     console.log(`Fetched ${videos.length} public videos from TikTok`);
 
     // Upsert videos to Supabase
-    const { synced, errors } = await upsertVideos(supabase, videos);
+    const { synced, errors } = await upsertVideos(adminSupabase, videos);
 
     // Update account info in tokens table if we got it
     if (accountUsername || accountDisplayName) {
-      await supabase
+      await adminSupabase
         .from('tiktok_tokens')
         .update({
           account_username: accountUsername,
