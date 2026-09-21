@@ -296,40 +296,31 @@ export const videosService = {
       return { success: false, error: validation.error || 'URL do TikTok inválida' };
     }
 
-    const videoId = validation.videoId;
-    const title = input.title?.trim() || `Vídeo TikTok #${videoId.slice(-4)}`;
-    const category = input.category?.trim() || 'TikTok';
-    const duration = input.duration?.trim() || '0:30';
-    const featured = Boolean(input.featured);
-
     if (await isSupabaseConfiguredAndAccessible()) {
       try {
-        const { data, error } = await supabase
-          .from('videos')
-          .insert({
-            title,
-            platform: 'tiktok',
-            video_url: input.url,
-            tiktok_video_id: videoId,
-            thumbnail_url: '',
-            category,
-            duration,
-            views: 0,
-            featured,
-            published_at: new Date().toISOString(),
-          })
-          .select()
-          .single();
+        const { data, error } = await supabase.functions.invoke('add-tiktok-video', {
+          body: input,
+        });
 
         if (error) {
-          return { success: false, error: `Erro ao salvar no Supabase: ${error.message}` };
+          throw new Error(`Edge Function error: ${error.message}`);
         }
 
-        return { success: true, video: mapSupabaseToVideoData(data) };
+        if (!data || !data.success) {
+          return { success: false, error: data?.error || 'Erro ao adicionar vídeo do TikTok' };
+        }
+
+        return { success: true, video: mapSupabaseToVideoData(data.video) };
       } catch (err) {
         return { success: false, error: err instanceof Error ? err.message : 'Erro desconhecido' };
       }
     } else {
+      const videoId = validation.videoId;
+      const title = input.title?.trim() || `Vídeo TikTok #${videoId.slice(-4)}`;
+      const category = input.category?.trim() || 'TikTok';
+      const duration = input.duration?.trim() || '0:30';
+      const featured = Boolean(input.featured);
+
       const newVideo: VideoData = {
         id: `local-tiktok-${Date.now()}`,
         title,
