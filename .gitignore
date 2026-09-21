@@ -48,3 +48,4 @@ kilo.json
 *.zip
 download
 download*
+.env*

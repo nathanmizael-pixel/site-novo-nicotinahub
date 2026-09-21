@@ -4,20 +4,38 @@ import { MediaCard, FeatureCard } from '@/components/ui/SemanticCards';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { videosRepository } from '@/lib/videos';
+import { Modal } from '@/components/ui/Modal';
+import { useToast } from '@/components/ui/Toast';
+import { useAuth } from '@/context/AuthContext';
+import { videosRepository, type VideoData } from '@/lib/videos';
 import { SOCIAL_LINKS } from '@/data/social';
-import { Twitch, Music2, X, Sparkles, Zap } from 'lucide-react';
+import { Twitch, Music2, X, Sparkles, Zap, Plus } from 'lucide-react';
 
 export function Videos() {
-  const [videos, setVideos] = useState<Array<{ id: string; title: string; platform: 'twitch' | 'tiktok'; thumbnail: string; author: string; date: string; views: number; category: string; duration: string; url: string; featured?: boolean }>>([]);
-  const [featuredVideo, setFeaturedVideo] = useState<{ id: string; title: string; platform: 'twitch' | 'tiktok'; thumbnail: string; author: string; date: string; views: number; category: string; duration: string; url: string; featured?: boolean } | null>(null);
+  const { addToast } = useToast();
+  const { isAdmin } = useAuth();
+  const [videos, setVideos] = useState<VideoData[]>([]);
+  const [featuredVideo, setFeaturedVideo] = useState<VideoData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const [filters, setFilters] = useState({
     platform: 'all' as 'all' | 'twitch' | 'tiktok',
     featured: false,
     sort: 'newest' as 'newest' | 'oldest' | 'most-viewed' | 'featured',
   });
+
+  // Modal states
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addForm, setAddForm] = useState({
+    url: '',
+    title: '',
+    category: 'TikTok',
+    duration: '0:30',
+    featured: false,
+  });
+  const [adding, setAdding] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
 
   const loadVideos = useCallback(async () => {
     setLoading(true);
@@ -27,11 +45,10 @@ export function Videos() {
         videosRepository.findAll({ platform: filters.platform === 'all' ? undefined : filters.platform, featured: filters.featured || undefined }, filters.sort),
         videosRepository.findFeatured(1),
       ]);
-      const featuredVideo = featured[0] ?? null;
-      setFeaturedVideo(featuredVideo);
-      // Remove featured video from grid to avoid duplication
-      if (featuredVideo) {
-        setVideos(allVideos.filter(v => v.id !== featuredVideo.id));
+      const feat = featured[0] ?? null;
+      setFeaturedVideo(feat);
+      if (feat) {
+        setVideos(allVideos.filter(v => v.id !== feat.id));
       } else {
         setVideos(allVideos);
       }
@@ -52,6 +69,43 @@ export function Videos() {
 
   const clearFilters = () => {
     setFilters({ platform: 'all', featured: false, sort: 'newest' });
+  };
+
+  const handleAddSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isAdmin) {
+      addToast('error', 'Apenas administradores podem adicionar vídeos.');
+      return;
+    }
+    if (!addForm.url.trim()) {
+      addToast('error', 'Informe a URL do TikTok');
+      return;
+    }
+
+    setAdding(true);
+    try {
+      const result = await videosRepository.addTikTokVideo(addForm);
+      if (!result.success) {
+        addToast('error', result.error || 'Erro ao adicionar vídeo do TikTok');
+      } else {
+        addToast('success', 'Vídeo do TikTok adicionado com sucesso!');
+        setIsAddModalOpen(false);
+        setAddForm({ url: '', title: '', category: 'TikTok', duration: '0:30', featured: false });
+        loadVideos();
+      }
+    } catch (err) {
+      addToast('error', err instanceof Error ? err.message : 'Erro ao adicionar vídeo');
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleVideoClick = (video: VideoData) => {
+    if (video.platform === 'tiktok' && video.tiktok_video_id) {
+      setSelectedVideo(video);
+    } else {
+      window.open(video.url, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const hasActiveFilters = filters.platform !== 'all' || filters.featured || filters.sort !== 'newest';
@@ -132,6 +186,17 @@ export function Videos() {
               A biblioteca completa de streams, destaques e momentos da comunidade.
               Cada frame conta uma história.
             </p>
+            {isAdmin && (
+              <div className="pt-2">
+                <Button
+                  variant="primary"
+                  onClick={() => setIsAddModalOpen(true)}
+                  icon={<Plus size={16} />}
+                >
+                  Adicionar Vídeo do TikTok
+                </Button>
+              </div>
+            )}
           </Stack>
         </Container>
       </Section>
@@ -211,26 +276,38 @@ export function Videos() {
           <Container size="xl">
             <FeatureCard
               layout="horizontal"
-              image={featuredVideo.thumbnail || undefined}
+              image={featuredVideo.platform === 'tiktok' && featuredVideo.tiktok_video_id ? undefined : (featuredVideo.thumbnail || undefined)}
               title={featuredVideo.title}
               description={`${featuredVideo.views.toLocaleString()} visualizações · ${featuredVideo.category} · ${featuredVideo.duration}`}
               accent={featuredVideo.platform === 'twitch' ? '#9146FF' : '#FF0050'}
               badge={
                 <Badge variant="glow" size="md" color={featuredVideo.platform === 'twitch' ? '#9146FF' : '#FF0050'}>
-                  <Twitch size={10} className="mr-1" />
+                  {featuredVideo.platform === 'twitch' ? <Twitch size={10} className="mr-1" /> : <Music2 size={10} className="mr-1" />}
                   Destaque
                 </Badge>
               }
               action={
-                <a href={featuredVideo.url} target="_blank" rel="noopener noreferrer">
-                  <Button variant="primary" icon={<Zap size={16} />}>
-                    Assistir
-                  </Button>
-                </a>
+                <Button
+                  variant="primary"
+                  icon={<Zap size={16} />}
+                  onClick={() => handleVideoClick(featuredVideo)}
+                >
+                  Assistir
+                </Button>
               }
               className="group"
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-primary/5 to-transparent" />
+              {featuredVideo.platform === 'tiktok' && featuredVideo.tiktok_video_id ? (
+                <div className="mt-4 aspect-[9/16] max-h-[300px] rounded-xl overflow-hidden bg-void/60">
+                  <iframe
+                    src={`https://www.tiktok.com/player/v1/${featuredVideo.tiktok_video_id}`}
+                    className="w-full h-full border-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title={featuredVideo.title}
+                  />
+                </div>
+              ) : null}
             </FeatureCard>
           </Container>
         </Section>
@@ -261,57 +338,175 @@ export function Videos() {
           ) : (
             <Grid cols={1} colsMd={2} colsLg={3} gap="lg" autoFit minItemWidth="320px">
               {videos.map((video, index) => (
-                <MediaCard
+                <div
                   key={video.id}
-                  image={video.thumbnail || undefined}
-                  title={video.title}
-                  subtitle={`${video.views.toLocaleString()} visualizações · ${video.category}`}
-                  aspectRatio="video"
-                  accent={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
-                  badge={
-                    <Badge
-                      variant="solid"
-                      size="sm"
-                      color={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
-                      className="animate-reveal"
-                      style={{ animationDelay: `${index * 60}ms` }}
-                    >
-                      {video.platform === 'twitch' ? <Twitch size={10} /> : <Music2 size={10} />}
-                      {video.platform}
-                    </Badge>
-                  }
-                  meta={
-                    <span className="flex items-center gap-1.5 text-xs text-text/80">
-                      <span className="font-mono">{video.duration}</span>
-                    </span>
-                  }
-                  overlay={
-                    <a href={video.url} target="_blank" rel="noopener noreferrer">
+                  onClick={() => handleVideoClick(video)}
+                  className="cursor-pointer"
+                >
+                  <MediaCard
+                    image={video.platform === 'tiktok' && video.tiktok_video_id ? undefined : (video.thumbnail || undefined)}
+                    title={video.title}
+                    subtitle={`${video.views.toLocaleString()} visualizações · ${video.category}`}
+                    aspectRatio="video"
+                    accent={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
+                    badge={
+                      <Badge
+                        variant="solid"
+                        size="sm"
+                        color={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
+                        className="animate-reveal"
+                        style={{ animationDelay: `${index * 60}ms` }}
+                      >
+                        {video.platform === 'twitch' ? <Twitch size={10} /> : <Music2 size={10} />}
+                        {video.platform}
+                      </Badge>
+                    }
+                    meta={
+                      <span className="flex items-center gap-1.5 text-xs text-text/80">
+                        <span className="font-mono">{video.duration}</span>
+                      </span>
+                    }
+                    overlay={
                       <div className="w-14 h-14 rounded-full bg-void/80 backdrop-blur-sm flex items-center justify-center border border-primary/30 text-primary animate-scale-in">
                         <Zap size={20} />
                       </div>
-                    </a>
-                  }
-                  onClick={() => window.open(video.url, '_blank', 'noopener,noreferrer')}
-                  className="cursor-pointer animate-reveal-up"
-                  style={{ animationDelay: `${index * 60}ms` }}
-                  titleAs="div"
-                >
-                  <div className="absolute bottom-3 left-3">
-                    <span className="font-mono text-xs text-text/80 bg-void/80 px-2 py-1 rounded">{video.duration}</span>
-                  </div>
-                </MediaCard>
+                    }
+                    className="animate-reveal-up"
+                    style={{ animationDelay: `${index * 60}ms` }}
+                    titleAs="div"
+                  >
+                    {video.platform === 'tiktok' && video.tiktok_video_id && (
+                      <div className="mt-3 aspect-[9/16] max-h-[220px] rounded-lg overflow-hidden bg-void/60 pointer-events-none">
+                        <iframe
+                          src={`https://www.tiktok.com/player/v1/${video.tiktok_video_id}`}
+                          className="w-full h-full border-0"
+                          title={video.title}
+                        />
+                      </div>
+                    )}
+                  </MediaCard>
+                </div>
               ))}
             </Grid>
           )}
         </Container>
       </Section>
 
+      {/* Add TikTok Video Modal */}
+      {isAdmin && (
+        <Modal
+          open={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          title="Adicionar Vídeo do TikTok"
+          size="md"
+        >
+          <form onSubmit={handleAddSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-600 text-text mb-1">URL Pública do TikTok *</label>
+              <input
+                type="url"
+                placeholder="https://www.tiktok.com/@usuario/video/1234567890"
+                value={addForm.url}
+                onChange={(e) => setAddForm({ ...addForm, url: e.target.value })}
+                className="w-full px-3 py-2 bg-abyss border border-border rounded-xl text-sm text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none transition-all"
+                required
+              />
+              <p className="text-xs text-text-dim mt-1">Cole a URL completa do vídeo público do TikTok.</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-600 text-text mb-1">Título (Opcional)</label>
+              <input
+                type="text"
+                placeholder="Ex: Momento épico na live"
+                value={addForm.title}
+                onChange={(e) => setAddForm({ ...addForm, title: e.target.value })}
+                className="w-full px-3 py-2 bg-abyss border border-border rounded-xl text-sm text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none transition-all"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-600 text-text mb-1">Categoria</label>
+                <input
+                  type="text"
+                  value={addForm.category}
+                  onChange={(e) => setAddForm({ ...addForm, category: e.target.value })}
+                  className="w-full px-3 py-2 bg-abyss border border-border rounded-xl text-sm text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-600 text-text mb-1">Duração</label>
+                <input
+                  type="text"
+                  value={addForm.duration}
+                  onChange={(e) => setAddForm({ ...addForm, duration: e.target.value })}
+                  className="w-full px-3 py-2 bg-abyss border border-border rounded-xl text-sm text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="add-featured"
+                checked={addForm.featured}
+                onChange={(e) => setAddForm({ ...addForm, featured: e.target.checked })}
+                className="w-4 h-4 accent-primary rounded"
+              />
+              <label htmlFor="add-featured" className="text-sm text-text cursor-pointer">Destacar este vídeo</label>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-border">
+              <Button type="button" variant="ghost" onClick={() => setIsAddModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" variant="primary" disabled={adding}>
+                {adding ? 'Adicionando...' : 'Adicionar Vídeo'}
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* Play TikTok Video Modal */}
+      {selectedVideo && selectedVideo.tiktok_video_id && (
+        <Modal
+          open={Boolean(selectedVideo)}
+          onClose={() => setSelectedVideo(null)}
+          title={selectedVideo.title}
+          size="lg"
+        >
+          <div className="space-y-4">
+            <div className="aspect-[9/16] w-full max-h-[75vh] mx-auto rounded-xl overflow-hidden bg-void">
+              <iframe
+                src={`https://www.tiktok.com/player/v1/${selectedVideo.tiktok_video_id}`}
+                className="w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title={selectedVideo.title}
+              />
+            </div>
+            <div className="flex items-center justify-between pt-2 text-sm text-text-muted">
+              <span>{selectedVideo.views.toLocaleString()} visualizações · {selectedVideo.category}</span>
+              <a
+                href={selectedVideo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-bright hover:underline"
+              >
+                Abrir no TikTok ↗
+              </a>
+            </div>
+          </div>
+        </Modal>
+      )}
+
       {/* CTA Section */}
       <Section size="loose" background="abyss" divider>
         <Container size="lg">
           <div className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/25 mb-4">
               <Sparkles size={14} className="text-primary animate-float-slow" />
               <span className="font-display font-600 text-sm text-text">Novos vídeos toda semana</span>
             </div>
