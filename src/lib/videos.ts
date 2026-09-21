@@ -11,6 +11,7 @@ export interface VideosService {
   getById(id: string): Promise<VideoData | null>;
   getPlatforms(): string[];
   syncTikTokVideos(): Promise<SyncResult>;
+  getTikTokVideos(limit?: number): Promise<VideoData[]>;
   addTikTokVideo(input: {
     url: string;
     title?: string;
@@ -238,6 +239,31 @@ export const videosService = {
     return fallbackGetById(id);
   },
 
+  async getTikTokVideos(limit = 10): Promise<VideoData[]> {
+    if (await isSupabaseConfiguredAndAccessible()) {
+      try {
+        const { data, error } = await supabase
+          .from('videos')
+          .select('*')
+          .eq('platform', 'tiktok')
+          .order('published_at', { ascending: false })
+          .limit(limit);
+
+        if (error) {
+          throw new Error(`Falha na consulta ao Supabase: ${error.message}`);
+        }
+
+        return (data || []).map(mapSupabaseToVideoData);
+      } catch (error) {
+        if (error instanceof Error) throw error;
+        throw new Error('Erro desconhecido no Supabase');
+      }
+    }
+
+    const tiktokMock = MOCK_VIDEOS.filter((v) => v.platform === 'tiktok');
+    return tiktokMock.slice(0, limit);
+  },
+
   getPlatforms(): string[] {
     return ['twitch', 'tiktok'];
   },
@@ -330,6 +356,9 @@ export const videosRepository = {
   },
   async findFeatured(limit?: number) {
     return videosService.getFeatured(limit);
+  },
+  async findTikTokVideos(limit?: number) {
+    return videosService.getTikTokVideos(limit);
   },
   async findById(id: string) {
     return videosService.getById(id);

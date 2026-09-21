@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Container, Section, Stack, Grid, Cluster } from '@/components/layout/LayoutPrimitives';
-import { MediaCard, FeatureCard } from '@/components/ui/SemanticCards';
+import { MediaCard } from '@/components/ui/SemanticCards';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -9,21 +9,14 @@ import { useToast } from '@/components/ui/Toast';
 import { useAuth } from '@/context/AuthContext';
 import { videosRepository, type VideoData } from '@/lib/videos';
 import { SOCIAL_LINKS } from '@/data/social';
-import { Twitch, Music2, X, Sparkles, Zap, Plus } from 'lucide-react';
+import { Music2, Zap, Plus, ExternalLink, RefreshCw } from 'lucide-react';
 
 export function Videos() {
   const { addToast } = useToast();
   const { isAdmin } = useAuth();
   const [videos, setVideos] = useState<VideoData[]>([]);
-  const [featuredVideo, setFeaturedVideo] = useState<VideoData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const [filters, setFilters] = useState({
-    platform: 'all' as 'all' | 'twitch' | 'tiktok',
-    featured: false,
-    sort: 'newest' as 'newest' | 'oldest' | 'most-viewed' | 'featured',
-  });
 
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -65,35 +58,18 @@ export function Videos() {
     setLoading(true);
     setError(null);
     try {
-      const [allVideos, featured] = await Promise.all([
-        videosRepository.findAll({ platform: filters.platform === 'all' ? undefined : filters.platform, featured: filters.featured || undefined }, filters.sort),
-        videosRepository.findFeatured(1),
-      ]);
-      const feat = featured[0] ?? null;
-      setFeaturedVideo(feat);
-      if (feat) {
-        setVideos(allVideos.filter(v => v.id !== feat.id));
-      } else {
-        setVideos(allVideos);
-      }
+      const tiktokVideos = await videosRepository.findTikTokVideos(10);
+      setVideos(tiktokVideos);
     } catch {
-      setError('Não foi possível carregar os vídeos. Tente novamente.');
+      setError('Não foi possível carregar os vídeos do TikTok. Tente novamente.');
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, []);
 
   useEffect(() => {
     loadVideos();
   }, [loadVideos]);
-
-  const handleFilterChange = (key: keyof typeof filters, value: 'all' | 'twitch' | 'tiktok' | boolean | 'newest' | 'oldest' | 'most-viewed' | 'featured') => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const clearFilters = () => {
-    setFilters({ platform: 'all', featured: false, sort: 'newest' });
-  };
 
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,14 +101,12 @@ export function Videos() {
   };
 
   const handleVideoClick = (video: VideoData) => {
-    if (video.platform === 'tiktok' && video.tiktok_video_id) {
+    if (video.tiktok_video_id) {
       setSelectedVideo(video);
     } else {
       window.open(video.url, '_blank', 'noopener,noreferrer');
     }
   };
-
-  const hasActiveFilters = filters.platform !== 'all' || filters.featured || filters.sort !== 'newest';
 
   if (loading) {
     return (
@@ -140,9 +114,9 @@ export function Videos() {
         <Section size="hero" background="atmosphere" className="vignette">
           <Container size="lg">
             <div className="text-center mb-12">
-              <h1 className="font-display font-800 text-display-lg text-text mb-4">Vídeos</h1>
+              <h1 className="font-display font-800 text-display-lg text-text mb-4">TikTok @nicotinaclipes</h1>
               <p className="text-body-md text-text-muted max-w-xl mx-auto">
-                A biblioteca completa de streams, destaques e momentos da comunidade.
+                Carregando os melhores clipes e momentos...
               </p>
             </div>
           </Container>
@@ -168,9 +142,9 @@ export function Videos() {
         <Section size="hero" background="atmosphere" className="vignette">
           <Container size="lg">
             <div className="text-center mb-12">
-              <h1 className="font-display font-800 text-display-lg text-text mb-4">Vídeos</h1>
+              <h1 className="font-display font-800 text-display-lg text-text mb-4">TikTok @nicotinaclipes</h1>
               <p className="text-body-md text-text-muted max-w-xl mx-auto">
-                A biblioteca completa de streams, destaques e momentos da comunidade.
+                Os melhores momentos do TikTok.
               </p>
             </div>
           </Container>
@@ -197,21 +171,55 @@ export function Videos() {
       {/* Page Header */}
       <Section size="hero" background="atmosphere" className="vignette">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[150px]" />
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#FF0050]/5 rounded-full blur-[150px]" />
         </div>
         <Container size="lg">
-          <Stack gap="md" align="center" className="mb-10 text-center animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 animate-fade-in">
-              <Sparkles size={14} className="text-primary animate-float-slow" />
-              <span className="font-display font-600 text-sm text-text">Biblioteca de Vídeos</span>
+          <Stack gap="lg" align="center" className="mb-10 text-center animate-fade-in-up">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FF0050]/10 border border-[#FF0050]/20 animate-fade-in">
+              <Music2 size={14} className="text-[#FF0050] animate-float-slow" />
+              <span className="font-display font-600 text-sm text-text">Canal Oficial TikTok</span>
             </div>
-            <h1 className="font-display font-800 text-display-xl text-text">Vídeos</h1>
+            <h1 className="font-display font-800 text-display-xl text-text">@nicotinaclipes</h1>
             <p className="text-body-lg text-text-muted max-w-xl mx-auto">
-              A biblioteca completa de streams, destaques e momentos da comunidade.
+              Cortes, momentos épicos e clipes exclusivos do Nicotinacat.
               Cada frame conta uma história.
             </p>
+
+            {/* Profile Card */}
+            <div className="w-full max-w-xl card-elevated p-6 rounded-2xl border border-border/80 bg-surface/80 backdrop-blur-md shadow-elevated mt-2">
+              <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#FF0050]/20 to-primary/20 border border-[#FF0050]/40 flex items-center justify-center shrink-0 shadow-glow-sm">
+                  <img
+                    src="/nicotinacat-app-icon.png"
+                    alt="Nicotinacat"
+                    className="w-14 h-14 object-contain rounded-xl"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-display font-700 text-lg text-text truncate">@nicotinaclipes</h2>
+                  <p className="text-sm text-text-muted mt-1">
+                    Clipes, melhores momentos e cortes do Nicotinacat. Siga no TikTok para acompanhar em tempo real.
+                  </p>
+                </div>
+                <div className="shrink-0 mt-2 sm:mt-0">
+                  <a
+                    href={SOCIAL_LINKS.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="primary" icon={<ExternalLink size={15} />} className="bg-[#FF0050] hover:bg-[#ff1a66] text-white border-0 shadow-glow-sm">
+                      Ver no TikTok
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </div>
+
             {isAdmin && (
-              <Cluster gap="sm" justify="center" className="pt-2">
+              <Cluster gap="sm" justify="center" className="pt-4">
                 <Button
                   variant="primary"
                   onClick={() => setIsAddModalOpen(true)}
@@ -224,7 +232,7 @@ export function Videos() {
                   onClick={handleSyncTikTok}
                   loading={syncing}
                   disabled={syncing}
-                  icon={!syncing ? <Music2 size={16} /> : undefined}
+                  icon={!syncing ? <RefreshCw size={16} /> : undefined}
                 >
                   {syncing ? 'Sincronizando...' : 'Sincronizar TikTok'}
                 </Button>
@@ -234,138 +242,25 @@ export function Videos() {
         </Container>
       </Section>
 
-      {/* Filters */}
-      <Section size="tight" background="none">
-        <Container size="xl">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
-            <div className="flex flex-wrap items-center gap-3" role="group" aria-label="Filtrar por plataforma">
-              <Button
-                variant={filters.platform === 'all' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => handleFilterChange('platform', 'all')}
-                className="transition-all min-h-[44px]"
-              >
-                <Sparkles size={14} className="mr-1" />
-                Todos
-              </Button>
-              <Button
-                variant={filters.platform === 'twitch' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => handleFilterChange('platform', 'twitch')}
-                className="transition-all min-h-[44px]"
-              >
-                <Twitch size={14} className="mr-1 text-[#9146FF]" />
-                Twitch
-              </Button>
-              <Button
-                variant={filters.platform === 'tiktok' ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => handleFilterChange('platform', 'tiktok')}
-                className="transition-all min-h-[44px]"
-              >
-                <Music2 size={14} className="mr-1" />
-                TikTok
-              </Button>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 lg:ml-auto">
-              <label htmlFor="video-sort" className="sr-only">Ordenar por</label>
-              <select
-                id="video-sort"
-                value={filters.sort}
-                onChange={(e) => handleFilterChange('sort', e.target.value as 'newest' | 'oldest' | 'most-viewed' | 'featured')}
-                className="px-3 py-2 bg-abyss border border-border rounded-lg text-sm text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none transition-all cursor-pointer min-h-[44px]"
-              >
-                <option value="newest">Mais recentes</option>
-                <option value="oldest">Mais antigos</option>
-                <option value="most-viewed">Mais vistos</option>
-                <option value="featured">Destaque</option>
-              </select>
-
-              <label htmlFor="video-featured" className="flex items-center gap-2 px-3 py-2 bg-abyss border border-border rounded-lg text-sm text-text-muted cursor-pointer min-h-[44px]">
-                <input
-                  id="video-featured"
-                  type="checkbox"
-                  checked={filters.featured}
-                  onChange={(e) => handleFilterChange('featured', e.target.checked)}
-                  className="w-4 h-4 accent-primary rounded"
-                />
-                Apenas em destaque
-              </label>
-
-              {hasActiveFilters && (
-                <Button variant="ghost" size="sm" onClick={clearFilters} icon={<X size={14} />} className="min-h-[44px]">
-                  Limpar
-                </Button>
-              )}
-            </div>
-          </div>
-        </Container>
-      </Section>
-
-      {/* Featured Video */}
-      {featuredVideo && (
-        <Section size="normal" background="atmosphere" className="vignette">
-          <Container size="xl">
-            <FeatureCard
-              layout="horizontal"
-              image={featuredVideo.platform === 'tiktok' && featuredVideo.tiktok_video_id ? undefined : (featuredVideo.thumbnail || undefined)}
-              title={featuredVideo.title}
-              description={`${featuredVideo.views.toLocaleString()} visualizações · ${featuredVideo.category} · ${featuredVideo.duration}`}
-              accent={featuredVideo.platform === 'twitch' ? '#9146FF' : '#FF0050'}
-              badge={
-                <Badge variant="glow" size="md" color={featuredVideo.platform === 'twitch' ? '#9146FF' : '#FF0050'}>
-                  {featuredVideo.platform === 'twitch' ? <Twitch size={10} className="mr-1" /> : <Music2 size={10} className="mr-1" />}
-                  Destaque
-                </Badge>
-              }
-              action={
-                <Button
-                  variant="primary"
-                  icon={<Zap size={16} />}
-                  onClick={() => handleVideoClick(featuredVideo)}
-                >
-                  Assistir
-                </Button>
-              }
-              className="group"
-            >
-              {featuredVideo.platform === 'tiktok' && featuredVideo.tiktok_video_id ? (
-                <div className="mt-4 aspect-[9/16] max-h-[300px] rounded-xl overflow-hidden bg-void/60">
-                  <iframe
-                    src={`https://www.tiktok.com/player/v1/${featuredVideo.tiktok_video_id}`}
-                    className="w-full h-full border-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    title={featuredVideo.title}
-                  />
-                </div>
-              ) : null}
-            </FeatureCard>
-          </Container>
-        </Section>
-      )}
-
-      {/* Video Grid */}
+      {/* Videos Section (10 most recent TikTok videos) */}
       <Section size="normal" background="none">
         <Container size="xl">
           <Stack gap="md" align="start" className="mb-8">
             <div>
               <h2 className="font-display font-800 text-display-md text-text">
-                {filters.featured ? 'Vídeos em Destaque' : filters.platform !== 'all' ? `Vídeos ${platformLabels[filters.platform]}` : 'Todos os Vídeos'}
+                Vídeos Recentes
               </h2>
               <p className="text-body-md text-text-muted mt-2">
-                {videos.length} vídeo{videos.length !== 1 ? 's' : ''} encontrado{videos.length !== 1 ? 's' : ''}
+                {videos.length} {videos.length === 1 ? 'vídeo exibido' : 'vídeos exibidos'} (máximo de 10 mais recentes)
               </p>
             </div>
           </Stack>
 
           {videos.length === 0 ? (
             <EmptyState
-              title="Nada por aqui."
-              description="Ajuste os filtros e tente de novo."
-              icon={<div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"><Sparkles size={24} className="text-primary/50" /></div>}
-              action={hasActiveFilters ? <Button variant="primary" size="sm" onClick={clearFilters} icon={<X size={14} />} className="min-h-[44px]">Limpar filtros</Button> : undefined}
+              title="Nenhum vídeo do TikTok encontrado."
+              description="Adicione vídeos ou sincronize com a conta do TikTok para exibi-los aqui."
+              icon={<div className="w-16 h-16 rounded-full bg-[#FF0050]/10 flex items-center justify-center"><Music2 size={24} className="text-[#FF0050]/60" /></div>}
               className="py-16 animate-fade-in-up"
             />
           ) : (
@@ -377,21 +272,21 @@ export function Videos() {
                   className="cursor-pointer"
                 >
                   <MediaCard
-                    image={video.platform === 'tiktok' && video.tiktok_video_id ? undefined : (video.thumbnail || undefined)}
+                    image={undefined}
                     title={video.title}
                     subtitle={`${video.views.toLocaleString()} visualizações · ${video.category}`}
                     aspectRatio="video"
-                    accent={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
+                    accent="#FF0050"
                     badge={
                       <Badge
                         variant="solid"
                         size="sm"
-                        color={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
+                        color="#FF0050"
                         className="animate-reveal"
                         style={{ animationDelay: `${index * 60}ms` }}
                       >
-                        {video.platform === 'twitch' ? <Twitch size={10} /> : <Music2 size={10} />}
-                        {video.platform}
+                        <Music2 size={10} className="mr-1" />
+                        TikTok
                       </Badge>
                     }
                     meta={
@@ -400,7 +295,7 @@ export function Videos() {
                       </span>
                     }
                     overlay={
-                      <div className="w-14 h-14 rounded-full bg-void/80 backdrop-blur-sm flex items-center justify-center border border-primary/30 text-primary animate-scale-in">
+                      <div className="w-14 h-14 rounded-full bg-void/80 backdrop-blur-sm flex items-center justify-center border border-[#FF0050]/30 text-[#FF0050] animate-scale-in">
                         <Zap size={20} />
                       </div>
                     }
@@ -408,7 +303,7 @@ export function Videos() {
                     style={{ animationDelay: `${index * 60}ms` }}
                     titleAs="div"
                   >
-                    {video.platform === 'tiktok' && video.tiktok_video_id && (
+                    {video.tiktok_video_id && (
                       <div className="mt-3 aspect-[9/16] max-h-[220px] rounded-lg overflow-hidden bg-void/60 pointer-events-none">
                         <iframe
                           src={`https://www.tiktok.com/player/v1/${video.tiktok_video_id}`}
@@ -526,7 +421,7 @@ export function Videos() {
                 href={selectedVideo.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-bright hover:underline"
+                className="text-[#FF0050] hover:underline"
               >
                 Abrir no TikTok ↗
               </a>
@@ -539,19 +434,18 @@ export function Videos() {
       <Section size="loose" background="abyss" divider>
         <Container size="lg">
           <div className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/25 mb-4">
-              <Sparkles size={14} className="text-primary animate-float-slow" />
-              <span className="font-display font-600 text-sm text-text">Novos vídeos toda semana</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FF0050]/10 border border-[#FF0050]/25 mb-4">
+              <Music2 size={14} className="text-[#FF0050] animate-float-slow" />
+              <span className="font-display font-600 text-sm text-text">Novos clipes toda semana</span>
             </div>
             <p className="text-body-md text-text-muted mb-6">
-              A biblioteca está sempre crescendo. Siga nas plataformas para não perder nenhum momento.
+              Siga @nicotinaclipes no TikTok para não perder nenhum momento épico.
             </p>
             <Cluster gap="md" justify="center">
-              <a href={SOCIAL_LINKS.twitch} target="_blank" rel="noopener noreferrer">
-                <Button variant="primary" icon={<Twitch size={16} />} className="min-h-[44px]">Twitch</Button>
-              </a>
               <a href={SOCIAL_LINKS.tiktok} target="_blank" rel="noopener noreferrer">
-                <Button variant="secondary" icon={<Music2 size={16} />} className="min-h-[44px]">TikTok</Button>
+                <Button variant="primary" icon={<Music2 size={16} />} className="bg-[#FF0050] hover:bg-[#ff1a66] text-white border-0 min-h-[44px]">
+                  Seguir no TikTok
+                </Button>
               </a>
             </Cluster>
           </div>
@@ -560,9 +454,3 @@ export function Videos() {
     </div>
   );
 }
-
-const platformLabels: Record<string, string> = {
-  all: 'Todos',
-  twitch: 'Twitch',
-  tiktok: 'TikTok',
-};
