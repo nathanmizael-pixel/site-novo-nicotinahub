@@ -167,21 +167,30 @@ async function fetchUserInfo(accessToken: string): Promise<{ username: string; d
 
 async function fetchAllVideos(accessToken: string): Promise<TikTokVideo[]> {
   const allVideos: TikTokVideo[] = [];
-  let cursor = 0;
+  let cursor: number | undefined = undefined;
   let hasMore = true;
-  const maxPages = 10; // Safety limit
+  let previousCursor: number | undefined = undefined;
 
-  for (let page = 0; page < maxPages && hasMore; page++) {
-    const params = new URLSearchParams({
-      fields: 'id,title,video_description,cover_image_url,share_url,embed_link,duration,create_time,view_count,like_count,comment_count,share_count,privacy_level',
-      max_count: '20',
-      cursor: cursor.toString(),
-    });
+  while (hasMore) {
+    const requestBody: Record<string, unknown> = {
+      max_count: 20,
+    };
 
-    const response = await fetch(`${TIKTOK_API_BASE}/video/list/?${params.toString()}`, {
+    if (cursor !== undefined) {
+      requestBody.cursor = cursor;
+    }
+
+    // fields can be passed as query parameter or body depending on TikTok API specs, but typically fields is a query param while pagination/body parameters are in JSON body.
+    // Let's keep fields in query string as it is standard for TikTok API v2 filtering, or check requirement: "Os parâmetros de paginação devem ser enviados no JSON body: max_count, cursor".
+    const fieldsParam = 'fields=id,title,video_description,cover_image_url,share_url,embed_link,duration,create_time,view_count,like_count,comment_count,share_count,privacy_level';
+
+    const response = await fetch(`${TIKTOK_API_BASE}/video/list/?${fieldsParam}`, {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
@@ -192,7 +201,6 @@ async function fetchAllVideos(accessToken: string): Promise<TikTokVideo[]> {
     const data: TikTokVideoListResponse = await response.json();
 
     if (data.error?.code) {
-      // Handle specific error codes
       if (data.error.code === 10005) {
         throw new Error('TikTok access token expired or invalid');
       }
@@ -200,15 +208,24 @@ async function fetchAllVideos(accessToken: string): Promise<TikTokVideo[]> {
     }
 
     if (data.data?.videos) {
-      // Only sync public videos
       const publicVideos = data.data.videos.filter(v => v.privacy_level === 'PUBLIC');
       allVideos.push(...publicVideos);
     }
 
-    cursor = data.data?.cursor || 0;
+    const nextCursor = data.data?.cursor;
     hasMore = data.data?.has_more || false;
 
-    // Rate limiting: small delay between pages
+    // Protection against infinite loop: if hasMore is true but cursor is missing or unchanged
+    if (hasMore) {
+      if (nextCursor === undefined || nextCursor === previousCursor) {
+        console.warn('Infinite pagination loop detected: has_more is true but cursor is missing or unchanged.');
+        break;
+      }
+    }
+
+    previousCursor = cursor;
+    cursor = nextCursor;
+
     if (hasMore) {
       await new Promise(resolve => setTimeout(resolve, 200));
     }

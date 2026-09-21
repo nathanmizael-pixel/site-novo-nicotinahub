@@ -23,6 +23,9 @@ export interface VideosService {
 export type SyncResult = {
   success: boolean;
   synced: number;
+  total?: number;
+  new_count?: number;
+  updated_count?: number;
   errors: string[];
   last_sync_at: string;
 };
@@ -240,22 +243,19 @@ export const videosService = {
   },
 
   async syncTikTokVideos(): Promise<SyncResult> {
-    const functionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-tiktok`;
-
-    const response = await fetch(functionUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-      },
+    const { data, error } = await supabase.functions.invoke('sync-tiktok', {
+      body: {},
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Sync failed: ${response.status} ${errorText}`);
+    if (error) {
+      throw new Error(`Sync failed: ${error.message || 'Unknown error'}`);
     }
 
-    return response.json();
+    if (!data) {
+      throw new Error('Sync failed: No response data returned from function');
+    }
+
+    return data as SyncResult;
   },
 
   async addTikTokVideo(input: {

@@ -35,7 +35,31 @@ export function Videos() {
     featured: false,
   });
   const [adding, setAdding] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
+
+  const handleSyncTikTok = async () => {
+    if (!isAdmin) {
+      addToast('error', 'Apenas administradores podem sincronizar o TikTok.');
+      return;
+    }
+
+    setSyncing(true);
+    try {
+      const result = await videosRepository.syncTikTok();
+      if (!result.success && result.errors && result.errors.length > 0) {
+        addToast('error', `Sincronização concluída com erros: ${result.errors[0]}`);
+      } else {
+        const syncedCount = result.synced ?? 0;
+        addToast('success', `TikTok sincronizado com sucesso! ${syncedCount} vídeo(s) processado(s).`);
+      }
+      loadVideos();
+    } catch (err) {
+      addToast('error', err instanceof Error ? err.message : 'Erro ao sincronizar TikTok');
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const loadVideos = useCallback(async () => {
     setLoading(true);
@@ -187,7 +211,7 @@ export function Videos() {
               Cada frame conta uma história.
             </p>
             {isAdmin && (
-              <div className="pt-2">
+              <Cluster gap="sm" justify="center" className="pt-2">
                 <Button
                   variant="primary"
                   onClick={() => setIsAddModalOpen(true)}
@@ -195,7 +219,16 @@ export function Videos() {
                 >
                   Adicionar Vídeo do TikTok
                 </Button>
-              </div>
+                <Button
+                  variant="secondary"
+                  onClick={handleSyncTikTok}
+                  loading={syncing}
+                  disabled={syncing}
+                  icon={!syncing ? <Music2 size={16} /> : undefined}
+                >
+                  {syncing ? 'Sincronizando...' : 'Sincronizar TikTok'}
+                </Button>
+              </Cluster>
             )}
           </Stack>
         </Container>
