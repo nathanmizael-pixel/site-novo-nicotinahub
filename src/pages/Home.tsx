@@ -1,15 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Container, HeroSection, Section, Stack, Grid, Cluster } from '@/components/layout/LayoutPrimitives';
-import { FeatureCard, MediaCard, NavigationCard, StatCard } from '@/components/ui/SemanticCards';
+import { FeatureCard, MediaCard, NavigationCard } from '@/components/ui/SemanticCards';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SkullLogo } from '@/components/SkullLogo';
-import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Crown } from 'lucide-react';
+import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap } from 'lucide-react';
 import { videosRepository } from '@/lib/videos';
-import { formatNumber } from '@/lib/utils';
 import { SOCIAL_LINKS } from '@/data/social';
-import { supabase } from '@/lib/supabase';
 import { usePageEntry } from '@/hooks/useMotion';
 import { useState, useEffect, useCallback } from 'react';
 
@@ -17,8 +15,6 @@ export function Home() {
   const isPageVisible = usePageEntry(0);
   const [featuredVideos, setFeaturedVideos] = useState<Array<{ id: string; title: string; platform: 'twitch' | 'tiktok'; thumbnail: string; author: string; date: string; views: number; category: string; duration: string; url: string; featured?: boolean }>>([]);
   const [videoDelays, setVideoDelays] = useState<number[]>([]);
-  const [totalViews, setTotalViews] = useState(0);
-  const [totalPosts, setTotalPosts] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,8 +25,6 @@ export function Home() {
       const videos = await videosRepository.findFeatured(3);
       setFeaturedVideos(videos);
       setVideoDelays(videos.map((_, i) => i * 80));
-      const total = videos.reduce((sum, v) => sum + v.views, 0);
-      setTotalViews(total);
     } catch {
       setError('Não foi possível carregar os vídeos. Tente novamente.');
     } finally {
@@ -41,13 +35,6 @@ export function Home() {
   useEffect(() => {
     loadFeaturedVideos();
   }, [loadFeaturedVideos]);
-
-  useEffect(() => {
-    // Fetch community stats
-    supabase.from('posts').select('*', { count: 'exact', head: true }).then(({ count }) => {
-      setTotalPosts(count || 0);
-    });
-  }, []);
 
   return (
     <div className="animate-fade-in min-h-screen">
@@ -62,18 +49,11 @@ export function Home() {
           <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center min-h-[70vh]">
             {/* Left: Copy + CTA */}
             <div className="text-center lg:text-left animate-fade-in-up" style={{ animationDelay: isPageVisible ? '0ms' : '200ms' }}>
-              <div className="inline-flex items-center gap-2 mb-6">
-                <Badge variant="glow" size="md" className="animate-fade-in" style={{ animationDelay: isPageVisible ? '100ms' : '300ms' }}>
-                  <Sparkles size={12} className="animate-float-slow" />
-                  <span className="font-display font-600">miau.</span>
-                </Badge>
-              </div>
-
               <h1 className="font-display font-900 text-display-xl text-text mb-6 leading-tight tracking-tight animate-reveal-up" style={{ animationDelay: isPageVisible ? '150ms' : '350ms' }}>
                 <span className="gradient-text">nicotinacat</span>
               </h1>
 
-              <p className="text-body-lg text-text-muted/70 leading-relaxed max-w-xl mb-8 animate-reveal-up tracking-wide" style={{ animationDelay: isPageVisible ? '250ms' : '450ms' }}>
+              <p className="text-body-lg text-text-muted/80 leading-relaxed max-w-xl mb-8 animate-reveal-up tracking-wide" style={{ animationDelay: isPageVisible ? '250ms' : '450ms' }}>
                 oi eu tenho tres gatos e uma camiseta do korn :)
               </p>
 
@@ -98,7 +78,7 @@ export function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/5 rounded-full blur-3xl" />
                 <div className="absolute inset-0 bg-gradient-to-t from-void/60 to-transparent rounded-full" />
 
-                {/* Main skull — larger, prominent */}
+                {/* Main skull */}
                 <SkullLogo size={160} className="relative z-10 drop-shadow-[0_0_40px_rgba(168,85,247,0.3)]" />
 
                 {/* Rotating orbit rings */}
@@ -113,33 +93,21 @@ export function Home() {
                     </defs>
                   </svg>
                 </div>
-                <div className="absolute inset-0 rotate-6 animate-spin-slow opacity-15" style={{ animationDirection: 'reverse', animationDuration: '25s' }}>
-                  <svg className="w-full h-full" viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="70" fill="none" stroke="#FBBF24" strokeWidth="0.3" strokeDasharray="4,20" opacity="0.4" />
-                  </svg>
-                </div>
 
-                {/* Floating particles */}
+                {/* Floating particles (reduced to 3 for elegance) */}
                 <div className="absolute inset-0 pointer-events-none">
-                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                  {[1, 2, 3].map((i) => (
                     <div
                       key={i}
                       className="absolute w-1.5 h-1.5 rounded-full bg-primary/60 animate-float"
                       style={{
-                        left: `${15 + i * 12}%`,
-                        top: `${20 + (i * 7) % 60}%`,
-                        animationDelay: `${i * 0.7}s`,
-                        animationDuration: `${4 + i * 0.5}s`,
+                        left: `${20 + i * 25}%`,
+                        top: `${30 + (i * 15) % 40}%`,
+                        animationDelay: `${i * 0.9}s`,
+                        animationDuration: `${5 + i * 0.5}s`,
                       }}
                     />
                   ))}
-                </div>
-
-                {/* Bottom badge */}
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
-                  <Badge variant="glow" size="md" className="px-4 py-1.5">
-                    <span className="font-display font-600 tracking-wider">ENTRE NA LIVE</span>
-                  </Badge>
                 </div>
               </div>
             </div>
@@ -234,12 +202,12 @@ export function Home() {
         </Container>
       </Section>
 
-      {/* Core Pillars — Feature cards with personality */}
+      {/* Core Pillars */}
       <Section size="loose" background="atmosphere" className="vignette">
         <Container size="lg">
           <h2 className="font-display font-800 text-display-lg text-text mb-16">Duas formas de viver a nicotinacat</h2>
 
-          <Grid cols={1} colsMd={3} gap="xl" autoFit minItemWidth="300px">
+          <Grid cols={1} colsMd={2} gap="xl" autoFit minItemWidth="300px">
             <FeatureCard
               layout="vertical"
               icon={<Users size={36} />}
@@ -253,17 +221,14 @@ export function Home() {
                   </Button>
                 </Link>
               }
-              badge={<Badge variant="glow" size="sm" color="#A855F7"><Sparkles size={10} /> Pilar</Badge>}
               className="group"
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-primary/10 to-transparent" />
-            </FeatureCard>
+            />
 
             <FeatureCard
               layout="vertical"
               icon={<Heart size={36} />}
               title="Lista de Desejos"
-              description="Explore a lista de desejos da Amazon curada e apoie a transmissão. Cada presente fortalece o conteúdo e mantém a comunidade viva."
+              description="Explore a lista de desejos e apoie a transmissão. Cada presente fortalece o conteúdo e mantém a comunidade viva."
               accent="#F43F5E"
               action={
                 <Link to="/wishlist">
@@ -272,16 +237,13 @@ export function Home() {
                   </Button>
                 </Link>
               }
-              badge={<Badge variant="glow" size="sm" color="#F43F5E"><Crown size={10} /> Apoio</Badge>}
               className="group"
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-secondary/10 to-transparent" />
-            </FeatureCard>
+            />
           </Grid>
         </Container>
       </Section>
 
-      {/* Social Links — Editorial presentation */}
+      {/* Social Links */}
       <Section size="normal" background="none">
         <Container size="lg">
           <h2 className="font-display font-700 text-display-md text-text text-center mb-10">Encontre a nicotinacat por aí</h2>
@@ -290,66 +252,36 @@ export function Home() {
             <NavigationCard
               icon={<Twitch size={24} />}
               label="Twitch"
-              description="Streams ao vivo, VODs e replays de chat"
+              description="Streams ao vivo, VODs e replays"
               accent="#9146FF"
               href={SOCIAL_LINKS.twitch}
               target="_blank"
               rel="noopener noreferrer"
               className="group h-full"
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-[#9146FF]/10 to-transparent" />
-            </NavigationCard>
+            />
 
             <NavigationCard
               icon={<Music2 size={24} />}
               label="TikTok"
-              description="Cortes curtos, desafios e bastidores"
+              description="Cortes curtos e momentos épicos"
               accent="#FF0050"
               href={SOCIAL_LINKS.tiktok}
               target="_blank"
               rel="noopener noreferrer"
               className="group h-full"
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-[#FF0050]/10 to-transparent" />
-            </NavigationCard>
+            />
 
             <NavigationCard
               icon={<MessageCircle size={24} />}
               label="Discord"
-              description="Chat da comunidade, anúncios e canais de voz"
+              description="Chat da comunidade e anúncios"
               accent="#5865F2"
               href={SOCIAL_LINKS.discord}
               target="_blank"
               rel="noopener noreferrer"
               className="group h-full"
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-[#5865F2]/10 to-transparent" />
-            </NavigationCard>
+            />
           </Grid>
-        </Container>
-      </Section>
-
-      {/* Stats Bar — Subtle credibility */}
-      <Section size="tight" background="abyss" divider>
-        <Container size="lg">
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-10 md:gap-16 max-w-xl mx-auto">
-            <StatCard
-              layout="vertical"
-              icon={<Zap size={20} />}
-              label="Visualizações em Destaque"
-              value={formatNumber(totalViews)}
-              accent="#A855F7"
-              className="bg-surface/40 backdrop-blur-sm border border-border/50 w-full sm:w-52"
-            />
-            <StatCard
-              layout="vertical"
-              icon={<MessageCircle size={20} />}
-              label="Posts Totais"
-              value={formatNumber(totalPosts)}
-              accent="#F43F5E"
-              className="bg-surface/40 backdrop-blur-sm border border-border/50 w-full sm:w-52"
-            />
-          </div>
         </Container>
       </Section>
     </div>

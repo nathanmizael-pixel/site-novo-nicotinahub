@@ -74,10 +74,10 @@ export function Community() {
 
   async function handleLike(postId: string) {
     if (!session) return;
-    
+
     const post = posts.find((p) => p.id === postId);
     const authorId = post?.author_id;
-    
+
     const { data: existing } = await supabase
       .from('likes')
       .select('id')
@@ -162,19 +162,14 @@ export function Community() {
       <Container size="xl">
         {/* Header */}
         <Stack gap="sm" align="center" className="mb-10 text-center animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-            <Sparkles size={14} className="text-primary" />
-            <span className="font-display font-600 text-sm text-text">A Comunidade</span>
-          </div>
           <h1 className="font-display font-800 text-display-lg text-text">Comunidade</h1>
-          <p className="text-body-md text-text-muted max-w-xl">Compartilhe suas ideias, siga outros viajantes e construa sua reputação na comunidade.</p>
+          <p className="text-body-md text-text-muted max-w-xl">Compartilhe ideias e conecte-se com a comunidade.</p>
         </Stack>
 
         {/* Composer */}
         <div className="mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
           {session ? (
             <Card variant="elevated" padding="lg" className="relative overflow-hidden">
-              <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-primary/5 to-transparent" />
               <div className="relative flex gap-4">
                 <div className="relative flex-shrink-0">
                   <Avatar profile={profile} size="lg" />
@@ -186,14 +181,13 @@ export function Community() {
                 </div>
                 <div className="flex-1">
                   <textarea
-                    placeholder="O que ecoa no vazio?"
+                    placeholder="O que está acontecendo?"
                     value={newPost}
                     onChange={(e) => setNewPost(e.target.value)}
                     rows={3}
                     className="w-full px-4 py-3 bg-abyss border border-border/50 rounded-xl text-text placeholder:text-text-dim focus:border-primary/50 focus:shadow-glow-primary outline-none resize-none transition-all duration-200 min-h-[44px]"
                   />
-                  <div className="flex items-center justify-between mt-3">
-                    <span className="text-xs text-text-dim">Sua voz ecoa na comunidade</span>
+                  <div className="flex items-center justify-end mt-3">
                     <Button size="sm" variant="primary" icon={<Send size={14} />} loading={posting} onClick={handlePost} disabled={!newPost.trim() || posting} className="min-h-[44px]">
                       Publicar
                     </Button>
@@ -203,12 +197,8 @@ export function Community() {
             </Card>
           ) : (
             <Card variant="elevated" padding="lg" className="text-center relative overflow-hidden">
-              <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-secondary/5 to-transparent" />
               <div className="relative">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary/10 mb-4">
-                  <Sparkles size={28} className="text-secondary" />
-                </div>
-                <p className="font-display font-600 text-lg text-text mb-1">Entre para publicar, curtir e comentar.</p>
+                <p className="font-display font-600 text-lg text-text mb-3">Entre para publicar, curtir e comentar.</p>
                 <Link to="/auth">
                   <Button variant="primary" size="md" icon={<Sparkles size={14} />} className="min-h-[44px]">Entrar na Comunidade</Button>
                 </Link>
@@ -227,8 +217,8 @@ export function Community() {
             </div>
           ) : posts.length === 0 ? (
             <EmptyState
-              title="O vazio escuta."
-              description="Seja a primeira voz a ecoar."
+              title="Nenhum post encontrado."
+              description="Seja a primeira pessoa a publicar."
               icon={<Sparkles size={48} className="text-primary/50 animate-float" />}
               className="py-16 animate-fade-in-up"
             />
@@ -237,38 +227,38 @@ export function Community() {
               {posts.map((post, index) => {
                 const classInfo = getClassInfo(post.author?.class_id);
                 return (
-<PostCard
-                  key={post.id}
-                  postId={post.id}
-                  author={{
-                    id: post.author_id,
-                    display_name: post.author?.display_name || 'Desconhecido',
-                    username: post.author?.username || 'desconhecido',
-                    avatar_url: post.author?.avatar_url,
-                    class_id: post.author?.class_id,
-                  }}
-                  content={post.content}
-                  created_at={post.created_at}
-                  like_count={post.like_count || 0}
-                  comment_count={post.comment_count || 0}
-                  liked_by_me={post.liked_by_me || false}
-                  media_url={post.media_url}
-                  accent={classInfo?.color || '#A855F7'}
-                  classColor={classInfo?.color}
-                  classIcon={classInfo?.icon}
-                  className={classInfo?.name}
-                  onLike={handleLike}
-                  onShare={() => {}}
-                  onToggleComments={toggleComments}
-                  isExpanded={expandedComments.has(post.id)}
-                  comments={commentsByPost[post.id] || []}
-                  commentInput={commentInputs[post.id] || ''}
-                  onCommentInputChange={(value: string) => setCommentInputs((prev) => ({ ...prev, [post.id]: value }))}
-                  onSubmitComment={handleComment}
-                  isCommenting={commentingPostId === post.id}
-                  animate
-                  animationDelay={staggerDelays[index] || 0}
-                />
+                  <PostCard
+                    key={post.id}
+                    postId={post.id}
+                    author={{
+                      id: post.author_id,
+                      display_name: post.author?.display_name || 'Desconhecido',
+                      username: post.author?.username || 'desconhecido',
+                      avatar_url: post.author?.avatar_url,
+                      class_id: post.author?.class_id,
+                    }}
+                    content={post.content}
+                    created_at={post.created_at}
+                    like_count={post.like_count || 0}
+                    comment_count={post.comment_count || 0}
+                    liked_by_me={post.liked_by_me || false}
+                    media_url={post.media_url}
+                    accent={classInfo?.color || '#A855F7'}
+                    classColor={classInfo?.color}
+                    classIcon={classInfo?.icon}
+                    className={classInfo?.name}
+                    onLike={handleLike}
+                    onShare={() => {}}
+                    onToggleComments={toggleComments}
+                    isExpanded={expandedComments.has(post.id)}
+                    comments={commentsByPost[post.id] || []}
+                    commentInput={commentInputs[post.id] || ''}
+                    onCommentInputChange={(value: string) => setCommentInputs((prev) => ({ ...prev, [post.id]: value }))}
+                    onSubmitComment={handleComment}
+                    isCommenting={commentingPostId === post.id}
+                    animate
+                    animationDelay={staggerDelays[index] || 0}
+                  />
                 );
               })}
             </div>

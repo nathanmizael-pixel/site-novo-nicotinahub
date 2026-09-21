@@ -27,7 +27,7 @@ export const FeatureCard = forwardRef<HTMLDivElement, FeatureCardProps>(
       <div
         ref={ref}
         className={cn(
-          'relative overflow-hidden rounded-2xl bg-surface/60 backdrop-blur-sm border border-border',
+          'relative overflow-hidden rounded-2xl bg-surface/80 border border-border',
           'transition-all duration-500 ease-out-expo',
           'hover:border-primary/30 hover:shadow-depth-3 hover:-translate-y-1',
           layout === 'horizontal' ? 'flex flex-col md:flex-row' : 'flex flex-col',
@@ -144,7 +144,7 @@ export const ContentCard = forwardRef<HTMLDivElement, ContentCardProps>(
       <article
         ref={ref}
         className={cn(
-          'relative rounded-xl bg-surface/60 backdrop-blur-sm border border-border',
+          'relative rounded-xl bg-surface/80 border border-border',
           'transition-all duration-300 ease-out-expo',
           'hover:border-primary/20 hover:shadow-depth-1',
           className
@@ -281,7 +281,7 @@ export const PostCard = forwardRef<HTMLDivElement, PostCardProps>(
       <article
         ref={ref}
         className={cn(
-          'relative rounded-2xl bg-surface/60 backdrop-blur-sm border border-border',
+          'relative rounded-2xl bg-surface/80 border border-border',
           'transition-all duration-500 ease-out-expo',
           'hover:border-primary/20 hover:shadow-depth-2',
           animate && 'animate-reveal-up',
@@ -450,7 +450,7 @@ export const ProfileCard = forwardRef<HTMLDivElement, ProfileCardProps>(
       <div
         ref={ref}
         className={cn(
-          'relative rounded-2xl overflow-hidden bg-surface/60 backdrop-blur-sm border border-border',
+          'relative rounded-2xl overflow-hidden bg-surface/80 border border-border',
           className
         )}
         {...props}
@@ -535,7 +535,7 @@ export const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
       <div
         ref={ref}
         className={cn(
-          'relative rounded-xl bg-surface/60 backdrop-blur-sm border border-border p-6',
+          'relative rounded-xl bg-surface/80 border border-border p-6',
           'transition-all duration-300 ease-out-expo hover:border-primary/20 hover:shadow-depth-1',
           layout === 'horizontal' ? 'flex items-center gap-6' : 'flex flex-col items-center text-center',
           className
@@ -606,7 +606,7 @@ export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(
       <div
         ref={ref}
         className={cn(
-          'relative rounded-xl overflow-hidden bg-surface/60 backdrop-blur-sm border border-border',
+          'relative rounded-xl overflow-hidden bg-surface/80 border border-border',
           'transition-all duration-500 ease-out-expo',
           'hover:shadow-depth-3 hover:-translate-y-1 hover:border-primary/30',
           className
@@ -688,7 +688,7 @@ export function NavigationCard({ className, icon, label, description, badge, act
           'transition-all duration-300 ease-out-expo',
           active
             ? 'bg-primary/15 border border-primary/30 shadow-glow-primary text-text'
-            : 'bg-surface/60 backdrop-blur-sm border border-border hover:border-primary/30 hover:bg-surface-elevated/50 hover:shadow-depth-1 text-text',
+            : 'bg-surface/80 border border-border hover:border-primary/30 hover:bg-surface-elevated/50 hover:shadow-depth-1 text-text',
           'focus-ring',
           className
         )}

@@ -13,11 +13,7 @@ export function Footer() {
               <SkullLogo size={28} />
               <span className="font-display font-700 text-lg tracking-wider text-text">nicotinacat</span>
             </div>
-            <p className="text-sm text-text-muted max-w-md leading-relaxed">
-              O ponto central da comunidade nicotinacat. Conecte e compartilhe
-              em um mundo dark fantasy feito para quem caminha na fronteira entre mundos.
-            </p>
-            <div className="mt-6 pt-4 border-t border-border">
+            <div className="mt-2 pt-2">
               <p className="text-sm text-text-muted leading-relaxed font-light">
                 oi eu tenho tres gatos<br />
                 e uma camiseta do korn :)

@@ -7,7 +7,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { Section, Container, Stack } from '@/components/layout/LayoutPrimitives';
 import { SOCIAL_LINKS } from '@/data/social';
-import { Heart, ShoppingBag, ExternalLink, Package } from 'lucide-react';
+import { ShoppingBag, ExternalLink, Package } from 'lucide-react';
 
 export function Wishlist() {
   const [items, setItems] = useState<WishlistItem[]>([]);
@@ -33,13 +33,9 @@ export function Wishlist() {
 
       <Container size="xl">
         <Stack gap="sm" align="center" className="mb-12 text-center animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-            <Heart size={14} className="text-primary" />
-            <span className="font-display font-600 text-sm text-text">Lista Curada</span>
-          </div>
           <h1 className="font-display font-800 text-display-lg text-text">Lista de Desejos</h1>
           <p className="text-body-md text-text-muted max-w-xl">
-            Itens selecionados para a transmissão. Cada presente mantém o vórtice aberto.
+            Itens selecionados para apoiar a transmissão.
           </p>
         </Stack>
 
@@ -57,9 +53,9 @@ export function Wishlist() {
           </div>
         ) : items.length === 0 ? (
           <EmptyState
-            title="A forja está fria."
+            title="Nenhum item encontrado."
             description="Itens sendo escolhidos a dedo."
-            icon={<Heart size={48} className="text-primary/50" />}
+            icon={<Package size={48} className="text-primary/50" />}
             className="py-16 animate-fade-in-up"
           />
         ) : (
