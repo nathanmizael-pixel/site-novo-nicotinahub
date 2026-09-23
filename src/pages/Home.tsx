@@ -8,13 +8,15 @@ import { SkullLogo } from '@/components/SkullLogo';
 import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap } from 'lucide-react';
 import { videosRepository } from '@/lib/videos';
 import { SOCIAL_LINKS } from '@/data/social';
-import { usePageEntry } from '@/hooks/useMotion';
+import { usePageEntry, useParallax, useReducedMotion, useStagger } from '@/hooks/useMotion';
 import { useState, useEffect, useCallback } from 'react';
 
 export function Home() {
   const isPageVisible = usePageEntry(0);
+  const parallaxOffset = useParallax(0.15);
+  const reducedMotion = useReducedMotion();
   const [featuredVideos, setFeaturedVideos] = useState<Array<{ id: string; title: string; platform: 'twitch' | 'tiktok'; thumbnail: string; author: string; date: string; views: number; category: string; duration: string; url: string; featured?: boolean }>>([]);
-  const [videoDelays, setVideoDelays] = useState<number[]>([]);
+  const videoStagger = useStagger(featuredVideos.length, 80, 400);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,7 +26,6 @@ export function Home() {
     try {
       const videos = await videosRepository.findFeatured(3);
       setFeaturedVideos(videos);
-      setVideoDelays(videos.map((_, i) => i * 80));
     } catch {
       setError('Não foi possível carregar os vídeos. Tente novamente.');
     } finally {
@@ -71,43 +72,96 @@ export function Home() {
               </Cluster>
             </div>
 
-            {/* Right: Skull Hero — Brand centerpiece */}
-            <div className="relative flex items-center justify-center lg:pl-8 animate-float-slow" style={{ animationDelay: isPageVisible ? '200ms' : '400ms' }}>
-              <div className="relative w-full max-w-md aspect-square">
-                {/* Atmospheric glow layers */}
+            {/* Right: Skull Hero — Brand centerpiece with parallax */}
+            <div className="relative flex items-center justify-center lg:pl-8">
+              <div
+                className="relative w-full max-w-md aspect-square"
+                style={{
+                  transform: parallaxOffset ? `translateY(${parallaxOffset * 0.3}px)` : undefined,
+                }}
+              >
+                {/* Depth: outer nebula aura with soft pulse */}
+                <div
+                  className="absolute -inset-[8%] bg-gradient-to-br from-primary/15 via-secondary/8 to-transparent rounded-full blur-[110px] opacity-40"
+                  style={{ animation: reducedMotion ? undefined : 'pulse-soft 3.5s ease-in-out infinite' }}
+                />
+
+                {/* Depth: atmospheric glow layers */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/5 rounded-full blur-3xl" />
                 <div className="absolute inset-0 bg-gradient-to-t from-void/60 to-transparent rounded-full" />
+                <div className="absolute inset-0 rounded-full shadow-[inset_0_0_40px_rgba(168,85,247,0.08)]" />
 
-                {/* Main skull */}
-                <SkullLogo size={160} className="relative z-10 drop-shadow-[0_0_40px_rgba(168,85,247,0.3)]" />
-
-                {/* Rotating orbit rings */}
-                <div className="absolute inset-0 -rotate-12 animate-spin-slow opacity-20">
+                {/* Orbital ring 1 — outer (slow CCW) */}
+                <div
+                  className="absolute inset-0 -rotate-12 opacity-20"
+                  style={{ animation: reducedMotion ? undefined : 'orbit-slow 32s linear infinite' }}
+                >
                   <svg className="w-full h-full" viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="90" fill="none" stroke="url(#primary)" strokeWidth="0.5" strokeDasharray="8,12" />
+                    <circle cx="100" cy="100" r="86" fill="none" stroke="url(#orb-primary)" strokeWidth="0.75" strokeDasharray="6,12" />
                     <defs>
-                      <linearGradient id="primary" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#A855F7" stopOpacity="0.3" />
+                      <linearGradient id="orb-primary" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#A855F7" stopOpacity="0.4" />
                         <stop offset="100%" stopColor="#F43F5E" stopOpacity="0" />
                       </linearGradient>
                     </defs>
                   </svg>
                 </div>
 
-                {/* Floating particles (reduced to 3 for elegance) */}
+                {/* Orbital ring 2 — inner (slow CW, reverse direction) */}
+                <div
+                  className="absolute inset-0 rotate-3 opacity-12"
+                  style={{ animation: reducedMotion ? undefined : 'orbit-reverse 26s linear infinite' }}
+                >
+                  <svg className="w-full h-full" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="66" fill="none" stroke="url(#orb-secondary)" strokeWidth="0.5" strokeDasharray="4,8" />
+                    <defs>
+                      <linearGradient id="orb-secondary" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#F43F5E" stopOpacity="0.3" />
+                        <stop offset="50%" stopColor="#A855F7" stopOpacity="0.1" />
+                        <stop offset="100%" stopColor="#000" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+
+                {/* Main skull with float + glow */}
+                <div
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+                  style={{ animation: reducedMotion ? undefined : 'float 6s ease-in-out infinite' }}
+                >
+                  <SkullLogo
+                    size={160}
+                    className="drop-shadow-[0_0_50px_rgba(168,85,247,0.4)] drop-shadow-[0_0_25px_rgba(244,63,94,0.3)]"
+                  />
+                </div>
+
+                {/* Constellation of orbital particles */}
                 <div className="absolute inset-0 pointer-events-none">
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="absolute w-1.5 h-1.5 rounded-full bg-primary/60 animate-float"
-                      style={{
-                        left: `${20 + i * 25}%`,
-                        top: `${30 + (i * 15) % 40}%`,
-                        animationDelay: `${i * 0.9}s`,
-                        animationDuration: `${5 + i * 0.5}s`,
-                      }}
-                    />
-                  ))}
+                  {Array.from({ length: 12 }).map((_, i) => {
+                    const angleDeg = i * 30;
+                    const angleRad = (angleDeg * Math.PI) / 180;
+                    const radius = 64 + (i % 3) * 6;
+                    const relX = Math.cos(angleRad) * radius;
+                    const relY = Math.sin(angleRad) * radius;
+                    const sizes = [1, 1.5, 2];
+                    const opacities = [0.3, 0.45, 0.6];
+                    return (
+                      <div
+                        key={i}
+                        className="absolute rounded-full bg-primary"
+                        style={{
+                          width: `${sizes[i % 3]}px`,
+                          height: `${sizes[i % 3]}px`,
+                          left: `calc(50% + ${relX}px)`,
+                          top: `calc(50% + ${relY}px)`,
+                          transform: 'translate(-50%, -50%)',
+                          opacity: opacities[i % 3],
+                          animationDelay: `${i * 0.12}s`,
+                          animation: reducedMotion ? undefined : `twinkle ${2 + (i % 3)}s ease-in-out infinite`,
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -120,7 +174,7 @@ export function Home() {
         <Container size="lg">
           <Stack gap="md" align="start" className="mb-12">
             <div>
-              <h2 className="font-display font-800 text-display-md text-text">Momentos em Destaque</h2>
+              <h2 className="font-display font-800 text-display-md text-text animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>Momentos em Destaque</h2>
             </div>
           </Stack>
 
@@ -167,7 +221,7 @@ export function Home() {
                       size="sm"
                       color={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
                       className="animate-reveal"
-                      style={{ animationDelay: `${videoDelays[index]}ms` }}
+                      style={{ animationDelay: `${videoStagger[index] ?? 0}ms` }}
                     >
                       {video.platform === 'twitch' ? <Twitch size={10} /> : <Music2 size={10} />}
                       {video.platform}
@@ -192,9 +246,9 @@ export function Home() {
                   }}
                   tabIndex={0}
                   role="button"
-                  className="cursor-pointer animate-reveal-up"
-                  style={{ animationDelay: `${videoDelays[index]}ms` }}
-                >
+                className="cursor-pointer animate-reveal-up"
+                style={{ animationDelay: `${videoStagger[index] ?? 0}ms` }}
+              >
                 </MediaCard>
               ))}
             </Grid>
@@ -205,7 +259,7 @@ export function Home() {
       {/* Core Pillars */}
       <Section size="loose" background="atmosphere" className="vignette">
         <Container size="lg">
-          <h2 className="font-display font-800 text-display-lg text-text mb-16">Duas formas de viver a nicotinacat</h2>
+          <h2 className="font-display font-800 text-display-lg text-text mb-16 animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>Duas formas de viver a nicotinacat</h2>
 
           <Grid cols={1} colsMd={2} gap="xl" autoFit minItemWidth="300px">
             <FeatureCard
@@ -221,7 +275,8 @@ export function Home() {
                   </Button>
                 </Link>
               }
-              className="group"
+              className="group animate-reveal-up"
+              style={{ animationDelay: isPageVisible ? '200ms' : '0ms' }}
             />
 
             <FeatureCard
@@ -237,7 +292,8 @@ export function Home() {
                   </Button>
                 </Link>
               }
-              className="group"
+              className="group animate-reveal-up"
+              style={{ animationDelay: isPageVisible ? '300ms' : '0ms' }}
             />
           </Grid>
         </Container>
@@ -246,7 +302,7 @@ export function Home() {
       {/* Social Links */}
       <Section size="normal" background="none">
         <Container size="lg">
-          <h2 className="font-display font-700 text-display-md text-text text-center mb-10">Encontre a nicotinacat por aí</h2>
+          <h2 className="font-display font-700 text-display-md text-text text-center mb-10 animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>Encontre a nicotinacat por aí</h2>
 
           <Grid cols={1} colsMd={3} gap="lg" autoFit minItemWidth="260px">
             <NavigationCard
@@ -257,7 +313,8 @@ export function Home() {
               href={SOCIAL_LINKS.twitch}
               target="_blank"
               rel="noopener noreferrer"
-              className="group h-full"
+              className="group h-full animate-reveal-up"
+              style={{ animationDelay: isPageVisible ? '200ms' : '0ms' }}
             />
 
             <NavigationCard
@@ -268,7 +325,8 @@ export function Home() {
               href={SOCIAL_LINKS.tiktok}
               target="_blank"
               rel="noopener noreferrer"
-              className="group h-full"
+              className="group h-full animate-reveal-up"
+              style={{ animationDelay: isPageVisible ? '300ms' : '0ms' }}
             />
 
             <NavigationCard
@@ -279,7 +337,8 @@ export function Home() {
               href={SOCIAL_LINKS.discord}
               target="_blank"
               rel="noopener noreferrer"
-              className="group h-full"
+              className="group h-full animate-reveal-up"
+              style={{ animationDelay: isPageVisible ? '400ms' : '0ms' }}
             />
           </Grid>
         </Container>

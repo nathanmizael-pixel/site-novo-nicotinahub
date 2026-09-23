@@ -45,32 +45,38 @@ export function TikTokPlayer({
 
   // postMessage event listener for TikTok player API
   const handleMessage = useCallback((event: MessageEvent) => {
-    // Verify origin if needed, TikTok embeds communicate via postMessage
-    if (!event.data || typeof event.data !== 'string') {
-      try {
-        const data = typeof event.data === 'object' ? event.data : JSON.parse(event.data);
-        if (data && data.type) {
-          switch (data.type) {
-            case 'onPlayerReady':
-              setIsLoaded(true);
-              break;
-            case 'onStateChange':
-              if (data.state === 'PLAYING' || data.isPlaying === true) setIsPlaying(true);
-              if (data.state === 'PAUSED' || data.isPlaying === false) setIsPlaying(false);
-              break;
-            case 'onCurrentTime':
-              if (typeof data.currentTime === 'number') setCurrentTime(data.currentTime);
-              break;
-            case 'onMute':
-              setIsMuted(Boolean(data.isMuted));
-              break;
-            case 'onPlayerError':
-              setHasError(true);
-              break;
-          }
-        }
-      } catch {
-        // Ignore non-JSON messages from other sources
+    // Only accept messages from the TikTok embed iframe origin
+    if (event.origin !== 'https://www.tiktok.com') return;
+    // TikTok embed API sends stringified JSON; tolerate raw objects too
+    if (!event.data) return;
+
+    let data: unknown;
+    try {
+      data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+    } catch {
+      // Ignore non-JSON messages from other sources
+      return;
+    }
+
+    if (data && typeof data === 'object' && 'type' in (data as Record<string, unknown>)) {
+      const d = data as Record<string, unknown>;
+      switch (d.type) {
+        case 'onPlayerReady':
+          setIsLoaded(true);
+          break;
+        case 'onStateChange':
+          if (d.state === 'PLAYING' || d.isPlaying === true) setIsPlaying(true);
+          if (d.state === 'PAUSED' || d.isPlaying === false) setIsPlaying(false);
+          break;
+        case 'onCurrentTime':
+          if (typeof d.currentTime === 'number') setCurrentTime(d.currentTime);
+          break;
+        case 'onMute':
+          setIsMuted(Boolean(d.isMuted));
+          break;
+        case 'onPlayerError':
+          setHasError(true);
+          break;
       }
     }
   }, []);
@@ -85,7 +91,7 @@ export function TikTokPlayer({
       try {
         iframeRef.current.contentWindow.postMessage(
           JSON.stringify({ type: 'command', func: action, args: value !== undefined ? [value] : [] }),
-          '*'
+          'https://www.tiktok.com'
         );
       } catch {
         // Fallback if postMessage fails
@@ -132,7 +138,7 @@ export function TikTokPlayer({
       ref={containerRef}
       className={cn(
         'relative rounded-xl overflow-hidden bg-void border border-border group',
-        'shadow-[0_0_24px_rgba(168,85,247,0.1)] hover:border-primary/40 transition-all duration-300',
+        'shadow-[0_0_24px_rgba(168,85,247,0.08)] hover:border-primary/30 hover:shadow-[0_0_32px_rgba(168,85,247,0.15)] transition-all duration-300 ease-out-expo',
         aspectStyles[aspectRatio],
         className
       )}
@@ -140,8 +146,8 @@ export function TikTokPlayer({
       {!isVisible ? (
         // Placeholder before intersecting viewport
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-abyss text-text-dim">
-          <Loader2 size={28} className="animate-spin text-primary/60 mb-2" />
-          <span className="text-xs font-mono tracking-wider">NICOTINACAT TIKTOK PLAYER</span>
+          <Loader2 size={28} className="animate-spin text-primary/60 mb-2 drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]" />
+          <span className="text-xs font-mono tracking-wider text-primary/40">NICOTINACAT TIKTOK PLAYER</span>
         </div>
       ) : hasError ? (
         // Error state if embed fails
@@ -152,7 +158,7 @@ export function TikTokPlayer({
             href={`https://www.tiktok.com/@nicotinaclipes/video/${videoId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 text-xs text-primary-bright underline"
+            className="mt-2 text-xs text-primary underline"
           >
             Abrir diretamente no TikTok ↗
           </a>
@@ -173,36 +179,36 @@ export function TikTokPlayer({
           {/* Loading spinner overlay until loaded */}
           {!isLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-void/80 backdrop-blur-sm pointer-events-none">
-              <Loader2 size={24} className="animate-spin text-primary" />
+              <Loader2 size={24} className="animate-spin text-primary drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]" />
             </div>
           )}
 
           {/* Custom Nicotinacat Player Shell Controls Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-void/90 via-void/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-between gap-2 pointer-events-auto">
-            <div className="flex items-center gap-2">
+          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-void/90 via-void/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out-expo flex items-center justify-between gap-2 pointer-events-auto motion-reduce:transition-none">
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={togglePlay}
-                className="w-8 h-8 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/40 flex items-center justify-center text-primary-bright transition-colors"
+                className="w-8 h-8 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/40 flex items-center justify-center text-primary-bright hover:text-primary transition-all duration-200 hover:scale-105 motion-reduce:hover:scale-100"
                 aria-label={isPlaying ? 'Pausar' : 'Reproduzir'}
               >
                 {isPlaying ? <Pause size={14} /> : <Play size={14} className="ml-0.5" />}
               </button>
               <button
                 onClick={toggleMute}
-                className="w-8 h-8 rounded-full bg-surface/60 hover:bg-surface border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors"
+                className="w-8 h-8 rounded-full bg-surface/60 hover:bg-surface border border-border flex items-center justify-center text-text-muted hover:text-text transition-all duration-200 hover:scale-105 motion-reduce:hover:scale-100"
                 aria-label={isMuted ? 'Ativar som' : 'Silenciar'}
               >
                 {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <span className="text-[10px] font-mono text-text-dim">
                 {Math.floor(currentTime / 60)}:{Math.floor(currentTime % 60).toString().padStart(2, '0')}
               </span>
               <button
                 onClick={toggleFullscreen}
-                className="w-8 h-8 rounded-full bg-surface/60 hover:bg-surface border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors"
+                className="w-8 h-8 rounded-full bg-surface/60 hover:bg-surface border border-border flex items-center justify-center text-text-muted hover:text-text transition-all duration-200 hover:scale-105 motion-reduce:hover:scale-100"
                 aria-label="Tela cheia"
               >
                 <Maximize2 size={14} />

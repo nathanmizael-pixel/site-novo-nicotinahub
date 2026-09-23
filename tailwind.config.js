@@ -154,6 +154,10 @@ export default {
         'coin-spin': 'coinSpin 0.7s ease-out',
         'ripple': 'ripple 0.4s ease-out',
         'bounce-subtle': 'bounceSubtle 0.5s ease-out',
+        'orbit-slow': 'orbit 30s linear infinite',
+        'orbit-reverse': 'orbit 25s linear infinite reverse',
+        'twinkle': 'twinkle 2s ease-in-out infinite',
+        'pulse-soft': 'pulseSoft 3.5s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
@@ -177,6 +181,9 @@ export default {
         coinSpin: { '0%': { transform: 'rotateY(0)' }, '100%': { transform: 'rotateY(720deg)' } },
         ripple: { '0%': { transform: 'scale(0)', opacity: '0.5' }, '100%': { transform: 'scale(2.5)', opacity: '0' } },
         bounceSubtle: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } },
+        orbit: { '0%': { transform: 'rotate(0deg)' }, '100%': { transform: 'rotate(360deg)' } },
+        twinkle: { '0%, 100%': { opacity: '0.2' }, '50%': { opacity: '0.8' } },
+        pulseSoft: { '0%, 100%': { opacity: '0.25' }, '50%': { opacity: '0.45' } },
       },
       backgroundImage: {
         'noise': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")",

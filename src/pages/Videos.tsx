@@ -8,13 +8,17 @@ import { SOCIAL_LINKS } from '@/data/social';
 import { Music2, Plus, ExternalLink, RefreshCw, Zap } from 'lucide-react';
 import { TikTokPlayer } from '@/components/TikTokPlayer';
 import { Modal } from '@/components/ui/Modal';
+import { usePageEntry, useParallax, useStagger } from '@/hooks/useMotion';
 
 export function Videos() {
   const { addToast } = useToast();
   const { isAdmin } = useAuth();
+  const isPageVisible = usePageEntry(0);
+  const parallaxOffset = useParallax(0.1);
   const [videos, setVideos] = useState<VideoData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const videoStagger = useStagger(videos.length, 60, 300);
 
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -103,8 +107,8 @@ export function Videos() {
         <Section size="hero" background="atmosphere" className="vignette">
           <Container size="lg">
             <div className="text-center mb-12">
-              <h1 className="font-display font-800 text-display-lg text-text mb-4">@nicotinaclipes</h1>
-              <p className="text-body-md text-text-muted max-w-xl mx-auto">
+              <h1 className="font-display font-800 text-display-lg text-text mb-4 animate-reveal-up">@nicotinaclipes</h1>
+              <p className="text-body-md text-text-muted max-w-xl mx-auto animate-reveal-up" style={{ animationDelay: '100ms' }}>
                 Carregando os melhores clipes...
               </p>
             </div>
@@ -112,12 +116,17 @@ export function Videos() {
         </Section>
         <Section size="normal">
           <Container size="xl">
-            <div className="space-y-4" role="status" aria-label="Carregando vídeos">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="animate-shimmer" style={{ animationDelay: `${i * 60}ms` }}>
-                  <div className="aspect-video rounded-xl bg-abyss" />
-                </div>
-              ))}
+            <div className="space-y-6" role="status" aria-label="Carregando vídeos">
+              <div className="animate-shimmer" style={{ animationDelay: '0ms' }}>
+                <div className="aspect-[9/16] w-44 rounded-xl bg-abyss" />
+              </div>
+              <Grid cols={2} colsMd={3} colsLg={4} gap="md">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="animate-shimmer" style={{ animationDelay: `${(i + 1) * 60}ms` }}>
+                    <div className="aspect-[9/16] w-full rounded-xl bg-abyss" />
+                  </div>
+                ))}
+              </Grid>
             </div>
           </Container>
         </Section>
@@ -164,28 +173,28 @@ export function Videos() {
       <Section size="hero" background="atmosphere" className="vignette pb-8">
         <Container size="lg">
           <Stack gap="md" align="center" className="text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-border">
-              <Music2 size={13} className="text-primary-bright" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-border animate-reveal-up" style={{ animationDelay: isPageVisible ? '50ms' : '0ms' }}>
+              <Music2 size={13} className="text-primary" />
               <span className="font-display font-600 text-xs tracking-wider text-text">TikTok Creator</span>
             </div>
-            <h1 className="font-display font-900 text-display-xl text-text tracking-tight">@nicotinaclipes</h1>
-            <p className="text-body-md text-text-muted max-w-md mx-auto">
+            <h1 className="font-display font-900 text-display-xl text-text tracking-tight animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>@nicotinaclipes</h1>
+            <p className="text-body-md text-text-muted max-w-md mx-auto animate-reveal-up" style={{ animationDelay: isPageVisible ? '150ms' : '0ms' }}>
               Clipes e momentos do Nicotinacat.
             </p>
-            <div>
+            <div className="animate-reveal-up" style={{ animationDelay: isPageVisible ? '200ms' : '0ms' }}>
               <a
                 href={SOCIAL_LINKS.tiktok}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button variant="primary" size="md" icon={<ExternalLink size={14} />} className="bg-primary hover:bg-primary-bright text-void font-600 border-0 shadow-glow-sm">
+                <Button variant="primary" size="md" icon={<ExternalLink size={14} />} className="bg-primary text-void font-600 border-0 shadow-glow-sm">
                   Ver no TikTok
                 </Button>
               </a>
             </div>
 
             {isAdmin && (
-              <div className="flex gap-2 pt-4">
+              <div className="flex gap-2 pt-4 animate-reveal-up" style={{ animationDelay: isPageVisible ? '250ms' : '0ms' }}>
                 <Button
                   variant="primary"
                   size="sm"
@@ -200,7 +209,7 @@ export function Videos() {
                   onClick={handleSyncTikTok}
                   loading={syncing}
                   disabled={syncing}
-                  icon={!syncing ? <RefreshCw size={14} /> : undefined}
+                  icon={!syncing ? (<RefreshCw size={14} />) : undefined}
                 >
                   {syncing ? 'Sincronizando...' : 'Sincronizar'}
                 </Button>
@@ -214,48 +223,56 @@ export function Videos() {
       <Section size="normal" background="none">
         <Container size="xl">
           {videos.length === 0 ? (
-            <div className="text-center py-16 text-text-muted">
+            <div className="text-center py-16 text-text-muted animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>
               Nenhum vídeo encontrado.
             </div>
           ) : (
-            <div className="space-y-16">
-              {/* 2. Featured Video */}
+            <div
+              className="space-y-12"
+              style={{ transform: parallaxOffset ? `translateY(${parallaxOffset * 0.05}px)` : undefined }}
+            >
+              {/* 2. Featured Video — compact showcase */}
               {featuredVideo && featuredVideo.tiktok_video_id && (
-                <div className="max-w-3xl mx-auto">
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="font-display font-700 text-sm uppercase tracking-wider text-primary-bright">Destaque Principal</span>
+                <div className="max-w-[220px] sm:max-w-[260px] mx-auto animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>
+                  <div className="mb-3 flex items-center justify-center gap-2 pb-2 border-b border-border">
+                    <span className="font-display font-700 text-xs uppercase tracking-wider text-primary">Destaque Principal</span>
                     <span className="text-xs text-text-dim font-mono">{featuredVideo.views.toLocaleString()} visualizações</span>
                   </div>
-                  <TikTokPlayer
-                    videoId={featuredVideo.tiktok_video_id}
-                    title={featuredVideo.title}
-                    aspectRatio="portrait"
-                  />
-                  <h2 className="font-display font-700 text-lg text-text mt-3">{featuredVideo.title}</h2>
+                  <div className="rounded-2xl overflow-hidden border border-border hover:border-primary/30 hover:shadow-[0_0_24px_rgba(168,85,247,0.12)] transition-all duration-300 ease-out-expo">
+                    <TikTokPlayer
+                      videoId={featuredVideo.tiktok_video_id}
+                      title={featuredVideo.title}
+                      aspectRatio="portrait"
+                    />
+                  </div>
+                  <h2 className="font-display font-700 text-sm text-text mt-3 text-center line-clamp-1">{featuredVideo.title}</h2>
                 </div>
               )}
 
-              {/* 3. TikTok Drops (9 remaining videos in 2-column grid on desktop) */}
+              {/* 3. TikTok Drops — compact grid */}
               {dropVideos.length > 0 && (
                 <div>
-                  <div className="mb-6 pb-2 border-b border-border">
+                  <div className="mb-5 pb-2 border-b border-border animate-reveal-up" style={{ animationDelay: isPageVisible ? '200ms' : '0ms' }}>
                     <h2 className="font-display font-700 text-display-sm text-text">TikTok Drops</h2>
                     <p className="text-xs text-text-muted">Últimos momentos publicados</p>
                   </div>
 
-                  <Grid cols={1} colsMd={2} gap="xl">
+                  <Grid cols={2} colsSm={3} colsMd={4} gap="md">
                     {dropVideos.map((video, index) => (
                       video.tiktok_video_id ? (
-                        <div key={video.id} className="space-y-2 animate-reveal-up" style={{ animationDelay: `${index * 60}ms` }}>
-                          <TikTokPlayer
-                            videoId={video.tiktok_video_id}
-                            title={video.title}
-                            aspectRatio="portrait"
-                          />
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-display font-600 text-sm text-text truncate max-w-[70%]">{video.title}</h3>
-                            <span className="text-xs text-text-dim font-mono">{video.views.toLocaleString()} views</span>
+                        <div
+                          key={video.id}
+                          className="w-full space-y-1.5 animate-reveal-up group"
+                          style={{ animationDelay: `${videoStagger[index + 1] ?? index * 60}ms` }}
+                        >
+                          <div className="rounded-xl overflow-hidden border border-border bg-void hover:border-primary/30 hover:shadow-[0_0_16px_rgba(168,85,247,0.08)] transition-all duration-300 ease-out-expo">
+                            <TikTokPlayer
+                              videoId={video.tiktok_video_id}
+                              title={video.title}
+                              aspectRatio="portrait"
+                            />
                           </div>
+                          <h3 className="font-display font-600 text-xs text-text truncate text-center">{video.title}</h3>
                         </div>
                       ) : null
                     ))}

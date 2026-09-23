@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { PostCard } from '@/components/ui/SemanticCards';
+import { CatSkullIcon } from '@/components/ui/CatSkullIcon';
 import { Heart, Send, Skull, Sparkles } from 'lucide-react';
 import { useStagger } from '@/hooks/useMotion';
 import { Section, Container, Stack } from '@/components/layout/LayoutPrimitives';
@@ -219,7 +220,7 @@ export function Community() {
             <EmptyState
               title="Nenhum post encontrado."
               description="Seja a primeira pessoa a publicar."
-              icon={<Sparkles size={48} className="text-primary/50 animate-float" />}
+              icon={<CatSkullIcon size={48} className="text-primary/70 animate-float drop-shadow-[0_0_12px_rgba(168,85,247,0.3)]" />}
               className="py-16 animate-fade-in-up"
             />
           ) : (
