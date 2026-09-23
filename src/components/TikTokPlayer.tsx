@@ -184,18 +184,18 @@ export function TikTokPlayer({
           )}
 
           {/* Custom Nicotinacat Player Shell Controls Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-void/90 via-void/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out-expo flex items-center justify-between gap-2 pointer-events-auto motion-reduce:transition-none">
+          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-void/90 via-void/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out-expo flex items-center justify-between gap-2 pointer-events-auto motion-reduce">
             <div className="flex items-center gap-1.5">
               <button
                 onClick={togglePlay}
-                className="w-8 h-8 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/40 flex items-center justify-center text-primary-bright hover:text-primary transition-all duration-200 hover:scale-105 motion-reduce:hover:scale-100"
+                className="w-8 h-8 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/40 flex items-center justify-center text-primary-bright hover:text-primary transition-all duration-200 hover:scale-105 motion-reduce"
                 aria-label={isPlaying ? 'Pausar' : 'Reproduzir'}
               >
                 {isPlaying ? <Pause size={14} /> : <Play size={14} className="ml-0.5" />}
               </button>
               <button
                 onClick={toggleMute}
-                className="w-8 h-8 rounded-full bg-surface/60 hover:bg-surface border border-border flex items-center justify-center text-text-muted hover:text-text transition-all duration-200 hover:scale-105 motion-reduce:hover:scale-100"
+                className="w-8 h-8 rounded-full bg-surface/60 hover:bg-surface border border-border flex items-center justify-center text-text-muted hover:text-text transition-all duration-200 hover:scale-105 motion-reduce"
                 aria-label={isMuted ? 'Ativar som' : 'Silenciar'}
               >
                 {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
@@ -208,7 +208,7 @@ export function TikTokPlayer({
               </span>
               <button
                 onClick={toggleFullscreen}
-                className="w-8 h-8 rounded-full bg-surface/60 hover:bg-surface border border-border flex items-center justify-center text-text-muted hover:text-text transition-all duration-200 hover:scale-105 motion-reduce:hover:scale-100"
+                className="w-8 h-8 rounded-full bg-surface/60 hover:bg-surface border border-border flex items-center justify-center text-text-muted hover:text-text transition-all duration-200 hover:scale-105 motion-reduce"
                 aria-label="Tela cheia"
               >
                 <Maximize2 size={14} />
