@@ -402,4 +402,16 @@
   .dynamic-width {
     --bar-width: 0%;
   }
+
+  /* Planet drift — ultra-slow continuous rotation */
+  @keyframes planet-drift {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Highlight sweep — soft lighting following planet rotation */
+  @keyframes highlight-sweep {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
+  }
 }

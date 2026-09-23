@@ -5,7 +5,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SkullLogo } from '@/components/SkullLogo';
-import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap } from 'lucide-react';
+import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Film } from 'lucide-react';
 import { videosRepository } from '@/lib/videos';
 import { SOCIAL_LINKS } from '@/data/social';
 import { usePageEntry, useParallax, useReducedMotion, useStagger } from '@/hooks/useMotion';
@@ -80,6 +80,32 @@ export function Home() {
                   transform: parallaxOffset ? `translateY(${parallaxOffset * 0.3}px)` : undefined,
                 }}
               >
+                {/* Planet — subtle continuous rotation with soft highlight following */}
+                <div
+                  className="absolute inset-0 z-0"
+                  style={{
+                    animation: reducedMotion ? undefined : 'planet-drift 60s linear infinite',
+                    transformOrigin: 'center center',
+                  }}
+                >
+                  {/* Planet base: dark sphere with atmospheric depth */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-abyss via-void to-abyss" />
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-t from-primary/5 via-transparent to-secondary/3 blur-xl opacity-60" />
+                  <div className="absolute inset-0 rounded-full shadow-[inset_0_-20px_60px_rgba(0,0,0,0.6),inset_0_20px_40px_rgba(168,85,247,0.04)]" />
+                  
+                  {/* Soft highlight band that follows rotation */}
+                  <div
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      background: 'conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(168,85,247,0.08) 90deg, rgba(244,63,94,0.06) 180deg, transparent 270deg, transparent 360deg)',
+                      animation: reducedMotion ? undefined : 'highlight-sweep 60s linear infinite',
+                    }}
+                  />
+                  
+                  {/* Atmospheric rim light */}
+                  <div className="absolute inset-[2%] rounded-full border border-primary/10 blur-sm opacity-40" />
+                </div>
+
                 {/* Depth: outer nebula aura with soft pulse */}
                 <div
                   className="absolute -inset-[8%] bg-gradient-to-br from-primary/15 via-secondary/8 to-transparent rounded-full blur-[110px] opacity-40"
@@ -124,7 +150,7 @@ export function Home() {
                   </svg>
                 </div>
 
-                {/* Main skull with float + glow */}
+                {/* Main skull centered on planet with float + glow */}
                 <div
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
                   style={{ animation: reducedMotion ? undefined : 'float 6s ease-in-out infinite' }}
@@ -259,19 +285,19 @@ export function Home() {
       {/* Core Pillars */}
       <Section size="loose" background="atmosphere" className="vignette">
         <Container size="lg">
-          <h2 className="font-display font-800 text-display-lg text-text mb-16 animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>Duas formas de viver a nicotinacat</h2>
+          <h2 className="font-display font-800 text-display-lg text-text mb-16 animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>Três formas de viver a nicotinacat</h2>
 
-          <Grid cols={1} colsMd={2} gap="xl" autoFit minItemWidth="300px">
+          <Grid cols={1} colsMd={3} gap="md" autoFit minItemWidth="260px">
             <FeatureCard
               layout="vertical"
-              icon={<Users size={36} />}
+              icon={<Users size={28} />}
               title="Comunidade"
-              description="Compartilhe seus pensamentos, siga outros viajantes e construa sua reputação na comunidade. Toda voz ecoa no escuro."
+              description="Compartilhe pensamentos, siga viajantes e construa reputação. Toda voz ecoa no escuro."
               accent="#A855F7"
               action={
                 <Link to="/community">
-                  <Button variant="primary" icon={<ArrowRight size={16} />}>
-                    Entrar na Comunidade
+                  <Button variant="primary" size="sm" icon={<ArrowRight size={14} />}>
+                    Entrar
                   </Button>
                 </Link>
               }
@@ -281,19 +307,36 @@ export function Home() {
 
             <FeatureCard
               layout="vertical"
-              icon={<Heart size={36} />}
-              title="Lista de Desejos"
-              description="Explore a lista de desejos e apoie a transmissão. Cada presente fortalece o conteúdo e mantém a comunidade viva."
-              accent="#F43F5E"
+              icon={<Film size={28} />}
+              title="Vídeos"
+              description="Assista aos melhores momentos, clipes e compilados da stream. Curados semanalmente."
+              accent="#FF0050"
               action={
-                <Link to="/wishlist">
-                  <Button variant="primary" icon={<ArrowRight size={16} />}>
-                    Ver lista de desejos
+                <Link to="/videos">
+                  <Button variant="primary" size="sm" icon={<ArrowRight size={14} />}>
+                    Assistir
                   </Button>
                 </Link>
               }
               className="group animate-reveal-up"
               style={{ animationDelay: isPageVisible ? '300ms' : '0ms' }}
+            />
+
+            <FeatureCard
+              layout="vertical"
+              icon={<Heart size={28} />}
+              title="Lista de Desejos"
+              description="Explore a wishlist e apoie a transmissão. Cada presente fortalece o conteúdo."
+              accent="#F43F5E"
+              action={
+                <Link to="/wishlist">
+                  <Button variant="primary" size="sm" icon={<ArrowRight size={14} />}>
+                    Ver lista
+                  </Button>
+                </Link>
+              }
+              className="group animate-reveal-up"
+              style={{ animationDelay: isPageVisible ? '400ms' : '0ms' }}
             />
           </Grid>
         </Container>

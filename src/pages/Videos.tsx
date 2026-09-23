@@ -243,6 +243,8 @@ export function Videos() {
                       videoId={featuredVideo.tiktok_video_id}
                       title={featuredVideo.title}
                       aspectRatio="portrait"
+                      priority
+                      thumbnail={featuredVideo.thumbnail || undefined}
                     />
                   </div>
                   <h2 className="font-display font-700 text-sm text-text mt-3 text-center line-clamp-1">{featuredVideo.title}</h2>
@@ -270,6 +272,7 @@ export function Videos() {
                               videoId={video.tiktok_video_id}
                               title={video.title}
                               aspectRatio="portrait"
+                              thumbnail={video.thumbnail || undefined}
                             />
                           </div>
                           <h3 className="font-display font-600 text-xs text-text truncate text-center">{video.title}</h3>
