@@ -100,17 +100,6 @@ export type Expedition = {
   reward_chest: boolean;
 };
 
-export type WishlistItem = {
-  id: string;
-  name: string;
-  price: string;
-  image_url: string;
-  link: string;
-  category: string;
-  status: string;
-  priority: number;
-};
-
 export type Video = {
   id: string;
   title: string;

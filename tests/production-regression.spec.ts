@@ -52,35 +52,6 @@ test.describe('Production Regression Tests', () => {
     });
   });
 
-  test.describe('Wishlist Page', () => {
-    test('empty state or item grid shows correctly', async ({ page }) => {
-      await page.goto(`${PROD_URL}/wishlist`, { waitUntil: 'domcontentloaded' });
-      await page.waitForLoadState('domcontentloaded');
-
-      const emptyState = page.locator('text=A forja está fria.').first();
-      if (await emptyState.count() > 0) {
-        await expect(emptyState).toBeVisible({ timeout: 15000 });
-        const description = page.locator('text=Itens sendo escolhidos a dedo.').first();
-        await expect(description).toBeVisible({ timeout: 15000 });
-      } else {
-        const itemGrid = page.locator('[class*="grid"]').first();
-        await expect(itemGrid).toBeVisible({ timeout: 15000 });
-      }
-    });
-
-    test('only one CTA button for Amazon exists', async ({ page }) => {
-      await page.goto(`${PROD_URL}/wishlist`, { waitUntil: 'domcontentloaded' });
-      await page.waitForLoadState('domcontentloaded');
-
-      const amazonButtons = page.locator('a[href*="amazon"]');
-      await expect(amazonButtons).toHaveCount(1);
-
-      const ctaButton = amazonButtons.first();
-      await expect(ctaButton).toBeVisible({ timeout: 15000 });
-      await expect(ctaButton).toContainText('Ver lista na Amazon');
-    });
-  });
-
   test.describe('Profile Page - Non-existent Profile', () => {
     test('shows "Perfil não encontrado" as H1', async ({ page }) => {
       await page.goto(`${PROD_URL}/profile/non-existent-id-12345`, { waitUntil: 'domcontentloaded' });

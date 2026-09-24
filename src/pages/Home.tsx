@@ -64,11 +64,15 @@ export function Home() {
                     Entrar na Comunidade
                   </Button>
                 </Link>
-                <Link to="/wishlist">
+                <a
+                  href={SOCIAL_LINKS.amazon}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Button variant="outline" size="lg" icon={<Heart size={18} />}>
-                    Apoiar a Stream
+                    Apoie a streamer
                   </Button>
-                </Link>
+                </a>
               </Cluster>
             </div>
 
@@ -320,23 +324,6 @@ export function Home() {
               }
               className="group animate-reveal-up"
               style={{ animationDelay: isPageVisible ? '300ms' : '0ms' }}
-            />
-
-            <FeatureCard
-              layout="vertical"
-              icon={<Heart size={28} />}
-              title="Lista de Desejos"
-              description="Explore a wishlist e apoie a transmissão. Cada presente fortalece o conteúdo."
-              accent="#F43F5E"
-              action={
-                <Link to="/wishlist">
-                  <Button variant="primary" size="sm" icon={<ArrowRight size={14} />}>
-                    Ver lista
-                  </Button>
-                </Link>
-              }
-              className="group animate-reveal-up"
-              style={{ animationDelay: isPageVisible ? '400ms' : '0ms' }}
             />
           </Grid>
         </Container>

@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { SkullLogo } from '@/components/SkullLogo';
 import { useAuth } from '@/context/AuthContext';
 import { Avatar } from '@/components/ui/Avatar';
-import { Home, Heart, Users, Bell, Menu, X, Film, LogOut, User } from 'lucide-react';
+import { Home, Users, Bell, Menu, X, Film, LogOut, User } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { timeAgo } from '@/lib/utils';
@@ -11,7 +11,6 @@ const NAV_ITEMS = [
   { path: '/', label: 'Início', icon: Home },
   { path: '/videos', label: 'Vídeos', icon: Film },
   { path: '/community', label: 'Comunidade', icon: Users },
-  { path: '/wishlist', label: 'Lista de Desejos', icon: Heart },
 ];
 
 export function Header() {
