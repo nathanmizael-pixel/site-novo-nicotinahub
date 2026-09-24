@@ -6,11 +6,55 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SkullLogo } from '@/components/SkullLogo';
 import { CommunitySkullIcon, VideoSkullIcon } from '@/components/ui/HomeSkullIcons';
-import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap } from 'lucide-react';
+import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Play } from 'lucide-react';
 import { videosRepository } from '@/lib/videos';
 import { SOCIAL_LINKS } from '@/data/social';
 import { usePageEntry, useParallax, useReducedMotion, useStagger } from '@/hooks/useMotion';
 import { useState, useEffect, useCallback } from 'react';
+
+import { CatSkullIcon } from '@/components/ui/CatSkullIcon';
+
+function isValidThumbnail(url: string | undefined): boolean {
+  if (!url || url.trim() === '') return false;
+  if (url.includes('/player/v1/')) return false;
+  return true;
+}
+
+function VideoThumbnailFallback({
+  platform,
+  accent = '#A855F7',
+}: {
+  platform: 'twitch' | 'tiktok';
+  accent?: string;
+}) {
+  const platformLabel = platform === 'twitch' ? 'Twitch' : 'TikTok';
+  return (
+    <div className="w-full h-full relative overflow-hidden flex items-center justify-center">
+      <div className="absolute inset-0 bg-gradient-to-br from-void via-abyss to-void" />
+      <div
+        className="absolute inset-0 opacity-30"
+        style={{ background: `radial-gradient(circle at 50% 25%, ${accent}, transparent 70%)` }}
+      />
+      <div className="absolute inset-0 bg-grain opacity-[0.04]" />
+
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full bg-primary/5 blur-[40px]" />
+
+      <div className="relative z-10 flex flex-col items-center gap-4">
+        <div className="relative flex-shrink-0">
+          <CatSkullIcon size={64} className="opacity-25 drop-shadow-[0_0_15px_rgba(168,85,247,0.1)]" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary-dim flex items-center justify-center shadow-[0_0_20px_rgba(168,85,247,0.35)]">
+              <Play size={20} className="text-void ml-0.5" />
+            </div>
+          </div>
+        </div>
+        <span className="font-mono text-[9px] uppercase tracking-widest text-text-dim">
+          {platformLabel}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export function Home() {
   const isPageVisible = usePageEntry(0);
@@ -241,7 +285,7 @@ export function Home() {
               {featuredVideos.map((video, index) => (
                 <MediaCard
                   key={video.id}
-                  image={video.thumbnail || undefined}
+                  image={isValidThumbnail(video.thumbnail) ? video.thumbnail : undefined}
                   title={video.title}
                   subtitle={`${video.views.toLocaleString()} visualizações · ${video.category}`}
                   aspectRatio="video"
@@ -267,6 +311,12 @@ export function Home() {
                     <div className="w-14 h-14 rounded-full bg-void/80 backdrop-blur-sm flex items-center justify-center border border-primary/30 text-primary animate-scale-in">
                       <ArrowRight size={20} />
                     </div>
+                  }
+                  fallback={
+                    <VideoThumbnailFallback
+                      platform={video.platform}
+                      accent={video.platform === 'twitch' ? '#9146FF' : '#FF0050'}
+                    />
                   }
                   onClick={() => window.open(video.url, '_blank', 'noopener,noreferrer')}
                   onKeyDown={(e) => {

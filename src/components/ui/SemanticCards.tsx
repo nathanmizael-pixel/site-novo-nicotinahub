@@ -589,11 +589,12 @@ export interface MediaCardProps extends HTMLAttributes<HTMLDivElement> {
   aspectRatio?: 'video' | 'square' | 'portrait';
   accent?: string;
   overlay?: ReactNode;
+  fallback?: ReactNode;
   titleAs?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'span';
 }
 
 export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(
-  ({ className, image, title, subtitle, badge, meta, actions, aspectRatio = 'video', accent = '#A855F7', overlay, children, titleAs = 'h3', ...props }, ref) => {
+  ({ className, image, title, subtitle, badge, meta, actions, aspectRatio = 'video', accent = '#A855F7', overlay, fallback, children, titleAs = 'h3', ...props }, ref) => {
     const aspectStyles = {
       video: 'aspect-video',
       square: 'aspect-square',
@@ -606,7 +607,7 @@ export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(
       <div
         ref={ref}
         className={cn(
-          'relative rounded-xl overflow-hidden bg-surface/80 border border-border',
+          'relative rounded-xl overflow-hidden bg-surface/80 border border-border group',
           'transition-all duration-500 ease-out-expo',
           'hover:shadow-depth-3 hover:-translate-y-1 hover:border-primary/30',
           className
@@ -621,6 +622,8 @@ export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(
               alt={title}
               className="w-full h-full object-cover transition-transform duration-700 ease-out-expo group-hover:scale-105"
             />
+          ) : fallback ? (
+            fallback
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-surface to-deep-surface">
               <SkullLogo size={48} className="opacity-20" />
