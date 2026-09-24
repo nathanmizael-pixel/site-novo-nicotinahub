@@ -251,11 +251,11 @@ export function Videos() {
                 </div>
               )}
 
-              {/* 3. TikTok Drops — compact grid */}
+              {/* 3. TikTok Cortes — compact grid */}
               {dropVideos.length > 0 && (
                 <div>
                   <div className="mb-5 pb-2 border-b border-border animate-reveal-up" style={{ animationDelay: isPageVisible ? '200ms' : '0ms' }}>
-                    <h2 className="font-display font-700 text-display-sm text-text">TikTok Drops</h2>
+                    <h2 className="font-display font-700 text-display-sm text-text">TikTok Cortes</h2>
                     <p className="text-xs text-text-muted">Últimos momentos publicados</p>
                   </div>
 

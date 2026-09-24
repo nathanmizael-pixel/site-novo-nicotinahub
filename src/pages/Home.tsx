@@ -5,7 +5,8 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { SkullLogo } from '@/components/SkullLogo';
-import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap, Film } from 'lucide-react';
+import { CommunitySkullIcon, VideoSkullIcon } from '@/components/ui/HomeSkullIcons';
+import { Heart, Users, ArrowRight, Twitch, Music2, MessageCircle, Sparkles, Zap } from 'lucide-react';
 import { videosRepository } from '@/lib/videos';
 import { SOCIAL_LINKS } from '@/data/social';
 import { usePageEntry, useParallax, useReducedMotion, useStagger } from '@/hooks/useMotion';
@@ -289,12 +290,12 @@ export function Home() {
       {/* Core Pillars */}
       <Section size="loose" background="atmosphere" className="vignette">
         <Container size="lg">
-          <h2 className="font-display font-800 text-display-lg text-text mb-16 animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>Três formas de viver a nicotinacat</h2>
+          <h2 className="font-display font-800 text-display-lg text-text mb-16 animate-reveal-up" style={{ animationDelay: isPageVisible ? '100ms' : '0ms' }}>Duas formas de viver a nicotinacat</h2>
 
           <Grid cols={1} colsMd={3} gap="md" autoFit minItemWidth="260px">
             <FeatureCard
               layout="vertical"
-              icon={<Users size={28} />}
+              icon={<CommunitySkullIcon size={28} />}
               title="Comunidade"
               description="Compartilhe pensamentos, siga viajantes e construa reputação. Toda voz ecoa no escuro."
               accent="#A855F7"
@@ -311,7 +312,7 @@ export function Home() {
 
             <FeatureCard
               layout="vertical"
-              icon={<Film size={28} />}
+              icon={<VideoSkullIcon size={28} />}
               title="Vídeos"
               description="Assista aos melhores momentos, clipes e compilados da stream. Curados semanalmente."
               accent="#FF0050"

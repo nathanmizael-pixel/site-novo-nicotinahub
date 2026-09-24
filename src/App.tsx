@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import { ToastProvider } from '@/components/ui/Toast';
 import { Layout } from '@/components/layout/Layout';
+import { RouteTransition } from '@/components/RouteTransition';
 import { Home } from '@/pages/Home';
 import { Community } from '@/pages/Community';
 import { Profile } from '@/pages/Profile';
@@ -17,7 +18,7 @@ export default function App() {
       <ToastProvider>
         <AuthProvider>
           <Layout>
-            <Routes>
+            <RouteTransition>
               <Route path="/" element={<Home />} />
               <Route path="/videos" element={<Videos />} />
               <Route path="/community" element={<Community />} />
@@ -27,7 +28,7 @@ export default function App() {
               <Route path="/auth/tiktok/callback" element={<AuthCallback />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
-            </Routes>
+            </RouteTransition>
           </Layout>
         </AuthProvider>
       </ToastProvider>
