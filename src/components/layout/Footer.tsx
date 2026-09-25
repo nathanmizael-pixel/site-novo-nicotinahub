@@ -26,7 +26,7 @@ export function Footer() {
             <ul className="space-y-1">
               <li><Link to="/" className="flex items-center py-2 text-sm text-text hover:text-primary-bright transition-colors">Início</Link></li>
               <li><Link to="/community" className="flex items-center py-2 text-sm text-text hover:text-primary-bright transition-colors">Comunidade</Link></li>
-              <li><Link to="/wishlist" className="flex items-center py-2 text-sm text-text hover:text-primary-bright transition-colors">Lista de Desejos</Link></li>
+              <li><a href={SOCIAL_LINKS.amazon} target="_blank" rel="noopener noreferrer" className="flex items-center py-2 text-sm text-text hover:text-primary-bright transition-colors">Lista de Desejos</a></li>
             </ul>
           </div>
 
@@ -49,9 +49,9 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <Link to="/wishlist" className="flex items-center gap-2 py-2 text-sm text-text hover:text-primary-bright transition-colors">
+                <a href={SOCIAL_LINKS.amazon} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-2 text-sm text-text hover:text-primary-bright transition-colors">
                   <ShoppingBag size={14} /> Lista de Desejos
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
